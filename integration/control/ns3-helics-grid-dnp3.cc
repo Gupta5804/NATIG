@@ -72,7 +72,8 @@
 #include <filesystem>
 #include <iostream>
 #include <fstream>
-#include <string> 
+#include <string>
+#include <stdexcept>
 #include <chrono>
 #include <thread>
 #include <vector>
@@ -112,6 +113,20 @@ int dirExists(const char *path)
         return 1;
     else
         return 0;
+}
+
+static int SafeStoi(const std::string &str, const std::string &key, int def = 0)
+{
+    try
+    {
+        return std::stoi(str);
+    }
+    catch (const std::invalid_argument &ia)
+    {
+        std::cerr << "ERROR: [stoi failure] Failed to convert JSON key '" << key
+                  << "' to int. Offending string value was: '" << str << "'" << std::endl;
+        return def;
+    }
 }
 
 /*
@@ -196,7 +211,8 @@ main (int argc, char *argv[])
   //p2p.SetChannelAttribute ("Delay", StringValue (topologyConfigObject["Channel"][0]["P2Pdelay"].asString()));
 
   CsmaHelper csma2;
-  csma2.SetChannelAttribute("Delay", TimeValue (NanoSeconds (std::stoi(topologyConfigObject["Channel"][0]["CSMAdelay"].asString()))));
+  int csmaDelay = SafeStoi(topologyConfigObject["Channel"][0]["CSMAdelay"].asString(), "Channel.CSMAdelay");
+  csma2.SetChannelAttribute("Delay", TimeValue (NanoSeconds (csmaDelay)));
 
 
   InternetStackHelper internetStack;
@@ -206,7 +222,7 @@ main (int argc, char *argv[])
 
   simTime = Seconds(std::stof(configObject["Simulation"][0]["SimTime"].asString()));
   float start = std::stof(configObject["Simulation"][0]["StartTime"].asString());
-  int includeMIM = std::stoi(configObject["Simulation"][0]["includeMIM"].asString());
+  int includeMIM = SafeStoi(configObject["Simulation"][0]["includeMIM"].asString(), "Simulation.includeMIM");
 
   NodeContainer Microgrid;
   Microgrid.Create(configObject["microgrid"].size());
@@ -215,8 +231,8 @@ main (int argc, char *argv[])
   NodeContainer MIMNode;
   NodeContainer hubNode;
 
-  bool ring = stoi(configObject["Simulation"][0]["UseDynTop"].asString()) == 1; //false; //true;
-  bool star_bool = stoi(configObject["Simulation"][0]["UseDynTop"].asString()) == 0; ////true; //false;
+  bool ring = SafeStoi(configObject["Simulation"][0]["UseDynTop"].asString(), "Simulation.UseDynTop") == 1; //false; //true;
+  bool star_bool = SafeStoi(configObject["Simulation"][0]["UseDynTop"].asString(), "Simulation.UseDynTop") == 0; ////true; //false;
 
   //Ring topology start
   NodeContainer nodes;
@@ -237,7 +253,7 @@ main (int argc, char *argv[])
       WifiHelper wifi;
       std::vector<NetDeviceContainer> NetRing;
       //Attaching the nodes to the InternetStacks
-      if (std::stoi(topologyConfigObject["Node"][0]["UseWifi"].asString())==0){
+      if (SafeStoi(topologyConfigObject["Node"][0]["UseWifi"].asString(), "Node[0].UseWifi")==0){
           internetStackMIM.Install(MIMNode);
           internetStack.Install(hubNode);
       }else{
@@ -266,26 +282,26 @@ main (int argc, char *argv[])
 	  //int con = 0;
           for(int con = 0; con < topologyConfigObject["Node"][node]["connections"].size(); con++){
              std::cout << "Connection " << con << " " << topologyConfigObject["Node"][node]["connections"][con] << std::endl;	     
-	     if(std::stoi(topologyConfigObject["Node"][node]["UseCSMA"].asString())==1){
+             if(SafeStoi(topologyConfigObject["Node"][node]["UseCSMA"].asString(), "Node[" + std::to_string(node) + "].UseCSMA")==1){
 		 //CsmaHelper csma2;
 		 int MTU = 1476;
 		 for(auto it = topologyConfigObject["Node"][node].begin(); it != topologyConfigObject["Node"][node].end(); ++it) {
                      if (it.key().compare("MTU") == 0){
-                         MTU = std::stoi(topologyConfigObject["Node"][node]["MTU"].asString());
+                         MTU = SafeStoi(topologyConfigObject["Node"][node]["MTU"].asString(), "Node[" + std::to_string(node) + "].MTU");
 		     }
 		 }
 	         csma2.SetDeviceAttribute("Mtu", UintegerValue(MTU));
-                 NetDeviceContainer NetDev = csma2.Install(NodeContainer(nodes.Get(std::stoi(topologyConfigObject["Node"][node]["name"].asString())), nodes.Get(std::stoi(topologyConfigObject["Node"][node]["connections"][con].asString())))); 
+                 NetDeviceContainer NetDev = csma2.Install(NodeContainer(nodes.Get(SafeStoi(topologyConfigObject["Node"][node]["name"].asString(), "Node[" + std::to_string(node) + "].name")), nodes.Get(SafeStoi(topologyConfigObject["Node"][node]["connections"][con].asString(), "Node[" + std::to_string(node) + "].connections"))));
 	         NetRing.push_back(NetDev);
-	     }else if (std::stoi(topologyConfigObject["Node"][node]["UseWifi"].asString())==1){
+             }else if (SafeStoi(topologyConfigObject["Node"][node]["UseWifi"].asString(), "Node[" + std::to_string(node) + "].UseWifi")==1){
 		     //Ssid ssid = Ssid ("ns3-80211ax-"+std::to_string(node));
 		     //mac.SetType ("ns3::StaWifiMac", "Ssid", SsidValue (ssid));
 		     mac.SetType ("ns3::AdhocWifiMac");
-		     NetDeviceContainer nodeDevices = wifi.Install (phy, mac, NodeContainer(nodes.Get(std::stoi(topologyConfigObject["Node"][node]["name"].asString())), nodes.Get(std::stoi(topologyConfigObject["Node"][node]["connections"][con].asString())))); 
+                     NetDeviceContainer nodeDevices = wifi.Install (phy, mac, NodeContainer(nodes.Get(SafeStoi(topologyConfigObject["Node"][node]["name"].asString(), "Node[" + std::to_string(node) + "].name")), nodes.Get(SafeStoi(topologyConfigObject["Node"][node]["connections"][con].asString(), "Node[" + std::to_string(node) + "].connections"))));
 		     NN.Add(nodeDevices.Get(0));
 		     NN.Add(nodeDevices.Get(0));
 	     }else{
-	         NetDeviceContainer NetDev = p2p.Install(NodeContainer(nodes.Get(std::stoi(topologyConfigObject["Node"][node]["name"].asString())), nodes.Get(std::stoi(topologyConfigObject["Node"][node]["connections"][con].asString()))));
+                 NetDeviceContainer NetDev = p2p.Install(NodeContainer(nodes.Get(SafeStoi(topologyConfigObject["Node"][node]["name"].asString(), "Node[" + std::to_string(node) + "].name")), nodes.Get(SafeStoi(topologyConfigObject["Node"][node]["connections"][con].asString(), "Node[" + std::to_string(node) + "].connections"))));
                  NetRing.push_back(NetDev);
 	     }
 	     //if (){
@@ -299,7 +315,7 @@ main (int argc, char *argv[])
 	   }
         }
       }
-      if (std::stoi(topologyConfigObject["Node"][0]["UseWifi"].asString())==1){
+      if (SafeStoi(topologyConfigObject["Node"][0]["UseWifi"].asString(), "Node[0].UseWifi")==1){
 	 // First item to do is to pass all the intergers of the Positionallocator through the json file
 	 // Then I need to look into different LoyoutTypes that are supported by ns3
 	 MobilityHelper mobility;
@@ -309,11 +325,11 @@ main (int argc, char *argv[])
 	 std::cout << "DeltaY " << topologyConfigObject["Gridlayout"][0]["DeltaY"].asString() << std::endl;
 	 std::cout << "GridLayout " << topologyConfigObject["Gridlayout"][0]["GridLayout"].asString() << std::endl; 
 	 mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
-	                         "MinX", DoubleValue (std::stoi(topologyConfigObject["Gridlayout"][0]["MinX"].asString())),
-	                         "MinY", DoubleValue (std::stoi(topologyConfigObject["Gridlayout"][0]["MinY"].asString())),
-	                         "DeltaX", DoubleValue (std::stoi(topologyConfigObject["Gridlayout"][0]["DeltaX"].asString())),
-	                         "DeltaY", DoubleValue (std::stoi(topologyConfigObject["Gridlayout"][0]["DeltaY"].asString())),
-	                         "GridWidth", UintegerValue (std::stoi(topologyConfigObject["Gridlayout"][0]["GridWidth"].asString())),
+                                 "MinX", DoubleValue (SafeStoi(topologyConfigObject["Gridlayout"][0]["MinX"].asString(), "Gridlayout.MinX")),
+                                 "MinY", DoubleValue (SafeStoi(topologyConfigObject["Gridlayout"][0]["MinY"].asString(), "Gridlayout.MinY")),
+                                 "DeltaX", DoubleValue (SafeStoi(topologyConfigObject["Gridlayout"][0]["DeltaX"].asString(), "Gridlayout.DeltaX")),
+                                 "DeltaY", DoubleValue (SafeStoi(topologyConfigObject["Gridlayout"][0]["DeltaY"].asString(), "Gridlayout.DeltaY")),
+                                 "GridWidth", UintegerValue (SafeStoi(topologyConfigObject["Gridlayout"][0]["GridWidth"].asString(), "Gridlayout.GridWidth")),
 	                         "LayoutType", StringValue (topologyConfigObject["Gridlayout"][0]["LayoutType"].asString()));
 	mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
 	mobility.Install (nodes);
@@ -321,21 +337,21 @@ main (int argc, char *argv[])
         internetStackMIM.Install(MIMNode);
         internetStack.Install(hubNode);
       }
-      if(std::stoi(topologyConfigObject["Gridlayout"][0]["setPos"].asString()) == 1){
-	  for (int x = 0; x < topologyConfigObject["Node"].size(); x++){
-	      Ptr<ConstantPositionMobilityModel> mob = nodes.Get(std::stoi(topologyConfigObject["Node"][x]["name"].asString()))->GetObject<ConstantPositionMobilityModel>();
+      if(SafeStoi(topologyConfigObject["Gridlayout"][0]["setPos"].asString(), "Gridlayout.setPos") == 1){
+          for (int x = 0; x < topologyConfigObject["Node"].size(); x++){
+              Ptr<ConstantPositionMobilityModel> mob = nodes.Get(SafeStoi(topologyConfigObject["Node"][x]["name"].asString(), "Node[" + std::to_string(x) + "].name"))->GetObject<ConstantPositionMobilityModel>();
               Vector m_position = mob->GetPosition();
-	      m_position.y = std::stoi(topologyConfigObject["Node"][x]["y"].asString());
-	      m_position.x = std::stoi(topologyConfigObject["Node"][x]["x"].asString());
+              m_position.y = SafeStoi(topologyConfigObject["Node"][x]["y"].asString(), "Node[" + std::to_string(x) + "].y");
+              m_position.x = SafeStoi(topologyConfigObject["Node"][x]["x"].asString(), "Node[" + std::to_string(x) + "].x");
               mob->SetPosition(m_position);
-	  }
+          }
       }
       //assigning the address to the nodes
       Ipv4AddressHelper ipv4Sub;
       std::string address = "10.1.1.0";
       ipv4Sub.SetBase(address.c_str(), "255.255.255.0", "0.0.0.1");
       for (int h = 0; h < NetRing.size(); h++){
-	    if (h < topologyConfigObject["Node"].size() && std::stoi(topologyConfigObject["Node"][h]["UseWifi"].asString()) == 0){
+            if (h < topologyConfigObject["Node"].size() && SafeStoi(topologyConfigObject["Node"][h]["UseWifi"].asString(), "Node[" + std::to_string(h) + "].UseWifi") == 0){
 	      Ptr<RateErrorModel> em = CreateObject<RateErrorModel> ();
 	      std::cout << topologyConfigObject["Node"][h] << std::endl;
 	      em->SetAttribute ("ErrorRate", DoubleValue (std::stof(topologyConfigObject["Node"][h]["error"].asString())));//0.00001));
@@ -444,8 +460,8 @@ main (int argc, char *argv[])
     dnp3Master.SetAttribute("LocalPort", UintegerValue(master_port));
     dnp3Master.SetAttribute("RemoteAddress", AddressValue(tempnode1->GetObject<Ipv4>()->GetAddress(1,0).GetLocal()));//star.GetSpokeIpv4Address (i)));
     dnp3Master.SetAttribute("RemotePort", UintegerValue(port));
-    dnp3Master.SetAttribute("JitterMinNs", DoubleValue (std::stoi(topologyConfigObject["Channel"][0]["jitterMin"].asString())));
-    dnp3Master.SetAttribute("JitterMaxNs", DoubleValue (std::stoi(topologyConfigObject["Channel"][0]["jitterMax"].asString())));
+    dnp3Master.SetAttribute("JitterMinNs", DoubleValue (SafeStoi(topologyConfigObject["Channel"][0]["jitterMin"].asString(), "Channel.jitterMin")));
+    dnp3Master.SetAttribute("JitterMaxNs", DoubleValue (SafeStoi(topologyConfigObject["Channel"][0]["jitterMax"].asString(), "Channel.jitterMax")));
     dnp3Master.SetAttribute("isMaster", BooleanValue (true));
     dnp3Master.SetAttribute("Name", StringValue (cc_name+ep_name));
     dnp3Master.SetAttribute("PointsFilename", StringValue (pointFileDir+"/points_"+ep_name+".csv"));
@@ -470,7 +486,8 @@ main (int argc, char *argv[])
 
     Ptr<Dnp3ApplicationNew> slave = dnp3Outstation.Install (tempnode1, std::string(ep_name));
     dnpOutstationApp.Add(slave);
-    Simulator::Schedule(MilliSeconds(1005), &Dnp3ApplicationNew::periodic_poll, master, std::stoi(configObject["Simulation"][0]["PollReqFreq"].asString()));
+    Simulator::Schedule(MilliSeconds(1005), &Dnp3ApplicationNew::periodic_poll, master,
+                        SafeStoi(configObject["Simulation"][0]["PollReqFreq"].asString(), "Simulation.PollReqFreq"));
     // Simulator::Schedule(MilliSeconds(2005), &Dnp3HelicsApplication::send_control_binary, master,
     //   Dnp3HelicsApplication::DIRECT, 0, ControlOutputRelayBlock::CLOSE);
       // Dnp3HelicsApplication::DIRECT, 0, ControlOutputRelayBlock::TRIP);
@@ -499,7 +516,7 @@ main (int argc, char *argv[])
   //int MIM_ID = 0;
   if (includeMIM == 1){
     for (int x = 0; x < val.size(); x++){ //std::stoi(configObject["MIM"][0]["NumberAttackers"].asString()); x++){
-      int MIM_ID = std::stoi(val[x]) + 1; //x+1;
+      int MIM_ID = SafeStoi(val[x], "MIM list entry") + 1; //x+1;
       auto ep_name = configObject["MIM"][MIM_ID]["name"].asString();
       Ptr<Node> tempnode = MIMNode.Get(MIM_ID-1); //star.GetSpokeNode (MIM_ID-1);
       Names::Add(ep_name, tempnode);
@@ -518,7 +535,8 @@ main (int argc, char *argv[])
       Dnp3ApplicationHelperNew dnp3MIM1 ("ns3::UdpSocketFactory", InetSocketAddress (MIMNode.Get(MIM_ID-1)->GetObject<Ipv4>()->GetAddress(1,0).GetLocal(), port)); //star.GetSpokeIpv4Address(MIM_ID-1),port)); 
       dnp3MIM1.SetAttribute("LocalPort", UintegerValue(port));
       dnp3MIM1.SetAttribute("RemoteAddress", AddressValue(hubNode.Get(0)->GetObject<Ipv4>()->GetAddress(ID, 0).GetLocal())); //star.GetHubIpv4Address(MIM_ID-1)));
-      if(std::stoi(attack["MIM-"+std::to_string(MIM_ID)+"-attack_type"]) == 3 || std::stoi(attack["MIM-"+std::to_string(MIM_ID)+"-attack_type"]) == 4){
+      if(SafeStoi(attack["MIM-"+std::to_string(MIM_ID)+"-attack_type"], "MIM-"+std::to_string(MIM_ID)+"-attack_type") == 3 ||
+         SafeStoi(attack["MIM-"+std::to_string(MIM_ID)+"-attack_type"], "MIM-"+std::to_string(MIM_ID)+"-attack_type") == 4){
           dnp3MIM1.SetAttribute("RemoteAddress2", AddressValue(Microgrid.Get(MIM_ID-1)->GetObject<Ipv4>()->GetAddress(1,0).GetLocal()));
       }
       dnp3MIM1.SetAttribute("RemotePort", UintegerValue(mimPort[MIM_ID-1]));
@@ -532,9 +550,9 @@ main (int argc, char *argv[])
       dnp3MIM1.SetAttribute("StationDeviceAddress", UintegerValue(2));
       dnp3MIM1.SetAttribute("IntegrityPollInterval", UintegerValue (10));
       dnp3MIM1.SetAttribute("EnableTCP", BooleanValue (false));
-      dnp3MIM1.SetAttribute("AttackSelection", UintegerValue(std::stoi(attack["MIM-"+std::to_string(MIM_ID)+"-attack_type"])));
+      dnp3MIM1.SetAttribute("AttackSelection", UintegerValue(SafeStoi(attack["MIM-"+std::to_string(MIM_ID)+"-attack_type"], "MIM-"+std::to_string(MIM_ID)+"-attack_type")));
 
-      if (std::stoi(attack["MIM-"+std::to_string(MIM_ID)+"-attack_type"]) == 2 || std::stoi(attack["MIM-"+std::to_string(MIM_ID)+"-attack_type"]) == 4){
+      if (SafeStoi(attack["MIM-"+std::to_string(MIM_ID)+"-attack_type"], "MIM-"+std::to_string(MIM_ID)+"-attack_type") == 2 || SafeStoi(attack["MIM-"+std::to_string(MIM_ID)+"-attack_type"], "MIM-"+std::to_string(MIM_ID)+"-attack_type") == 4){
          if(attack["MIM-"+std::to_string(MIM_ID)+"-scenario_id"] == "b"){
             dnp3MIM1.SetAttribute("Value_attck_max", StringValue(attack["MIM-"+std::to_string(MIM_ID)+"-attack_val"]));
             dnp3MIM1.SetAttribute("Value_attck_min", StringValue(attack["MIM-"+std::to_string(MIM_ID)+"-real_val"]));
@@ -548,14 +566,14 @@ main (int argc, char *argv[])
           }
       }
 
-      if(std::stoi(attack["MIM-"+std::to_string(MIM_ID)+"-attack_type"]) == 3){
+      if(SafeStoi(attack["MIM-"+std::to_string(MIM_ID)+"-attack_type"], "MIM-"+std::to_string(MIM_ID)+"-attack_type") == 3){
          dnp3MIM1.SetAttribute("Value_attck", StringValue(attack["MIM-"+std::to_string(MIM_ID)+"-attack_val"]));
          dnp3MIM1.SetAttribute("NodeID", StringValue (attack["MIM-"+std::to_string(MIM_ID)+"-node_id"])); 
          dnp3MIM1.SetAttribute("PointID", StringValue (attack["MIM-"+std::to_string(MIM_ID)+"-point_id"])); 
       }
 
-      dnp3MIM1.SetAttribute("AttackStartTime", UintegerValue(std::stoi(attack["MIM-"+std::to_string(MIM_ID)+"-Start"]))); 
-      dnp3MIM1.SetAttribute("AttackEndTime", UintegerValue(std::stoi(attack["MIM-"+std::to_string(MIM_ID)+"-End"]))); 
+      dnp3MIM1.SetAttribute("AttackStartTime", UintegerValue(SafeStoi(attack["MIM-"+std::to_string(MIM_ID)+"-Start"], "MIM-"+std::to_string(MIM_ID)+"-Start")));
+      dnp3MIM1.SetAttribute("AttackEndTime", UintegerValue(SafeStoi(attack["MIM-"+std::to_string(MIM_ID)+"-End"], "MIM-"+std::to_string(MIM_ID)+"-End")));
       dnp3MIM1.SetAttribute("mitmFlag", BooleanValue(true));
       Ptr<Dnp3ApplicationNew> mim = dnp3MIM1.Install (tempnode, enamestring);
       ApplicationContainer dnpMIMApp(mim);
