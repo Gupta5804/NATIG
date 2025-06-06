@@ -551,7 +551,8 @@ def main(xmlfile="gridlabd.xml"):
     with open("grid.json", "w") as f:
         f.write(json.dumps(topology, indent=4))
 
-    to_metadata(gbuilder)
+    # generate DNP3 points files for each microgrid
+    to_metadata(gbuilder, basedir)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
