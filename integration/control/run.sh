@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 #SBATCH --time=64:15:00
 
 # ==== set root and output
