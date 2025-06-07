@@ -13,7 +13,7 @@ git clone https://github.com/pnnl/NATIG.git
 # Go back to your project's root directory
 cd ..
 After this step, your local project folder will contain ns-3-dev/ and PUSH/.3. Build the Docker ImageThis command builds the Docker image using the provided Dockerfile. This process will take a very long time as it compiles GCC, CMake, HELICS, and other dependencies. This is a one-time setup.docker build --network=host -f Dockerfile -t pnnl/natig:natigbase --no-cache .
-(Note: Ensure you have made the Dockerfile edit from our previous conversation to install GridLAB-D to /usr/local).4. Run the Docker ContainerUse the provided script to run the container. It correctly sets up the bind mount, linking your current directory to /rd2c inside the container.# Stop and remove any old container to avoid conflicts
+Note: Ensure you have made the Dockerfile edit from our previous conversation to install GridLAB-D to /usr/local.4. Run the Docker ContainerUse the provided script to run the container. It correctly sets up the bind mount, linking your current directory to /rd2c inside the container.# Stop and remove any old container to avoid conflicts
 docker stop natigbase_container
 docker rm natigbase_container
 
