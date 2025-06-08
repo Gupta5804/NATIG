@@ -528,6 +528,7 @@ main (int argc, char *argv[])
           dnp3MIM1.SetAttribute("RemoteAddress2", AddressValue(Microgrid.Get(MIM_ID-1)->GetObject<Ipv4>()->GetAddress(1,0).GetLocal()));
       }
       dnp3MIM1.SetAttribute("RemotePort", UintegerValue(mimPort[MIM_ID-1]));
+      dnp3MIM1.SetAttribute("ID", UintegerValue(MIM_ID));
 
       dnp3MIM1.SetAttribute ("PointsFilename", StringValue (pointFileDir+"/points_mg"+std::to_string(MIM_ID)+".csv"));
       dnp3MIM1.SetAttribute("JitterMinNs", DoubleValue (500));
