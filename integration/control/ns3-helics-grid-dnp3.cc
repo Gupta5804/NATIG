@@ -178,7 +178,7 @@ main (int argc, char *argv[])
   readMicroGridConfig(helicsConfigFileName, helicsConfigObject);
   readMicroGridConfig(topologyConfigFileName, topologyConfigObject);
 
-  HelicsHelper helicsHelper(6000);
+  HelicsHelper helicsHelper(std::stoi(helicsConfigObject["brokerPort"].asString()));
   std::cout << "Calling Calling Message Federate Constructor" << std::endl;
   helicsHelper.SetupApplicationFederate();
 
@@ -226,10 +226,13 @@ main (int argc, char *argv[])
       nodes.Create(topologyConfigObject["Node"].size());
       std::cout << "Creating the nodes " << topologyConfigObject["Node"].size() << " vs " << configObject["MIM"].size() << std::endl;
       //Dividing the nodes depending on whether they will serve as control center or man in the middle
-      for (int h = 0; h < configObject["MIM"].size(); h++){
+      // Reserve one node for the hub. The first entry in the MIM array
+      // contains only configuration parameters, so subtract one when
+      // creating the attacker nodes.
+      for (int h = 0; h < configObject["MIM"].size() - 1; h++){
           MIMNode.Add(nodes.Get(h));
       }
-      hubNode.Add(nodes.Get(configObject["MIM"].size()));
+      hubNode.Add(nodes.Get(configObject["MIM"].size() - 1));
       std::cout << "MIM nodes have been added" << std::endl;
 
       YansWifiChannelHelper channel;
