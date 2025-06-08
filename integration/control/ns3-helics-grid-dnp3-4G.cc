@@ -650,8 +650,9 @@ main (int argc, char *argv[])
 		   
                    dnp3MIM1.SetAttribute("AttackStartTime", StringValue(attack["MIM-"+std::to_string(MIM_ID)+"-Start"]));
                    dnp3MIM1.SetAttribute("AttackEndTime", StringValue(attack["MIM-"+std::to_string(MIM_ID)+"-End"]));
-		   dnp3MIM1.SetAttribute("mitmFlag", BooleanValue(true));
-		   Ptr<Dnp3ApplicationNew> mim = dnp3MIM1.Install (tempnode, enamestring);
+                   dnp3MIM1.SetAttribute("AttackConf", StringValue(configFileName));
+                   dnp3MIM1.SetAttribute("mitmFlag", BooleanValue(true));
+                   Ptr<Dnp3ApplicationNew> mim = dnp3MIM1.Install (tempnode, enamestring);
 		   ApplicationContainer dnpMIMApp(mim);
 		   dnpMIMApp.Start (Seconds (start));
 		   dnpMIMApp.Stop (simTime);
