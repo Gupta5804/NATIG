@@ -175,7 +175,7 @@ main (int argc, char *argv[])
   readMicroGridConfig(configFileName, configObject);
   readMicroGridConfig(helicsConfigFileName, helicsConfigObject);
 
-  HelicsHelper helicsHelper;
+  HelicsHelper helicsHelper(std::stoi(helicsConfigObject["brokerPort"].asString()));
   std::cout << "Calling Calling Message Federate Constructor" << std::endl;
   helicsHelper.SetupApplicationFederate();
 

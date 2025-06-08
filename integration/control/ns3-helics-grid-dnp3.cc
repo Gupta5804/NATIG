@@ -178,7 +178,7 @@ main (int argc, char *argv[])
   readMicroGridConfig(helicsConfigFileName, helicsConfigObject);
   readMicroGridConfig(topologyConfigFileName, topologyConfigObject);
 
-  HelicsHelper helicsHelper(6000);
+  HelicsHelper helicsHelper(std::stoi(helicsConfigObject["brokerPort"].asString()));
   std::cout << "Calling Calling Message Federate Constructor" << std::endl;
   helicsHelper.SetupApplicationFederate();
 
@@ -226,10 +226,13 @@ main (int argc, char *argv[])
       nodes.Create(topologyConfigObject["Node"].size());
       std::cout << "Creating the nodes " << topologyConfigObject["Node"].size() << " vs " << configObject["MIM"].size() << std::endl;
       //Dividing the nodes depending on whether they will serve as control center or man in the middle
-      for (int h = 0; h < configObject["MIM"].size(); h++){
+      // Reserve one node for the hub. The first entry in the MIM array
+      // contains only configuration parameters, so subtract one when
+      // creating the attacker nodes.
+      for (int h = 0; h < configObject["MIM"].size() - 1; h++){
           MIMNode.Add(nodes.Get(h));
       }
-      hubNode.Add(nodes.Get(configObject["MIM"].size()));
+      hubNode.Add(nodes.Get(configObject["MIM"].size() - 1));
       std::cout << "MIM nodes have been added" << std::endl;
 
       YansWifiChannelHelper channel;
@@ -321,7 +324,10 @@ main (int argc, char *argv[])
         internetStackMIM.Install(MIMNode);
         internetStack.Install(hubNode);
       }
-      if(std::stoi(topologyConfigObject["Gridlayout"][0]["setPos"].asString()) == 1){
+      // Some configuration files use "SetPos" with a capital S. Access that key
+      // directly to avoid empty strings that cause std::stoi failures when the
+      // wrong case is used.
+      if(std::stoi(topologyConfigObject["Gridlayout"][0]["SetPos"].asString()) == 1){
 	  for (int x = 0; x < topologyConfigObject["Node"].size(); x++){
 	      Ptr<ConstantPositionMobilityModel> mob = nodes.Get(std::stoi(topologyConfigObject["Node"][x]["name"].asString()))->GetObject<ConstantPositionMobilityModel>();
               Vector m_position = mob->GetPosition();
@@ -554,8 +560,8 @@ main (int argc, char *argv[])
          dnp3MIM1.SetAttribute("PointID", StringValue (attack["MIM-"+std::to_string(MIM_ID)+"-point_id"])); 
       }
 
-      dnp3MIM1.SetAttribute("AttackStartTime", UintegerValue(std::stoi(attack["MIM-"+std::to_string(MIM_ID)+"-Start"]))); 
-      dnp3MIM1.SetAttribute("AttackEndTime", UintegerValue(std::stoi(attack["MIM-"+std::to_string(MIM_ID)+"-End"]))); 
+      dnp3MIM1.SetAttribute("AttackStartTime", StringValue(attack["MIM-"+std::to_string(MIM_ID)+"-Start"]));
+      dnp3MIM1.SetAttribute("AttackEndTime", StringValue(attack["MIM-"+std::to_string(MIM_ID)+"-End"]));
       dnp3MIM1.SetAttribute("mitmFlag", BooleanValue(true));
       Ptr<Dnp3ApplicationNew> mim = dnp3MIM1.Install (tempnode, enamestring);
       ApplicationContainer dnpMIMApp(mim);

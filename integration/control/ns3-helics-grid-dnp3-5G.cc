@@ -327,7 +327,7 @@ main (int argc, char *argv[])
   readMicroGridConfig(topologyConfigFileName, topologyConfigObject);
 
   
-  HelicsHelper helicsHelper(6000);
+  HelicsHelper helicsHelper(std::stoi(helicsConfigObject["brokerPort"].asString()));
   std::cout << "Calling Calling Message Federate Constructor" << std::endl; 
   helicsHelper.SetupApplicationFederate();
   std::string fedName = helics_federate->getName();
@@ -854,8 +854,8 @@ main (int argc, char *argv[])
 			   dnp3MIM1.SetAttribute("PointID", StringValue (attack["MIM-"+std::to_string(MIM_ID)+"-point_id"])); 
 		   }
 		   
-		   dnp3MIM1.SetAttribute("AttackStartTime", UintegerValue(std::stoi(attack["MIM-"+std::to_string(MIM_ID)+"-Start"]))); 
-		   dnp3MIM1.SetAttribute("AttackEndTime", UintegerValue(std::stoi(attack["MIM-"+std::to_string(MIM_ID)+"-End"]))); 
+                   dnp3MIM1.SetAttribute("AttackStartTime", StringValue(attack["MIM-"+std::to_string(MIM_ID)+"-Start"]));
+                   dnp3MIM1.SetAttribute("AttackEndTime", StringValue(attack["MIM-"+std::to_string(MIM_ID)+"-End"]));
 		   dnp3MIM1.SetAttribute("mitmFlag", BooleanValue(true));
 		   Ptr<Dnp3ApplicationNew> mim = dnp3MIM1.Install (tempnode, enamestring);
 		   ApplicationContainer dnpMIMApp(mim);
