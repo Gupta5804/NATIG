@@ -45,9 +45,9 @@
 //NR libraries
 #include "ns3/buildings-module.h"
 #include "ns3/antenna-module.h"
-#include "ns3/nr-point-to-point-epc-helper.h"
-#include "ns3/nr-mac-scheduler-tdma-rr.h"
-#include "ns3/nr-module.h"
+//#include "ns3/nr-point-to-point-epc-helper.h"
+//#include "ns3/nr-mac-scheduler-tdma-rr.h"
+//#include "ns3/nr-module.h"
 
 #include "ns3/helics-helper.h"
 #include "ns3/dnp3-application-helper-new.h"
