@@ -324,7 +324,10 @@ main (int argc, char *argv[])
         internetStackMIM.Install(MIMNode);
         internetStack.Install(hubNode);
       }
-      if(std::stoi(topologyConfigObject["Gridlayout"][0]["setPos"].asString()) == 1){
+      // Some configuration files use "SetPos" with a capital S. Access that key
+      // directly to avoid empty strings that cause std::stoi failures when the
+      // wrong case is used.
+      if(std::stoi(topologyConfigObject["Gridlayout"][0]["SetPos"].asString()) == 1){
 	  for (int x = 0; x < topologyConfigObject["Node"].size(); x++){
 	      Ptr<ConstantPositionMobilityModel> mob = nodes.Get(std::stoi(topologyConfigObject["Node"][x]["name"].asString()))->GetObject<ConstantPositionMobilityModel>();
               Vector m_position = mob->GetPosition();
