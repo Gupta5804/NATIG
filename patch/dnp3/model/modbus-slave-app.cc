@@ -6,6 +6,7 @@
 #include "ns3/inet-socket-address.h"
 #include "ns3/inet6-socket-address.h"
 #include "ns3/simulator.h"
+#include <algorithm>
 #include <list>
 
 namespace ns3 {
