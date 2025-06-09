@@ -18,7 +18,19 @@ ModbusMasterApp::GetTypeId (void)
   static TypeId tid = TypeId ("ns3::ModbusMasterApp")
     .SetParent<Application> ()
     .SetGroupName ("Applications")
-    .AddConstructor<ModbusMasterApp> ();
+    .AddConstructor<ModbusMasterApp> ()
+    .AddAttribute ("PeerAddress", "Remote address of the Modbus slave", AddressValue (),
+                   MakeAddressAccessor (&ModbusMasterApp::m_peerAddress),
+                   MakeAddressChecker ())
+    .AddAttribute ("PeerPort", "Remote port of the Modbus slave", UintegerValue (502),
+                   MakeUintegerAccessor (&ModbusMasterApp::m_peerPort),
+                   MakeUintegerChecker<uint16_t> ())
+    .AddAttribute ("PacketSize", "Size of Modbus request packets", UintegerValue (12),
+                   MakeUintegerAccessor (&ModbusMasterApp::m_packetSize),
+                   MakeUintegerChecker<uint32_t> ())
+    .AddAttribute ("DataRate", "Data rate for sending packets", DataRateValue (DataRate ("1Mbps")),
+                   MakeDataRateAccessor (&ModbusMasterApp::m_dataRate),
+                   MakeDataRateChecker ());
   return tid;
 }
 

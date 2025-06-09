@@ -18,7 +18,10 @@ ModbusSlaveApp::GetTypeId (void)
   static TypeId tid = TypeId ("ns3::ModbusSlaveApp")
     .SetParent<Application> ()
     .SetGroupName ("Applications")
-    .AddConstructor<ModbusSlaveApp> ();
+    .AddConstructor<ModbusSlaveApp> ()
+    .AddAttribute ("LocalPort", "Listening port", UintegerValue (502),
+                   MakeUintegerAccessor (&ModbusSlaveApp::m_localPort),
+                   MakeUintegerChecker<uint16_t> ());
   return tid;
 }
 
