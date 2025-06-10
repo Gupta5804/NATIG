@@ -52,10 +52,16 @@ cp -r ${RD2C}/PUSH/NATIG/RC/code/helics/dnp3-application-new* ${RD2C}/ns-3-dev/c
 cp -r ${RD2C}/PUSH/NATIG/RC/code/helics/wscript ${RD2C}/ns-3-dev/contrib/helics/
 
 
-cd ${RD2C}/gridlab-d/third_party/xerces-c-3.2.0 
-./configure 
-make 
-make install 
+XERCES_DIR="${RD2C}/gridlab-d/third_party/xerces-c-3.2.0"
+if [ -d "$XERCES_DIR" ]; then
+    cd "$XERCES_DIR"
+    ./configure
+    make
+    make install
+else
+    echo "Error: Xerces directory '$XERCES_DIR' is missing. Please install the required dependencies." >&2
+    exit 1
+fi
 cd ${RD2C}/gridlab-d 
 autoreconf -if 
 ./configure --with-helics=/usr/local --prefix=${RD2C} --enable-silent-rules 'CFLAGS=-g -O2 -w' 'CXXFLAGS=-g -O2 -w -std=c++14' 'LDFLAGS=-g -O2 -w' 
