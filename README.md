@@ -132,6 +132,14 @@ cd /rd2c/PUSH/NATIG
 ./build_ns3.sh "" /rd2c
 ```
 
+If you've installed the code to a different directory, set the `RD2C` variable
+before running helper scripts. For example:
+
+```bash
+export RD2C=/custom/path
+bash update_workstation.sh
+```
+
 ---
 
 ## Verification Run ⚙️
