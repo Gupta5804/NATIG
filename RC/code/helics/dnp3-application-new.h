@@ -50,9 +50,9 @@
 #include "ns3/helics-application.h"
 #include "helics/helics.hpp"
 
-#include <json/json.h>
-#include <json/forwards.h>
-#include <json/writer.h>
+#include <jsoncpp/json/json.h>
+#include <jsoncpp/json/forwards.h>
+#include <jsoncpp/json/writer.h>
 
 
 namespace ns3 {

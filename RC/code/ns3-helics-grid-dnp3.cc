@@ -59,9 +59,9 @@
 #include "ns3/point-to-point-helper.h"
 #include <ns3/antenna-module.h>
 
-#include <json/json.h>
-#include <json/forwards.h>
-#include <json/writer.h>
+#include <jsoncpp/json/json.h>
+#include <jsoncpp/json/forwards.h>
+#include <jsoncpp/json/writer.h>
 #include "ns3/olsr-helper.h"
 #include <filesystem>
 #include <iostream>
