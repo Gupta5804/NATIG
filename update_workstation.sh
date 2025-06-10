@@ -19,7 +19,10 @@ then
             cp ${RD2C}/integration/control/*.glm $dt
 fi
 
-rm -rf ${RD2C}/integration
+# Move the existing directory to a backup location instead of deleting
+if [ -d "${RD2C}/integration" ]; then
+    mv ${RD2C}/integration ${RD2C}/integration.bak-$(date +%F-%T)
+fi
 cp -r integration ${RD2C}
 cp -r RC/code/run.sh ${RD2C}/integration/control 
 cp -r RC/code/ns3-helics-grid-dnp3-4G-Docker.cc ${RD2C}/integration/control/ns3-helics-grid-dnp3-4G.cc  
