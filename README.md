@@ -137,7 +137,7 @@ before running helper scripts. For example:
 
 ```bash
 export RD2C=/custom/path
-bash update_workstation.sh
+bash develop.sh
 ```
 
 ---
@@ -160,8 +160,9 @@ Expected result: logs from HELICS, GridLAB-D, and ns-3 appear; the simulation fi
 1. **Edit locally** – code, configs, docs (VS Code, vim, etc.).
 2. **Attach** to the running container:
    `docker exec -it natigbase_container bash`
-3. **Run simulations** from inside `/rd2c/integration/control`.
-   Changes are picked up instantly thanks to the bind mount.
+3. **Patch, compile and run** using the helper script from the repo root:
+   `bash develop.sh`
+   This copies your files from `patch/`, rebuilds ns-3 and launches the simulation.
 
 ---
 
