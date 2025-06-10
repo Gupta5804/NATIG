@@ -18,3 +18,9 @@ def build(bld):
         'helper/modbus-helper.h',
     ]
 
+    # Build example programs when enabled
+    if bld.env.ENABLE_EXAMPLES:
+        bld.recurse('examples')
+
+    # Explicitly return the module so that waf knows the build step
+    return module
