@@ -4,6 +4,12 @@ def build(bld):
 
     module = bld.create_ns3_module('dnp3', ['core', 'applications', 'fncs'])
 
+    # Ensure jsoncpp headers are found during compilation
+    module.includes = [
+        '.',
+        '/usr/local/include/jsoncpp',
+    ]
+
     module.source = [
         'dnplib/app.cpp',
         'dnplib/station.cpp',
@@ -24,7 +30,10 @@ def build(bld):
         'dnplib/dummy_timer.cpp',
         'model/dnp3-application.cc',
         'model/dnp3-simulator-impl.cc',
-        'helper/dnp3-application-helper.cc'
+        'helper/dnp3-application-helper.cc',
+        'model/modbus-master-app.cc',
+        'model/modbus-slave-app.cc',
+        'helper/modbus-helper.cc'
         ]
 
     headers = bld(features='ns3header')
@@ -33,6 +42,9 @@ def build(bld):
             'model/dnp3-application.h',
             'model/dnp3-simulator-impl.h',
             'helper/dnp3-application-helper.h',
+            'model/modbus-master-app.h',
+            'model/modbus-slave-app.h',
+            'helper/modbus-helper.h',
             'dnplib/app.hpp',
             'dnplib/station.hpp',
             'dnplib/factory.hpp',

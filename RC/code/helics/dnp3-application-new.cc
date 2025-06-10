@@ -29,9 +29,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include <json/json.h>
-#include <json/forwards.h>
-#include <json/writer.h>
+#include <jsoncpp/json/json.h>
+#include <jsoncpp/json/forwards.h>
+#include <jsoncpp/json/writer.h>
 
 using namespace std;
 
@@ -571,21 +571,43 @@ void Dnp3ApplicationNew::GetStartStopArray(){
   timer_end.push_back(std::stof(attack["MIM-"+std::to_string(MIM_ID)+"-End"]));*/
 }
 
-std::vector<float> Dnp3ApplicationNew::GetVal(std::map<std::string, std::string> attack, std::string tag) {
-  std::vector<float> timer;
-  std::string delimiter = ",";
+std::vector<float> Dnp3ApplicationNew::GetVal(std::map<std::string, std::string> attack,
+                                              std::string tag)
+{
+  std::vector<float> values;
+  const std::string key = "MIM-" + std::to_string(MIM_ID) + "-" + tag;
+  std::string data = attack[key];
+  const std::string delimiter = ",";
   size_t pos = 0;
   std::string token;
-  std::cout << MIM_ID << " " << tag << std::endl;
-  while ((pos = attack["MIM-"+std::to_string(MIM_ID)+"-"+tag].find(delimiter)) != std::string::npos) {
-        token = attack["MIM-"+std::to_string(MIM_ID)+"-"+tag].substr(0, pos);
-	std::cout << "Stof 1" << std::endl;
-	timer.push_back(std::stof(token));
-        attack["MIM-"+std::to_string(MIM_ID)+"-"+tag].erase(0, pos + delimiter.length());
-  }
-  std::cout << "I am printing here ----------------------- " << attack["MIM-"+std::to_string(MIM_ID)+"-"+tag] << std::endl;
-  timer.push_back(std::stof(attack["MIM-"+std::to_string(MIM_ID)+"-"+tag]));
-  return timer;
+
+  while ((pos = data.find(delimiter)) != std::string::npos)
+    {
+      token = data.substr(0, pos);
+      try
+        {
+          values.push_back(std::stof(token));
+        }
+      catch (const std::exception &)
+        {
+          NS_LOG_WARN("Invalid numeric token '" << token << "' for key " << key);
+        }
+      data.erase(0, pos + delimiter.length());
+    }
+
+  if (!data.empty())
+    {
+      try
+        {
+          values.push_back(std::stof(data));
+        }
+      catch (const std::exception &)
+        {
+          NS_LOG_WARN("Invalid numeric token '" << data << "' for key " << key);
+        }
+    }
+
+  return values;
 }
 
 void Dnp3ApplicationNew::makeUdpConnection(void) {
