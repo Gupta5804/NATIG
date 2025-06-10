@@ -4,15 +4,21 @@
 #           DEVELOPMENT WORKFLOW SCRIPT FOR NATIG
 #
 # This script simplifies the workflow to:
-#   1. Patch: Copy your custom files to the right locations.
-#   2. Compile: Rebuild the ns-3 simulator.
-#   3. Run: Execute the simulation.
+#   1. Setup Environment
+#   2. Patch: Copy your custom files to the right locations.
+#   3. Compile: Rebuild the ns-3 simulator.
+#   4. Run: Execute the simulation.
 #
 #################################################################
 
 set -e # Exit immediately if a command exits with a non-zero status.
 
-echo "=== 1. APPLYING CUSTOM PATCHES FROM 'patch/' DIRECTORY ==="
+echo "=== 1. SETTING UP BUILD ENVIRONMENT ==="
+source /rd2c/RC/environmental.sh
+echo "Environment variables set."
+echo ""
+
+echo "=== 2. APPLYING CUSTOM PATCHES FROM 'patch/' DIRECTORY ==="
 
 # Define key directories
 RD2C_DIR="${RD2C:-/rd2c}"
@@ -35,6 +41,7 @@ sync_dir() {
 # Synchronise patched modules with the ns-3 tree
 sync_dir "${PATCH_DIR}/applications"            "${NS3_SRC_DIR}/applications"
 sync_dir "${PATCH_DIR}/dnp3"                     "${NS3_SRC_DIR}/dnp3"
+cp -v "${PATCH_DIR}/dnp3/wscript" "${NS3_SRC_DIR}/dnp3/"
 sync_dir "${PATCH_DIR}/fncs"                     "${NS3_SRC_DIR}/fncs"
 sync_dir "${PATCH_DIR}/internet"                 "${NS3_SRC_DIR}/internet"
 sync_dir "${PATCH_DIR}/lte"                      "${NS3_SRC_DIR}/lte"
@@ -50,7 +57,7 @@ if [ -f "${PATCH_DIR}/make.sh" ]; then
 fi
 
 echo ""
-echo "=== 2. COMPILING NS-3 ==="
+echo "=== 3. COMPILING NS-3 ==="
 
 cd ${NS3_DIR}
 
@@ -67,7 +74,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo ""
-echo "=== 3. RUNNING SIMULATION ==="
+echo "=== 4. RUNNING SIMULATION ==="
 echo "Compilation successful. Executing run_ns3_only.sh..."
 
 cd ${RD2C_DIR}/integration/control
