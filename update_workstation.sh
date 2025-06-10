@@ -51,14 +51,13 @@ cp -r ${RD2C}/PUSH/NATIG/RC/code/helics/dnp3-application-new* ${RD2C}/ns-3-dev/c
 cp -r ${RD2C}/PUSH/NATIG/RC/code/helics/wscript ${RD2C}/ns-3-dev/contrib/helics/
 
 
-XERCES_DIR="${RD2C}/gridlab-d/third_party/xerces-c-3.2.0"
-if [ -d "$XERCES_DIR" ]; then
-    cd "$XERCES_DIR"
+if [ -d "${RD2C}/gridlab-d/third_party/xerces-c-3.2.0" ]; then
+    cd "${RD2C}/gridlab-d/third_party/xerces-c-3.2.0"
     ./configure
     make
     make install
 else
-    echo "Error: Xerces directory '$XERCES_DIR' is missing. Please install the required dependencies." >&2
+    echo "Error: '${RD2C}/gridlab-d/third_party/xerces-c-3.2.0' directory not found." >&2
     exit 1
 fi
 cd ${RD2C}/gridlab-d 
