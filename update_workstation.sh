@@ -34,7 +34,6 @@ cp -r RC/code/dnp3/helper ${RD2C}/ns-3-dev/src/dnp3
 mkdir ${RD2C}/ns-3-dev/src/dnp3/model 
 cp -r RC/code/dnp3/wscript ${RD2C}/ns-3-dev/src/dnp3/ 
 cp -r RC/code/dnp3/model/dnp3-application.h ${RD2C}/ns-3-dev/src/dnp3/model/ 
-cp -r RC/code/dnp3/model/dnp3-application-Docker.cc ${RD2C}/ns-3-dev/src/dnp3/model/dnp3-application.cc 
 cp -r RC/code/dnp3/model/dnp3-simulator-impl.* ${RD2C}/ns-3-dev/src/dnp3/model/ 
 cp -r RC/code/dnp3/model/tcptest* ${RD2C}/ns-3-dev/src/dnp3/model/ 
 cp -r RC/code/dnp3/model/dnp3-mim-* ${RD2C}/ns-3-dev/src/dnp3/model/ 
