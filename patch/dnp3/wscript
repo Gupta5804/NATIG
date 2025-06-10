@@ -7,8 +7,8 @@ def build(bld):
     # Ensure jsoncpp headers are found during compilation
     module.includes = [
         '.',
-        '/usr/local/include/jsoncpp',
         '/usr/include/jsoncpp',
+        '/usr/local/include/jsoncpp',
     ]
 
     module.source = [
