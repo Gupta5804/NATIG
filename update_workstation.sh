@@ -51,39 +51,39 @@ cp -r ${RD2C}/PUSH/NATIG/RC/code/helics/dnp3-application-new* ${RD2C}/ns-3-dev/c
 cp -r ${RD2C}/PUSH/NATIG/RC/code/helics/wscript ${RD2C}/ns-3-dev/contrib/helics/
 
 
-if [ -d "${RD2C}/gridlab-d/third_party/xerces-c-3.2.0" ]; then
-    XERCES_DIR="${RD2C}/gridlab-d/third_party/xerces-c-3.2.0"
-elif [ -d "/usr/local/gridlab-d/third_party/xerces-c-3.2.0" ]; then
-    XERCES_DIR="/usr/local/gridlab-d/third_party/xerces-c-3.2.0"
-else
-    echo "Error: Xerces-C directory not found in '${RD2C}' or '/usr/local/gridlab-d'." >&2
-    exit 1
-fi
-cd "$XERCES_DIR"
-./configure
-make
-make install
-cd ${RD2C}/gridlab-d 
-autoreconf -if 
-./configure --with-helics=/usr/local --prefix=${RD2C} --enable-silent-rules 'CFLAGS=-g -O2 -w' 'CXXFLAGS=-g -O2 -w -std=c++14' 'LDFLAGS=-g -O2 -w' 
-make 
-make install
-# ** NEW: Add this cleanup command for GridLAB-D **
-echo "==== Cleaning up GridLAB-D build files ===="
-make clean
-
-# Export linker flags so ns-3 picks them up during the build
-export LDFLAGS="-ljsoncpp -L/usr/local/include/jsoncpp/"
-cd $RD2C/PUSH/NATIG
-./build_ns3.sh "$1" ${RD2C}
-
-# Remove ns-3 build directory to save disk space
-cd ${RD2C}/ns-3-dev
-./waf distclean
-
-# ** NEW: Add this cleanup command for ns-3 **
-echo "==== Cleaning up ns-3 build files ===="
-cd $RD2C/ns-3-dev
-./waf clean
-
-echo "==== Update and build process complete! ===="
+#if [ -d "${RD2C}/gridlab-d/third_party/xerces-c-3.2.0" ]; then
+#    XERCES_DIR="${RD2C}/gridlab-d/third_party/xerces-c-3.2.0"
+#elif [ -d "/usr/local/gridlab-d/third_party/xerces-c-3.2.0" ]; then
+#    XERCES_DIR="/usr/local/gridlab-d/third_party/xerces-c-3.2.0"
+#else
+#    echo "Error: Xerces-C directory not found in '${RD2C}' or '/usr/local/gridlab-d'." >&2
+#    exit 1
+#fi
+#cd "$XERCES_DIR"
+#./configure
+#make
+#make install
+#cd ${RD2C}/gridlab-d 
+#autoreconf -if 
+#./configure --with-helics=/usr/local --prefix=${RD2C} --enable-silent-rules 'CFLAGS=-g -O2 -w' 'CXXFLAGS=-g -O2 -w -std=c++14' 'LDFLAGS=-g -O2 -w' 
+#make 
+#make install
+## ** NEW: Add this cleanup command for GridLAB-D **
+#echo "==== Cleaning up GridLAB-D build files ===="
+#make clean
+#
+## Export linker flags so ns-3 picks them up during the build
+#export LDFLAGS="-ljsoncpp -L/usr/local/include/jsoncpp/"
+#cd $RD2C/PUSH/NATIG
+#./build_ns3.sh "$1" ${RD2C}
+#
+## Remove ns-3 build directory to save disk space
+#cd ${RD2C}/ns-3-dev
+#./waf distclean
+#
+## ** NEW: Add this cleanup command for ns-3 **
+#echo "==== Cleaning up ns-3 build files ===="
+#cd $RD2C/ns-3-dev
+#./waf clean
+#
+#echo "==== Update and build process complete! ===="
