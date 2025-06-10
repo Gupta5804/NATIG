@@ -91,7 +91,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     vim \
     procps \
     libzmq5 \
-    libjsoncpp1 \
+    libjsoncpp-dev \
     libxml2 \
     # The GridLAB-D runtime depends on OpenMPI
     openmpi-bin \
@@ -107,12 +107,10 @@ COPY --from=builder /usr/local/ /usr/local/
 # --- 3. Install Python dependencies ---
 RUN pip3 install --no-cache-dir helics==2.7.1 helics-apps==2.7.1
 
-# --- 4. Clone the ns-3 repository ---
-# We clone ns-3 directly into the final image. It will be compiled
-# for the first time by your develop.sh script inside the container.
+# --- 4. Prepare the working directory ---
+# The ns-3-dev directory will be provided by your bind mount.
 RUN mkdir -p /rd2c
 WORKDIR /rd2c
-RUN git clone https://github.com/nsnam/ns-3-dev-git.git ns-3-dev
 
 # --- 5. Set up the final environment ---
 # This ensures that all executables and libraries can be found.
