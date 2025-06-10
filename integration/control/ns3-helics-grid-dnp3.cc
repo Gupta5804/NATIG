@@ -543,7 +543,8 @@ main (int argc, char *argv[])
  
 
   PointToPointHelper p2p;
-  p2p.SetDeviceAttribute ("DataRate", StringValue (topologyConfigObject["Channel"][0]["P2PRate"].asString()));
+  p2p.EnablePcapAll ("modbus_verification");
+  p2p.SetDeviceAttribute ("DataRate", StringValue (topologyConfigObject["Channel"][0]["dataRate"].asString()));
   //p2p.SetChannelAttribute ("Delay", StringValue (topologyConfigObject["Channel"][0]["P2Pdelay"].asString()));
 
   CsmaHelper csma2;
