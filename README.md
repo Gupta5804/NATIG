@@ -162,7 +162,7 @@ Expected result: logs from HELICS, GridLAB-D, and ns-3 appear; the simulation fi
    `docker exec -it natigbase_container bash`
 3. **Patch, compile and run** using the helper script from the repo root:
    `bash develop.sh`
-   The script syncs everything under `patch/` into `/rd2c/ns-3-dev`, rebuilds ns-3 and launches the simulation.
+   The script copies files from the repository's `patch/` folder into `/rd2c/ns-3-dev`, runs `make.sh` to configure and build ns-3, then launches the simulation.
 
 ---
 

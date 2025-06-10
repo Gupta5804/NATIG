@@ -16,7 +16,10 @@ echo "=== 1. APPLYING CUSTOM PATCHES FROM 'patch/' DIRECTORY ==="
 
 # Define key directories
 RD2C_DIR="${RD2C:-/rd2c}"
-PATCH_DIR="${RD2C_DIR}/patch"
+# Location of this repository
+REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
+# Patches live inside the repo
+PATCH_DIR="${REPO_DIR}/patch"
 NS3_DIR="${RD2C_DIR}/ns-3-dev"
 NS3_SRC_DIR="${NS3_DIR}/src"
 NS3_CONTRIB_DIR="${NS3_DIR}/contrib"
@@ -49,10 +52,13 @@ fi
 echo ""
 echo "=== 2. COMPILING NS-3 ==="
 
-# We use the existing ns-3 build script.
-# This is the only essential step to apply your C++ changes.
 cd ${NS3_DIR}
-./waf
+
+if [ -f "make.sh" ]; then
+    bash ./make.sh
+else
+    ./waf
+fi
 
 # Check if the compilation was successful
 if [ $? -ne 0 ]; then
