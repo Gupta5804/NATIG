@@ -1,7 +1,8 @@
 def build(bld):
-    # Define our custom module. We'll call it 'modbus-logic'.
-    # Its dependencies are the basic ns-3 modules plus 'helics'.
-    module = bld.create_ns3_module('modbus-logic', ['core', 'network', 'internet', 'point-to-point', 'helics'])
+    # Define our custom module. It retains the name 'dnp3'
+    # so that other components that expect this name can find it.
+    # It depends on standard ns-3 modules and HELICS only.
+    module = bld.create_ns3_module('dnp3', ['core', 'network', 'internet', 'point-to-point', 'helics'])
 
     # List ONLY the source files for your custom Modbus applications.
     module.source = [
