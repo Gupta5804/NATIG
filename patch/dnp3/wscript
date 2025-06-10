@@ -8,6 +8,7 @@ def build(bld):
     module.includes = [
         '.',
         '/usr/local/include/jsoncpp',
+        '/usr/include/jsoncpp',
     ]
 
     module.source = [
