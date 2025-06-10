@@ -367,8 +367,6 @@ Dnp3ApplicationNew::SetName (const std::string &name)
   if(pos != std::string::npos) {
       m_name.erase(pos, fedName.length()+1);
   }
-  std::cout << "I am trying to add the following" << std::endl;
-  std::cout << m_name << std::endl;
   if (strcmp(m_name.c_str(), "mg1") == 0){
     helics_federate->registerEndpoint("trip_shad_inv1$Pref");
   }
@@ -398,7 +396,6 @@ void Dnp3ApplicationNew::Store(std::string point, std::string value)
   //NS_LOG_FUNCTION (this << value);
 
   if (false == m_isMaster) {
-    //cout << "Point: " << point << "Value: " << value << endl;
     store_points(point, value);
 //    //o_p->store(point, value);
 
@@ -503,7 +500,6 @@ void Dnp3ApplicationNew::GetStartStopArray(){
 		  std::string ID = "MIM-"+std::to_string(j)+"-"+item;
 		  std::string my_str = configObject["MIM"][j][item].asString();
 		  my_str.erase(remove(my_str.begin(), my_str.end(), '"'), my_str.end());
-		  std::cout << "This is the keys value: " << ID << "  and the value is " << my_str << std::endl;
 		  attack.insert(pair<std::string,std::string >(ID, my_str));
 	  }
 	  
@@ -516,7 +512,6 @@ void Dnp3ApplicationNew::GetStartStopArray(){
   std::string token;
   while ((pos = attack["MIM-"+std::to_string(MIM_ID)+"-Start"].find(delimiter)) != std::string::npos) {
         token = attack["MIM-"+std::to_string(MIM_ID)+"-Start"].substr(0, pos);
-	std::cout << "Stof 1" << std::endl;
 	std::string token_int;
         while((pos_1 = token.find(delimiter2)) != std::string::npos){
           token_int = token.substr(0,pos_1);
@@ -526,7 +521,6 @@ void Dnp3ApplicationNew::GetStartStopArray(){
 	timer.push_back(std::stof(token));
         attack["MIM-"+std::to_string(MIM_ID)+"-Start"].erase(0, pos + delimiter.length());
   }
-  std::cout << "I am printing here " << attack["MIM-"+std::to_string(MIM_ID)+"-Start"] << std::endl;
   std::string token_int;
   while((pos_1 = attack["MIM-"+std::to_string(MIM_ID)+"-Start"].find(delimiter2)) != std::string::npos){
       token_int = attack["MIM-"+std::to_string(MIM_ID)+"-Start"];
@@ -541,7 +535,6 @@ void Dnp3ApplicationNew::GetStartStopArray(){
   std::string token1;
   while ((pos = attack["MIM-"+std::to_string(MIM_ID)+"-End"].find(delimiter)) != std::string::npos) {
         token1 = attack["MIM-"+std::to_string(MIM_ID)+"-End"].substr(0, pos);
-	std::cout << "Stof 1" << std::endl;
 	std::string token_int;
         while((pos_1 = token1.find(delimiter2)) != std::string::npos){
           token_int = token1.substr(0,pos_1);
@@ -551,7 +544,6 @@ void Dnp3ApplicationNew::GetStartStopArray(){
 	timer.push_back(std::stof(token1));
         attack["MIM-"+std::to_string(MIM_ID)+"-End"].erase(0, pos + delimiter.length());
   }
-  std::cout << "I am printing here " << attack["MIM-"+std::to_string(MIM_ID)+"-End"] << std::endl;
   //std::string token_int;
   while((pos_1 = attack["MIM-"+std::to_string(MIM_ID)+"-End"].find(delimiter2)) != std::string::npos){
       token_int = attack["MIM-"+std::to_string(MIM_ID)+"-End"];
@@ -563,11 +555,9 @@ void Dnp3ApplicationNew::GetStartStopArray(){
   std::string token1;
   while ((pos1 = attack["MIM-"+std::to_string(MIM_ID)+"-End"].find(delimiter)) != std::string::npos){
         token1 = attack["MIM-"+std::to_string(MIM_ID)+"-End"].substr(0, pos1);
-	std::cout << "Stof 2" << std::endl;
 	timer_end.push_back(std::stof(token1));
 	attack["MIM-"+std::to_string(MIM_ID)+"-End"].erase(0, pos1 + delimiter.length());
   }
-  std::cout << "I am printing here 2 " << attack["MIM-"+std::to_string(MIM_ID)+"-End"] << std::endl;
   timer_end.push_back(std::stof(attack["MIM-"+std::to_string(MIM_ID)+"-End"]));*/
 }
 
@@ -673,11 +663,9 @@ void Dnp3ApplicationNew::makeUdpConnection(void) {
     std::string token;
     while ((pos = m_attackStartTime.find(delimiter)) != std::string::npos) {
 	token = m_attackStartTime.substr(0, pos);
-	std::cout << "Stof 1" << std::endl;
 	timer.push_back(std::stof(token));
         m_attackStartTime.erase(0, pos + delimiter.length());
     }
-    std::cout << "I am printing here " << m_attackStartTime << std::endl;
     timer.push_back(std::stof(m_attackStartTime));
 
     std::vector<float> timer_end;
@@ -685,15 +673,11 @@ void Dnp3ApplicationNew::makeUdpConnection(void) {
     std::string token1;
     while ((pos1 = m_attackEndTime.find(delimiter)) != std::string::npos){
         token1 = m_attackEndTime.substr(0, pos1);
-	std::cout << "Stof 2" << std::endl;
 	timer_end.push_back(std::stof(token1));
 	m_attackEndTime.erase(0, pos1 + delimiter.length());
     }
-    std::cout << "I am printing here 2 " << m_attackEndTime << std::endl;
     timer_end.push_back(std::stof(m_attackEndTime));
 
-    std::cout << "My name is: " << std::endl;
-    std::cout << m_name << std::endl;
     for (int index = 0; index < timer.size(); index ++){
     if(m_isMaster == true) {
 
@@ -703,7 +687,6 @@ void Dnp3ApplicationNew::makeUdpConnection(void) {
             if(timer[index])
             {
                 //Schedule for start of the attack (in seconds)
-		std::cout << "Start threads ----------------------" << std::endl;
                 Simulator::Schedule(Seconds(timer[index]), &Dnp3ApplicationNew::set_attack, this, true); //virtual method
 		StartVect.push_back(std::to_string(timer[index]));
             }
@@ -727,26 +710,19 @@ void Dnp3ApplicationNew::makeUdpConnection(void) {
                 if(timer[index])
                 {
                     //Schedule for start of the attack (in seconds)
-		    std::cout << "start threads " << timer[index] << std::endl;
                     Simulator::Schedule(Seconds(timer[index]), &Dnp3ApplicationNew::set_attack, this, true); //virtual method
 		    StartVect.push_back(std::to_string(timer[index]));
-		    std::cout << "Added to vector" << std::endl;
                 }
                 if(timer_end[index]) {
                     //Schedule for end of the attack (in seconds)
-		    std::cout << "End threads " << timer_end[index] << std::endl;
                     Simulator::Schedule(Seconds(timer_end[index]), &Dnp3ApplicationNew::set_attack, this, false); //virtual method
 		    StopVect.push_back(std::to_string(timer_end[index]));
-		    std::cout << "Added to vector" << std::endl;
                 }
         }
 	//m_socket->SetRecvCallback( MakeCallback(&Dnp3Application::HandleRead, this));
         m_socket->Connect (InetSocketAddress (Ipv4Address::ConvertFrom(m_remoteAddress), m_remotelPort));
-	std::cout << "FLAG1" << std::endl;
 	mim_socket->Connect (InetSocketAddress (Ipv4Address::ConvertFrom(m_remoteAddress2), m_localPort));
-	std::cout << "FLAG2" << std::endl;
         startOutstation(m_socket);
-	std::cout << "HEERREE" << std::endl;
 	if (m_name.find("Inside") != std::string::npos or m_name.find("MIM")!=std::string::npos){
 	  startOutstation(mim_socket);
 	}
@@ -873,7 +849,6 @@ NS_LOG_INFO("DNp3Application:initConfig");
 void Dnp3ApplicationNew::initConfig(void)
 {
 	NS_LOG_FUNCTION (this);
-	std::cout << points_filename << std::endl;
 	ifstream  pointsFile(points_filename, ifstream::in);
 	if(pointsFile) {
 		bool isValid;
@@ -926,16 +901,13 @@ void Dnp3ApplicationNew::store_points(std::string name, std::string value)
     if (!analog_points.empty()) {
         if (analog_points.find(name) != analog_points.end()) {
             analog_points[name] = atof(value.c_str());
-            //cout << "analog point found: " << name << "New item:" << analog_points[name] << endl;
         } else if (bin_points.find(name) != bin_points.end()) {
             if(value.compare("CLOSED") == 0) {
                 bin_points[name] = 1;
             } else{
                 bin_points[name] = 0;
             }
-          //  cout << "bin point found: " << name << "New item:" << bin_points[name] << endl;
         } else {
-            //cout << "point not found: " << name << endl;
             NS_LOG_INFO("point not found " << name);
         }
     }
@@ -1043,7 +1015,6 @@ void Dnp3ApplicationNew::attack_data(int freq)
 
 void Dnp3ApplicationNew::periodic_poll(int count)
 {
-//    cout << count << endl;
 //    if (count == 0) {
 //        Simulator::Schedule(Seconds(4), &Dnp3Application::periodic_poll, this, ++count); //virtual method
 //    }
@@ -1134,7 +1105,6 @@ void Dnp3ApplicationNew::startOutstation(Ptr<Socket> sock)
 {
     NS_LOG_INFO("Starting Outstation");
 
-    std::cout << "Starting Outstation" << std::endl;
 
     //OutstationConfig             outstationConfig;
     Endpoint::EndpointConfig                 epConfig;
@@ -1150,7 +1120,6 @@ void Dnp3ApplicationNew::startOutstation(Ptr<Socket> sock)
     outstationConfig.userNum             = 4; //3; // hard coded for prototype
     outstationConfig.debugLevel_p        = &debugLevel;
     
-    std::cout << "PLEASE GET HERE!!!!!!!!!!!!!!!!!!!! " << std::endl;
     // end point config
     epConfig.ownerDnpAddr          = m_master_device_addr;
     epConfig.tcp                   = m_enableTcp;
@@ -1172,12 +1141,9 @@ void Dnp3ApplicationNew::startOutstation(Ptr<Socket> sock)
     dlConfig.debugLevel_p          = &debugLevel;
 
     Endpoint* ep_p = new Endpoint(epConfig, m_txTrace, sock, this);
-    std::cout << "HHHHHHHHHHHHHHHHHHHHHHH" << std::endl;
     // datalink required pointer to the transmit interface
     dlConfig.tx_p  = ep_p;
-    std::cout << "before init" << std::endl;
     initConfig();
-    std::cout << "hhhhhhhhhhhhhhhhh" << std::endl;
     //TimerInterface* ti = NULL; //Todo
     NS_LOG_UNCOND("I AM INITIALIZING AN OUTSTATION");
     o_p = new Outstation ( outstationConfig, dlConfig,
@@ -1192,7 +1158,6 @@ void Dnp3ApplicationNew::startOutstation(Ptr<Socket> sock)
     using std::placeholders::_3;
     std::function<void(std::string,std::string,std::string)> func;
     func = std::bind (&Dnp3ApplicationNew::DoMessage, this, _1, _2, _3);
-    std::cout << "binding" << std::endl;
     o_p->set_publishCallback(func);
     vector<string>::iterator it;
     m_respond = true;
@@ -1218,10 +1183,8 @@ void Dnp3ApplicationNew::set_respond(bool respond) {
 void Dnp3ApplicationNew::set_offline(bool offline) {
     NS_LOG_INFO ("DNP3Application::set_offline");
     if (m_isMaster == true) {
-      //cout << "Master HandleRead Recieved: " << temp << endl;
       NS_LOG_INFO ("Error: Tried to set a master DNP3 to offline; only valid for outstation DNP3 applications");
     } else {
-      //cout << "Outstation HandleRead" << temp << endl;
       o_p->set_offline(offline);
       if(offline) {
           frozen_analog_points = analog_points;
@@ -1235,10 +1198,8 @@ void Dnp3ApplicationNew::set_offline(bool offline) {
 void Dnp3ApplicationNew::set_multiplier(float multiplier) {
     NS_LOG_INFO ("DNP3Application::set_multiplier");
     if (m_isMaster == true) {
-      //cout << "Master HandleRead Recieved: " << temp << endl;
       NS_LOG_INFO ("Error: Tried to set a master DNP3 to offline; only valid for outstation DNP3 applications");
     } else {
-      //cout << "Outstation HandleRead" << temp << endl;
       o_p->set_multiplier(multiplier);
     }
 }
@@ -1246,8 +1207,6 @@ void Dnp3ApplicationNew::set_multiplier(float multiplier) {
 void
 Dnp3ApplicationNew::HandleRead (Ptr<Socket> socket)
 {
-  cout << "I am in handle read :)" << endl;
-  cout << m_name << endl;
   if (m_name.find("MIM") != std::string::npos) {
       handle_MIM(socket);
   }else {
@@ -1257,7 +1216,6 @@ Dnp3ApplicationNew::HandleRead (Ptr<Socket> socket)
 
 /*
 void Dnp3ApplicationNew::handle_inside(Ptr<Socket> socket) {
-	cout << "I AM AN INSIDER!!!!!!!!" << endl;
 	Address from;
 	Ptr<Packet> packet;
 	Address SourceAddr;
@@ -1266,8 +1224,6 @@ void Dnp3ApplicationNew::handle_inside(Ptr<Socket> socket) {
 	while ((packet = socket->RecvFrom (from)))
 	{
 		m_txTrace(packet);
-		std::cout << "This is where the data is coming from" << std::endl;
-		std::cout << SourceAddr << std::endl;
 		if(mitm_flag == true) {
 		       Json::Value configObject;
                        std::map<std::string, std::string> attack;
@@ -1279,7 +1235,6 @@ void Dnp3ApplicationNew::handle_inside(Ptr<Socket> socket) {
                                         std::string my_str = configObject["MIM"][j][item].asString();
 
                                         my_str.erase(remove(my_str.begin(), my_str.end(), '"'), my_str.end());
-                                        std::cout << "This is the keys value: " << ID << "  and the value is " << my_str << std::endl;
                                         attack.insert(pair<std::string,std::string >(ID, my_str));
                                 }
 
@@ -1294,7 +1249,6 @@ void Dnp3ApplicationNew::handle_inside(Ptr<Socket> socket) {
 					
 					uint8_t *temp = new uint8_t[size];
 					packet->CopyData(temp, size);
-					std::cout << "HandleRead Insider" << temp << std::endl;
 					Bytes buf((unsigned char*) temp, (unsigned char*)temp+size);
 					Bytes emptyData;
 					Ptr<Packet> packet_mitm;
@@ -1308,7 +1262,6 @@ void Dnp3ApplicationNew::handle_inside(Ptr<Socket> socket) {
 							Lpdu::UserData data;
 							data.dest = dest;
 							data.src = src;
-                                                        std::cout << "Dest: " << data.dest << " src: " << data.src << std::endl;
 						        if (m_isMaster) {
 								 NS_LOG_INFO("Am I the master----------------");
 							} else {
@@ -1336,7 +1289,6 @@ void Dnp3ApplicationNew::handle_inside(Ptr<Socket> socket) {
 				uint32_t size = packet->GetSize();
             			uint8_t *temp = new uint8_t[size];
 				packet->CopyData(temp, size);
-				std::cout << "HandleRead Insider" << temp << std::endl;
 				Bytes buf((unsigned char*) temp, (unsigned char*)temp+size);
                                 uint16_t dest = buf[5] << 0x08 | buf[4]; //To check
 				uint16_t src = buf[7] << 0x08 | buf[6];
@@ -1365,8 +1317,6 @@ void Dnp3ApplicationNew::send_directly_server(Ptr<Packet> p)
 
    if (Ipv4Address::IsMatchingType (m_remoteAddress2))
     {
-        std::cout << "HEEEEEEEEERRRRRRRRRREEEEEEEEEEEEEE" << std::endl;
-        std::cout << "Remote addr: " << Ipv4Address::ConvertFrom(m_remoteAddress2) << " remote port " << m_localPort << std::endl;
         InetSocketAddress address = InetSocketAddress(Ipv4Address::ConvertFrom(m_remoteAddress2), m_localPort);
         if (m_enableTcp) {
             int (Socket::*fp)(Ptr<Packet>, uint32_t)  = &Socket::Send;
@@ -1438,11 +1388,8 @@ void Dnp3ApplicationNew::handle_normal(Ptr<Socket> socket) {
 
         DnpStat_t state;
         if (m_isMaster == true) {
-          cout << "Master HandleRead Recieved: " << temp << endl;
           state = m_p->rxData(&buf, timeRxd);
         } else {
-          cout << "Outstation HandleRead" << temp << endl;
-	  cout << m_name << endl;
           if(m_respond) {
               if(!m_offline) state = o_p->rxData(&buf, analog_points, bin_points, timeRxd);
               else state = o_p->rxData(&buf, frozen_analog_points, frozen_bin_points, timeRxd);
@@ -1496,7 +1443,6 @@ void Dnp3ApplicationNew::calc_crc(Bytes buf_temp, uint8_t * temp2, Ptr<Packet> t
     Bytes::const_iterator j = buf_temp.begin();
     int i;
     for (i = 0; i < data_length; i++, j++) {
-	    std::cout << "I am in here 1" << std::endl;
 	    const uint16_t lookupIndex = (crc32^(*j)) & 0x00ff;
 	    crc32 = (crc32 >> 8) ^ crctable[lookupIndex];  // CRCTable is an array of 256 32-bit constants
     }
@@ -1504,11 +1450,9 @@ void Dnp3ApplicationNew::calc_crc(Bytes buf_temp, uint8_t * temp2, Ptr<Packet> t
     crc32 = (~crc32 & 0xffff);
     Bytes crc3;
     appendUINT16(crc3, crc32);
-    std::cout << "After the append" << std::endl;
     int crc1 = crc3[0]; //(crc32) & 0xff;
     int crc2 = crc3[1]; //(crc32 >> (8*1)) & 0xff;
     
-    std::cout << "The calculated crc is "  << crc1 << " " << crc2 << " the observed crc is " << (int)buf_temp[8] << " and " << (int) buf_temp[9] << std::endl;
     temp2[8] = crc1;
     temp2[9] = crc2;
     
@@ -1534,7 +1478,6 @@ void Dnp3ApplicationNew::calc_crc(Bytes buf_temp, uint8_t * temp2, Ptr<Packet> t
 		    int crc1_temp = crc3_temp[crc3_temp.size()-2];
 		    int crc2_temp = crc3_temp[crc3_temp.size()-1];
 		    
-		    std::cout << "The calculated crc is " << crc1_temp << " " << crc2_temp << " the observed crc is " << (int)buf_temp[index1] << " and " << (int)buf_temp[index2] << std::endl;
 		    
 		    temp2[index1] = crc1_temp;
 		    temp2[index2] = crc2_temp;
@@ -1544,7 +1487,6 @@ void Dnp3ApplicationNew::calc_crc(Bytes buf_temp, uint8_t * temp2, Ptr<Packet> t
 		    crc3_temp.clear();
 	    }
     }
-    std::cout << "The remainder is equal to " << remainder-2 << std::endl;
     if( testPack->GetSize() == 188 ){
 	    crc32_temp = 0;
 	    jj = jj+2;
@@ -1560,13 +1502,11 @@ void Dnp3ApplicationNew::calc_crc(Bytes buf_temp, uint8_t * temp2, Ptr<Packet> t
 	    int crc1_temp = crc3_temp[crc3_temp.size()-2];
 	    int crc2_temp = crc3_temp[crc3_temp.size()-1];
 	    
-	    std::cout << "The calculated crc is 11111 " << crc1_temp << " " << crc2_temp << std::endl;
 	    temp2[index1-(18-remainder)] = crc1_temp;
 	    temp2[index2-(18-remainder)] = crc2_temp;
 	    crc3_temp.clear();
     }
     
-    cout << "Captured Response: " << testPack->GetSize() << endl;
 }
 
 std::vector<std::string> Dnp3ApplicationNew::get_val_vector (std::string delimiter, std::string m_attack_val){
@@ -1600,14 +1540,12 @@ float Dnp3ApplicationNew::get_val(std::vector<std::string> val, std::vector<std:
     if (index < val_min.size() && index < val_max.size()){
         if (!val_max[index].empty() && !val_min[index].empty() && std::find_if(val_max[index].begin(), val_max[index].end(), [](unsigned char c) { return !std::isdigit(c); }) == val_max[index].end() && std::find_if(val_min[index].begin(),val_min[index].end(), [](unsigned char c) { return !std::isdigit(c); }) == val_min[index].end()){//val_min[index] != "NA" && val_max[index] != "NA"){
 	    float r = (rand() % 10) + 1;//rand() / (RAND_MAX);
-	    std::cout << "The random number that is selected is " << r << std::endl;
 	    if (r > 5){
 		    f = (std::stof(val_min[index])); 
 	    }else{
 		    f = (std::stof(val_max[index])); 
 	    }
         }else{
-	    std::cout << "The value is: " << val[index] << std::endl;
 	    f = (std::stof(val[index])); 
         }
     }else{
@@ -1654,7 +1592,6 @@ void Dnp3ApplicationNew::handle_MIM(Ptr<Socket> socket) {
      }
      int size_temp = buf.size();
      Bytes buf_temp;
-     std::cout << "node_id " << node_id << std::endl;
 
      if(buf.size() >= Lpdu::HEADER_SIZE) {
 	     NS_LOG_INFO("After if statement");
@@ -1673,31 +1610,24 @@ void Dnp3ApplicationNew::handle_MIM(Ptr<Socket> socket) {
      std::vector<std::string> points = get_val_vector (delimiter, point_id);
      std::vector<std::string> real_val = get_val_vector (delimiter, RealVal);
      std::vector<std::string> nodesPoints;
-     std::cout << "node_id " << node_id << " real_val " << RealVal << std::endl;	      
      for (int xx = 0; xx < nodes.size(); xx++){
 	     nodesPoints.push_back(nodes[xx] + "$"+ points[xx]);
      }
      
      std::vector<int> ID_point;
      for (int qq = 0; qq < nodesPoints.size(); qq++){
-	     std::cout << "Searching for point " << nodesPoints[qq]  << " qq = " << qq<< std::endl;
 	     bool ffound = false; 
-	     std::cout << "Number of points " << nodesPoints.size() << std::endl;
 	     for (int i = 0; i < analog_point_names.size(); i++){
-                     std::cout << "ID: " << analog_point_names[i] << " : " << i << std::endl;
                      bool flag = 0;
                      if (analog_point_names[i].find(nodesPoints[qq]) != std::string::npos){ // and !flag){
-                             std::cout << "Found Analog point " << nodesPoints[qq] << " : " << analog_point_names[i] << " : " << i << std::endl;
                              ID_point.push_back(i);
                              break;
                      }
              }
 
 	     for (int i = 0; i < binary_point_names.size(); i++){
-		     std::cout << "ID: " << binary_point_names[i] << " : " << i << std::endl;
 		     bool flag = 0;
 		     if(binary_point_names[i].find(nodesPoints[qq]) != std::string::npos){ // and !flag){
-			     std::cout << "Found Binary point " << nodesPoints[qq] << " : " << binary_point_names[i] << " : " << i << std::endl;
 			     ID_point.push_back(i);
 			     ffound = true;
 			     break;
@@ -1718,7 +1648,6 @@ void Dnp3ApplicationNew::handle_MIM(Ptr<Socket> socket) {
 					std::string my_str = configObject["MIM"][j][item].asString();
 
 					my_str.erase(remove(my_str.begin(), my_str.end(), '"'), my_str.end());
-					std::cout << "This is the keys value: " << ID << "  and the value is " << my_str << std::endl;
 					attack.insert(pair<std::string,std::string >(ID, my_str));
 				}
 
@@ -1727,14 +1656,12 @@ void Dnp3ApplicationNew::handle_MIM(Ptr<Socket> socket) {
           uint16_t dest = buf[5] << 0x08 | buf[4]; //To check
           uint16_t src = buf[7] << 0x08 | buf[6];
 	  //m_attackChance
-	  std::cout << "Before getVal" << std::endl;
 	  std::vector<float> attackChance = GetVal(attack, "attack_chance");
           if(m_attack_on and ((start1 == 0x05) && (0x64))) {
 	      //Setting the dest and src
 	      Lpdu::UserData data;
 	      data.dest = dest;
 	      data.src = src;
-	      std::cout << "Dest: " << data.dest << " src: " << data.src << std::endl;
               //Setting up the attack scenario
 	      std::vector<float> start = GetVal(attack, "PointStart");
               std::vector<float> stop = GetVal(attack, "PointStop");
@@ -1752,7 +1679,6 @@ void Dnp3ApplicationNew::handle_MIM(Ptr<Socket> socket) {
 
 	      }else{
 		  for (int qq = 0; qq < ID_point.size(); qq++){
-		     std::cout << Simulator::Now ().GetSeconds () << " " << start[qq] << " " << stop[qq] << "1111111111111111111" << std::endl;
 		     float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX); 
 		     if (Simulator::Now ().GetSeconds () > start[qq] and Simulator::Now ().GetSeconds () < stop[qq] and attackChance[qq] > r){ 
 	             //m_attackType = attackType[qq];
@@ -1763,16 +1689,12 @@ void Dnp3ApplicationNew::handle_MIM(Ptr<Socket> socket) {
 		          NS_LOG_INFO("========================\n");
 		          NS_LOG_INFO("transmitting 0 data!!!!!!!!!!!!!!!!!");
 		          // changing one of the points
-			  std::cout << "Searching for point " << ID_point[qq]  << " qq = " << qq<< std::endl;
-			  std::cout << "Number of points " << ID_point.size() << std::endl;
 			  //index to check how many indexes are between each 1
 			  int ind1 = 0;
 			  //index to check if there is a crc check happening
 			  int ind2 = 0;
 			  four = start_byte(temp2, testPack);
-			  std::cout << "After the start bytes" << std::endl;
 			  float f = get_val(val, val_min, val_max, qq); 
-			  std::cout << "After the get_val" << std::endl;
 			  char *cc = (char *) &f;
 			  int d = 0;
 			  for (int i= 0; i < buf2.size(); i ++){
@@ -1797,7 +1719,6 @@ void Dnp3ApplicationNew::handle_MIM(Ptr<Socket> socket) {
 					  }
     				  }
     				  if (ind2 == 0 and i > 19){
-					  std::cout << "Found data crc check " << ind1 << " ID of point " << ID_point[qq] << std::endl;
     				  }
     				  if (( four > 0 ) && (four == ID_point[qq]) && (ind2 <= 18) && (i>19) && temp2[i] != 0x01){
  					  temp2[i] = cc[d]; 
@@ -1809,10 +1730,6 @@ void Dnp3ApplicationNew::handle_MIM(Ptr<Socket> socket) {
 		           NS_LOG_UNCOND ("MIMServer::HandleRead >>> MIM IP" << SourceAddr ); //<< " Forwarding packet to " << destAddr);
 		           NS_LOG_UNCOND ("End of setup before if statement");
 	                   NS_LOG_UNCOND ("========================\n");
-		           std::cout << binary_point_names.size() << endl;
-		           std::cout << "I will look through the available point during ATTACK 3" << std::endl;
-			   std::cout << "Searching for point " << ID_point[qq]  << " qq = " << qq<< std::endl;
-			   std::cout << "val[x] " << val[qq] << std::endl;
 			   if (val[qq].find("TRIP") != std::string::npos){
 				   ControlOutputRelayBlock ao(ControlOutputRelayBlock::Code::TRIP, ID_point[qq]);
 				   m_p->direct_operate(false,ao);
@@ -1828,21 +1745,16 @@ void Dnp3ApplicationNew::handle_MIM(Ptr<Socket> socket) {
 			   }
 	              }else if (int(attackType[qq]) == 4){
 	                 NS_LOG_INFO ("MIMServer::HandleRead >>> Attack is ON. Sending 0 payload by Man in the middle");
-		         std::cout << "HandleRead MIM intersepted " << temp << std::endl;
 	                 NS_LOG_UNCOND("sending false data to the controller");
 	                 NS_LOG_UNCOND("SENDING TO MICROGRIDS");
 	                 NS_LOG_UNCOND ("DNP3Application::send_control_analog");
-	 		 std::cout << "Searching for point " << ID_point[qq]  << " qq = " << qq<< std::endl;
 			 float f = get_val(val, val_min, val_max, qq);
-			 std::cout << "f = " << f << std::endl; 
 		         Bit32AnalogOutput ao(f*1000, ID_point[qq]);
 		         m_p->direct_operate(false,ao);
 	              }
 		    }else{
                       if (!real_val[qq].empty() && std::find_if(real_val[qq].begin(),real_val[qq].end(), [](unsigned char c) { return !std::isdigit(c); }) == real_val[qq].end()){
-				std::cout << real_val[qq] << std::endl;
 				float f = std::stof(real_val[qq]); //get_val(val, val_min, val_max, qq);	
-				std::cout << "f = " << f << std::endl;
 				Bit32AnalogOutput ao(f*1000, ID_point[qq]);
 				m_p->direct_operate(false,ao);
 			}else{
@@ -1873,53 +1785,36 @@ void Dnp3ApplicationNew::handle_MIM(Ptr<Socket> socket) {
 
                           int point_num = 0;
                           for(int i = 0; i < buf.size(); i++){
-                             std::cout << (int)temp2[i] << ", ";
                              if ((int)temp2[i] == 1 && point_num < 16){
                                 point_num = i;
                              }
                            }
-                           std::cout << std::endl;
                            Ptr<Packet> newPack = Create<Packet>(temp2, testPack->GetSize());
                            send_directly(newPack);
-                           std::cout << "I have found start at " << point_num << std::endl;
                       }
 		  }
 	      }
           } else {
-		std::cout << "HandleRead Insider" << temp << std::endl;
-		std::cout << "MIM-ATTACKER!!!!!!!!!!!!!!! " << dest << " " << src << std::endl;
 		//Reading updates to the start and end time of the grid.json file
 		if (configFile.find("NA") == std::string::npos and ID_point.size()>0){
 			// If start is not in start vector then trigger start update
 			// attack["MIM-"+std::to_string(MIM_ID)+"-Start"]
 			if (std::find(StartVect.begin(), StartVect.end(), attack["MIM-"+std::to_string(MIM_ID)+"-Start"]) == StartVect.end()) {
-				std::cout << attack["MIM-"+std::to_string(MIM_ID)+"-Start"] << " is not in the vector.\n";
-				std::cout << "Start threads ----------------------" << std::endl;
 				Simulator::Schedule(Seconds(std::stoi(attack["MIM-"+std::to_string(MIM_ID)+"-Start"])), &Dnp3ApplicationNew::set_attack, this, true);
 				StartVect.push_back(attack["MIM-"+std::to_string(MIM_ID)+"-Start"]);
 			} else {
-				std::cout << attack["MIM-"+std::to_string(MIM_ID)+"-Start"] << " is in the vector.\n";
 			}
 			
 			if (std::find(StopVect.begin(), StopVect.end(), attack["MIM-"+std::to_string(MIM_ID)+"-End"]) == StopVect.end()) {
-				std::cout << attack["MIM-"+std::to_string(MIM_ID)+"-End"] << " is not in the vector.\n";
-				std::cout << "End threads ----------------------" << std::endl;
 				Simulator::Schedule(Seconds(std::stoi(attack["MIM-"+std::to_string(MIM_ID)+"-End"])), &Dnp3ApplicationNew::set_attack, this, true);
 				StopVect.push_back(attack["MIM-"+std::to_string(MIM_ID)+"-End"]);
 			} else {
-				std::cout << attack["MIM-"+std::to_string(MIM_ID)+"-End"] << " is in the vector.\n";
 			}
 		}
 		//std::vector<std::string> real_val = get_val_vector (delimiter, RealVal);
-		std::cout << "The number of real values collected is: " << real_val.size() << std::endl;
 		for (int qq = 0; qq < ID_point.size(); qq++){
-			std::cout << "I AM HERE" << std::endl;
-			std::cout << "Searching for point " << ID_point[qq]  << " qq = " << qq<< std::endl;
-			std::cout << "real_val[qq] " << real_val[qq] << std::endl;
 			if (!real_val[qq].empty() && std::find_if(real_val[qq].begin(),real_val[qq].end(), [](unsigned char c) { return !std::isdigit(c); }) == real_val[qq].end()){
-				std::cout << real_val[qq] << std::endl;
 				float f = std::stof(real_val[qq]); //get_val(val, val_min, val_max, qq);	
-				std::cout << "f = " << f << std::endl;
 				Bit32AnalogOutput ao(f*1000, ID_point[qq]);
 				m_p->direct_operate(false,ao);
 			}else{
@@ -1962,8 +1857,6 @@ void Dnp3ApplicationNew::send_directly(Ptr<Packet> p)
 
   if (Ipv4Address::IsMatchingType (m_remoteAddress))
     {
-      std::cout << "HEEEEEEEEERRRRRRRRRREEEEEEEEEEEEEE" << std::endl;
-      std::cout << "Remote addr: " << Ipv4Address::ConvertFrom(m_remoteAddress) << " remote port " << m_remotelPort << std::endl;
       InetSocketAddress address = InetSocketAddress(Ipv4Address::ConvertFrom(m_remoteAddress), m_remotelPort);
       if (m_enableTcp) {
         int (Socket::*fp)(Ptr<Packet>, uint32_t)  = &Socket::Send;
