@@ -15,30 +15,43 @@ set -e # Exit immediately if a command exits with a non-zero status.
 echo "=== 1. APPLYING CUSTOM PATCHES FROM 'patch/' DIRECTORY ==="
 
 # Define key directories
-RD2C_DIR="/rd2c"
+RD2C_DIR="${RD2C:-/rd2c}"
 PATCH_DIR="${RD2C_DIR}/patch"
-NS3_SRC_DIR="${RD2C_DIR}/ns-3-dev/src"
+NS3_DIR="${RD2C_DIR}/ns-3-dev"
+NS3_SRC_DIR="${NS3_DIR}/src"
+NS3_CONTRIB_DIR="${NS3_DIR}/contrib"
 
-# --- Add your custom file copy commands here ---
-# This section copies files from your 'patch' directory to the ns-3
-# source, overwriting the originals before compilation.
-# The structure inside 'patch/' should mirror the destination in 'ns-3-dev/src/'.
+sync_dir() {
+    local src="$1" dest="$2"
+    if [ -d "$src" ]; then
+        mkdir -p "$dest"
+        cp -rv "$src"/* "$dest/"
+    fi
+}
 
-# Example for your Modbus applications:
-cp -v "${PATCH_DIR}/dnp3/model/modbus-master-app.cc" "${NS3_SRC_DIR}/dnp3/model/"
-cp -v "${PATCH_DIR}/dnp3/model/modbus-master-app.h"  "${NS3_SRC_DIR}/dnp3/model/"
-cp -v "${PATCH_DIR}/dnp3/model/modbus-slave-app.cc"  "${NS3_SRC_DIR}/dnp3/model/"
-cp -v "${PATCH_DIR}/dnp3/model/modbus-slave-app.h"   "${NS3_SRC_DIR}/dnp3/model/"
+# Synchronise patched modules with the ns-3 tree
+sync_dir "${PATCH_DIR}/applications"            "${NS3_SRC_DIR}/applications"
+sync_dir "${PATCH_DIR}/dnp3"                     "${NS3_SRC_DIR}/dnp3"
+sync_dir "${PATCH_DIR}/fncs"                     "${NS3_SRC_DIR}/fncs"
+sync_dir "${PATCH_DIR}/internet"                 "${NS3_SRC_DIR}/internet"
+sync_dir "${PATCH_DIR}/lte"                      "${NS3_SRC_DIR}/lte"
+sync_dir "${PATCH_DIR}/point-to-point-layout"    "${NS3_SRC_DIR}/point-to-point-layout"
 
-# Example for the wscript build file, if you modify it:
-# cp -v "${PATCH_DIR}/dnp3/wscript" "${NS3_SRC_DIR}/dnp3/"
+# Contrib modules
+sync_dir "${PATCH_DIR}/helics-backup"            "${NS3_CONTRIB_DIR}/helics"
+sync_dir "${PATCH_DIR}/nr"                       "${NS3_CONTRIB_DIR}/nr"
+
+# Copy patched build helper and other top-level files
+if [ -f "${PATCH_DIR}/make.sh" ]; then
+    cp -v "${PATCH_DIR}/make.sh" "${NS3_DIR}/"
+fi
 
 echo ""
 echo "=== 2. COMPILING NS-3 ==="
 
 # We use the existing ns-3 build script.
 # This is the only essential step to apply your C++ changes.
-cd ${RD2C_DIR}/ns-3-dev
+cd ${NS3_DIR}
 ./waf
 
 # Check if the compilation was successful
