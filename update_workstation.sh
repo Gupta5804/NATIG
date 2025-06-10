@@ -1,7 +1,7 @@
 #!/bin/bash
 
 git pull
-RD2C=/rd2c
+RD2C=${RD2C:-/rd2c}
 
 read -p "Do you want to save your current setup? [y/n] " answer
 
@@ -12,11 +12,11 @@ then
 	    dt=$(date '+%d-%m-%Y-%H:%M:%S')
 	    echo "Saving setup in $dt"
 	    mkdir $dt
-	    cp /rd2c/integration/control/*.cc $dt
-	    cp /rd2c/integration/control/config/grid.json $dt
-	    cp /rd2c/integration/control/config/gridlabd_config.json $dt
-	    cp /rd2c/integration/control/config/topology.json $dt
-	    cp /rd2c/integration/control/*.glm $dt
+            cp ${RD2C}/integration/control/*.cc $dt
+            cp ${RD2C}/integration/control/config/grid.json $dt
+            cp ${RD2C}/integration/control/config/gridlabd_config.json $dt
+            cp ${RD2C}/integration/control/config/topology.json $dt
+            cp ${RD2C}/integration/control/*.glm $dt
 fi
 
 rm -rf ${RD2C}/integration
@@ -52,14 +52,17 @@ cp -r ${RD2C}/PUSH/NATIG/RC/code/helics/wscript ${RD2C}/ns-3-dev/contrib/helics/
 
 
 if [ -d "${RD2C}/gridlab-d/third_party/xerces-c-3.2.0" ]; then
-    cd "${RD2C}/gridlab-d/third_party/xerces-c-3.2.0"
-    ./configure
-    make
-    make install
+    XERCES_DIR="${RD2C}/gridlab-d/third_party/xerces-c-3.2.0"
+elif [ -d "/usr/local/gridlab-d/third_party/xerces-c-3.2.0" ]; then
+    XERCES_DIR="/usr/local/gridlab-d/third_party/xerces-c-3.2.0"
 else
-    echo "Error: '${RD2C}/gridlab-d/third_party/xerces-c-3.2.0' directory not found." >&2
+    echo "Error: Xerces-C directory not found in '${RD2C}' or '/usr/local/gridlab-d'." >&2
     exit 1
 fi
+cd "$XERCES_DIR"
+./configure
+make
+make install
 cd ${RD2C}/gridlab-d 
 autoreconf -if 
 ./configure --with-helics=/usr/local --prefix=${RD2C} --enable-silent-rules 'CFLAGS=-g -O2 -w' 'CXXFLAGS=-g -O2 -w -std=c++14' 'LDFLAGS=-g -O2 -w' 
