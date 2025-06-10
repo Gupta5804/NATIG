@@ -41,6 +41,7 @@ sync_dir() {
 # Synchronise patched modules with the ns-3 tree
 sync_dir "${PATCH_DIR}/applications"            "${NS3_SRC_DIR}/applications"
 sync_dir "${PATCH_DIR}/dnp3"                     "${NS3_SRC_DIR}/dnp3"
+cp -v "${PATCH_DIR}/dnp3/wscript" "${NS3_SRC_DIR}/dnp3/"
 sync_dir "${PATCH_DIR}/fncs"                     "${NS3_SRC_DIR}/fncs"
 sync_dir "${PATCH_DIR}/internet"                 "${NS3_SRC_DIR}/internet"
 sync_dir "${PATCH_DIR}/lte"                      "${NS3_SRC_DIR}/lte"

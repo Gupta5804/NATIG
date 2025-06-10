@@ -1,71 +1,19 @@
-## -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
-
 def build(bld):
+    # Define our custom module. We'll call it 'modbus-logic'.
+    # Its dependencies are the basic ns-3 modules plus 'helics'.
+    module = bld.create_ns3_module('modbus-logic', ['core', 'network', 'internet', 'point-to-point', 'helics'])
 
-    module = bld.create_ns3_module('dnp3', ['core', 'applications', 'fncs'])
-
-    # Ensure jsoncpp headers are found during compilation
-    module.includes = [
-        '.',
-        '/usr/include/jsoncpp',
-        '/usr/local/include/jsoncpp',
-    ]
-
+    # List ONLY the source files for your custom Modbus applications.
     module.source = [
-        'dnplib/app.cpp',
-        'dnplib/station.cpp',
-        'dnplib/factory.cpp',
-        'dnplib/asdu.cpp',
-        'dnplib/stats.cpp',
-        'dnplib/lpdu.cpp',
-        'dnplib/common.cpp',
-        'dnplib/timer_interface.cpp',
-        'dnplib/datalink.cpp',
-        'dnplib/master.cpp',
-        'dnplib/transmit_interface.cpp',
-        'dnplib/object.cpp',
-        'dnplib/transport.cpp',
-        'dnplib/endpoint.cpp',
-        'dnplib/outstation.cpp',
-        'dnplib/event_interface.cpp',
-        'dnplib/dummy_timer.cpp',
-        'model/dnp3-application.cc',
-        'model/dnp3-simulator-impl.cc',
-        'helper/dnp3-application-helper.cc',
         'model/modbus-master-app.cc',
         'model/modbus-slave-app.cc',
-        'helper/modbus-helper.cc'
-        ]
+        'helper/modbus-helper.cc',
+    ]
 
-    headers = bld(features='ns3header')
-    headers.module = 'dnp3'
-    headers.source = [
-            'model/dnp3-application.h',
-            'model/dnp3-simulator-impl.h',
-            'helper/dnp3-application-helper.h',
-            'model/modbus-master-app.h',
-            'model/modbus-slave-app.h',
-            'helper/modbus-helper.h',
-            'dnplib/app.hpp',
-            'dnplib/station.hpp',
-            'dnplib/factory.hpp',
-            'dnplib/asdu.hpp',
-            'dnplib/stats.hpp',
-            'dnplib/lpdu.hpp',
-            'dnplib/common.hpp',
-            'dnplib/timer_interface.hpp',
-            'dnplib/datalink.hpp',
-            'dnplib/master.hpp',
-            'dnplib/transmit_interface.hpp',
-            'dnplib/object.hpp',
-            'dnplib/transport.hpp',
-            'dnplib/endpoint.hpp',
-            'dnplib/outstation.hpp',
-            'dnplib/event_interface.hpp',
-            'dnplib/dummy_timer.hpp',
-        ]
-    #if bld.env.ENABLE_EXAMPLES:
-    #    bld.recurse('examples')
-
-    # bld.ns3_python_bindings()
+    # Define the headers for your custom applications.
+    module.headers = [
+        'model/modbus-master-app.h',
+        'model/modbus-slave-app.h',
+        'helper/modbus-helper.h',
+    ]
 
