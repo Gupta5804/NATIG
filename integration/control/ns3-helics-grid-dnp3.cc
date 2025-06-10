@@ -192,6 +192,7 @@ main (int argc, char *argv[])
   //nrHelper->Initialize ();
 
   PointToPointHelper p2p;
+  p2p.EnablePcapAll ("modbus_verification");
   p2p.SetDeviceAttribute ("DataRate", StringValue (topologyConfigObject["Channel"][0]["dataRate"].asString()));
   //p2p.SetChannelAttribute ("Delay", StringValue (topologyConfigObject["Channel"][0]["P2Pdelay"].asString()));
 
