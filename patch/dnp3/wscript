@@ -4,6 +4,12 @@ def build(bld):
 
     module = bld.create_ns3_module('dnp3', ['core', 'applications', 'fncs'])
 
+    # Ensure jsoncpp headers are found during compilation
+    module.includes = [
+        '.',
+        '/usr/local/include/jsoncpp',
+    ]
+
     module.source = [
         'dnplib/app.cpp',
         'dnplib/station.cpp',

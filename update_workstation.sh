@@ -19,12 +19,14 @@ then
 	    cp /rd2c/integration/control/*.glm $dt
 fi
 
-cp -r integration $RD2C 
+rm -rf ${RD2C}/integration
+cp -r integration ${RD2C}
 cp -r RC/code/run.sh ${RD2C}/integration/control 
 cp -r RC/code/ns3-helics-grid-dnp3-4G-Docker.cc ${RD2C}/integration/control/ns3-helics-grid-dnp3-4G.cc  
 cp -r RC/code/ns3-helics-grid-dnp3-5G-Docker.cc ${RD2C}/integration/control/ns3-helics-grid-dnp3-5G.cc 
-cp -r RC/code/ns3-helics-grid-dnp3-Docker.cc ${RD2C}/integration/control/ns3-helics-grid-dnp3.cc  
-mkdir ${RD2C}/ns-3-dev/src/dnp3/ 
+cp -r RC/code/ns3-helics-grid-dnp3-Docker.cc ${RD2C}/integration/control/ns3-helics-grid-dnp3.cc
+rm -rf ${RD2C}/ns-3-dev/src/dnp3
+mkdir -p ${RD2C}/ns-3-dev/src/dnp3
 cp -r RC/code/dnp3/crypto ${RD2C}/ns-3-dev/src/dnp3  
 cp -r RC/code/dnp3/dnplib ${RD2C}/ns-3-dev/src/dnp3  
 cp -r RC/code/dnp3/examples ${RD2C}/ns-3-dev/src/dnp3 
@@ -65,8 +67,12 @@ echo "==== Cleaning up GridLAB-D build files ===="
 make clean
 
 LDFLAGS="-ljsoncpp -L/usr/local/include/jsoncpp/"
-cd $RD2C/PUSH/NATIG 
+cd $RD2C/PUSH/NATIG
 ./build_ns3.sh "$1" ${RD2C}
+
+# Remove ns-3 build directory to save disk space
+cd ${RD2C}/ns-3-dev
+./waf distclean
 
 # ** NEW: Add this cleanup command for ns-3 **
 echo "==== Cleaning up ns-3 build files ===="

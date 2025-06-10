@@ -44,6 +44,8 @@
 
 #include "ns3/dnp3-application-helper-new.h"
 #include "ns3/dnp3-simulator-impl.h"
+#include "ns3/modbus-master-app.h"
+#include "ns3/modbus-slave-app.h"
 
 
 #include "ns3/core-module.h"
@@ -572,6 +574,9 @@ main (int argc, char *argv[])
   NodeContainer Microgrid;
   Microgrid.Create(configObject["microgrid"].size());
   internetStack.Install(Microgrid);
+  NodeContainer modbusNodes;
+  modbusNodes.Create(2);
+  internetStack.Install(modbusNodes);
   Ipv4StaticRoutingHelper ipv4RoutingHelper;
   NodeContainer MIMNode;
   NodeContainer hubNode;
@@ -758,6 +763,25 @@ main (int argc, char *argv[])
 	  std::string address = "11."+std::to_string(i+2)+".0.0";
 	  ipv4Sub.SetBase(address.c_str(), "255.255.255.0", "0.0.0.1");
 	  Ipv4InterfaceContainer interfacesSub = ipv4Sub.Assign(NetDev);
+	  //Adding the routes
+	  if (!ring){
+	    std::cout << "Second route" << std::endl;
+	    Ptr<Ipv4StaticRouting> MicrogridRouting = ipv4RoutingHelper.GetStaticRouting (Microgrid.Get(i)->GetObject<Ipv4>());
+	    MicrogridRouting->AddNetworkRouteTo (hubNode.Get(0)->GetObject<Ipv4>()->GetAddress(i+1,0).GetLocal(), Ipv4Mask("255.255.255.0"), MIMNode.Get(i)->GetObject<Ipv4>()->GetAddress(1,0).GetLocal(), 1); //star.GetSpokeIpv4Address(i), 1); star.GetHubIpv4Address(i)
+	    std::cout << "Microgrid Added" << std::endl;
+            ControlRouting->AddNetworkRouteTo(Microgrid.Get(i)->GetObject<Ipv4>()->GetAddress(1,0).GetLocal(), Ipv4Mask("255.255.255.0"), MIMNode.Get(i)->GetObject<Ipv4>()->GetAddress(1,0).GetLocal(), i+1);//star.GetSpokeIpv4Address(i), i+1);
+          }
+  }
+  if (ring){
+          Ipv4GlobalRoutingHelper::PopulateRoutingTables();
+  }
+
+  // Modbus point-to-point link
+  NetDeviceContainer modbusDev = p2p.Install(modbusNodes);
+  Ipv4AddressHelper ipv4Modbus;
+  ipv4Modbus.SetBase("12.1.0.0", "255.255.255.0", "0.0.0.1");
+  Ipv4InterfaceContainer modbusIf = ipv4Modbus.Assign(modbusDev);
+
   }
   PointToPointHelper p2ph2;
   std::string rate = configObject["DDoS"][0]["Rate"].asString();
@@ -830,6 +854,7 @@ main (int argc, char *argv[])
   uint16_t port = 20000;
   uint16_t master_port = 40000;
   ApplicationContainer dnpOutstationApp, dnpMasterApp;
+  ApplicationContainer modbusMasterApp, modbusSlaveApp;
   //Ptr<Node> hubNode = star.GetHub ();
   std::vector<uint16_t> mimPort;
   //changing the parameters of the nodes in the network
@@ -919,6 +944,17 @@ main (int argc, char *argv[])
         epName.erase(pos, fedName.length()+1);
       }
     std::cout << "Endpoint name: " << epName << std::endl;
+  }
+
+  // Setup Modbus applications
+  ModbusSlaveHelper modbusSlaveHelper;
+  modbusSlaveHelper.SetAttribute("LocalPort", UintegerValue(502));
+  modbusSlaveApp = modbusSlaveHelper.Install(modbusNodes.Get(1));
+
+  ModbusMasterHelper modbusMasterHelper;
+  modbusMasterHelper.SetAttribute("PeerAddress", AddressValue(modbusIf.GetAddress(1)));
+  modbusMasterHelper.SetAttribute("PeerPort", UintegerValue(502));
+  modbusMasterApp = modbusMasterHelper.Install(modbusNodes.Get(0));
  }
 
   //Adding the MIM node
@@ -1019,6 +1055,10 @@ main (int argc, char *argv[])
   dnpMasterApp.Stop (simTime);
   dnpOutstationApp.Start (Seconds (start));
   dnpOutstationApp.Stop (simTime);
+  modbusMasterApp.Start (Seconds (start));
+  modbusMasterApp.Stop (simTime);
+  modbusSlaveApp.Start (Seconds (start));
+  modbusSlaveApp.Stop (simTime);
 
 
   std::cout << "Setting up Bots" << std::endl;
