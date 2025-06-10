@@ -60,7 +60,17 @@ autoreconf -if
 ./configure --with-helics=/usr/local --prefix=${RD2C} --enable-silent-rules 'CFLAGS=-g -O2 -w' 'CXXFLAGS=-g -O2 -w -std=c++14' 'LDFLAGS=-g -O2 -w' 
 make 
 make install
+# ** NEW: Add this cleanup command for GridLAB-D **
+echo "==== Cleaning up GridLAB-D build files ===="
+make clean
 
 LDFLAGS="-ljsoncpp -L/usr/local/include/jsoncpp/"
 cd $RD2C/PUSH/NATIG 
 ./build_ns3.sh "$1" ${RD2C}
+
+# ** NEW: Add this cleanup command for ns-3 **
+echo "==== Cleaning up ns-3 build files ===="
+cd $RD2C/ns-3-dev
+./waf clean
+
+echo "==== Update and build process complete! ===="

@@ -1,0 +1,4 @@
+[2025-06-10 05:01:25.431] [console] [error] commERROR||95884-uQUOb-jDjdE-1TZD9-0Lzx8 (1)::Unable to bind zmq reply socket giving up tcp://127.0.0.1:9001
+[2025-06-10 05:01:25.432] [console] [error] commERROR||95884-uQUOb-jDjdE-1TZD9-0Lzx8 (1)::receiver connection failure
+Broker is unable to connect
+
