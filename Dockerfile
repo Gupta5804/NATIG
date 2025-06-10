@@ -91,7 +91,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     vim \
     procps \
     libzmq5 \
-    libjsoncpp19 \
+    libjsoncpp1 \
     libxml2 \
     # The GridLAB-D runtime depends on OpenMPI
     openmpi-bin \
