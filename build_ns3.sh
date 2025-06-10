@@ -54,7 +54,8 @@ cp -r /rd2c/PUSH/NATIG/RC/code/helics/dnp3-application-new* /rd2c/ns-3-dev/contr
 cp -r /rd2c/PUSH/NATIG/RC/code/helics/dnp3-application-new-Docker.cc /rd2c/ns-3-dev/contrib/helics/model/dnp3-application-new.cc
 cp -r /rd2c/PUSH/NATIG/RC/code/helics/dnp3-application-new-Docker.h /rd2c/ns-3-dev/contrib/helics/model/dnp3-application-new.h
 cp -r /rd2c/PUSH/NATIG/RC/code/helics/wscript /rd2c/ns-3-dev/contrib/helics/
-sudo ./make.sh $2
+# Pass linker flags through sudo so that ns-3 builds with the proper libraries
+sudo env "LDFLAGS=$LDFLAGS" ./make.sh $2
 if [ "$1" == "5G" ]; then
     echo "installing 5G"
     cd contrib
@@ -64,6 +65,6 @@ if [ "$1" == "5G" ]; then
     git checkout 5g-lena-v1.2.y
     cd ../../
     cp -r $2/PUSH/NATIG/patch/nr/* contrib/nr/
-    sudo ./make.sh $2
+    sudo env "LDFLAGS=$LDFLAGS" ./make.sh $2
 fi
 mkdir $2/integration/control/physicalDevOutput

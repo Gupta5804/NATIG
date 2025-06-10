@@ -71,7 +71,8 @@ make install
 echo "==== Cleaning up GridLAB-D build files ===="
 make clean
 
-LDFLAGS="-ljsoncpp -L/usr/local/include/jsoncpp/"
+# Export linker flags so ns-3 picks them up during the build
+export LDFLAGS="-ljsoncpp -L/usr/local/include/jsoncpp/"
 cd $RD2C/PUSH/NATIG
 ./build_ns3.sh "$1" ${RD2C}
 
