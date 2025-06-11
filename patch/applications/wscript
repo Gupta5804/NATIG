@@ -22,7 +22,6 @@ def build(bld):
         'model/three-gpp-http-server.cc',
         'model/three-gpp-http-header.cc',
         'model/three-gpp-http-variables.cc',
-        'model/fncs-application.cc', 
         'helper/bulk-send-helper.cc',
         'helper/on-off-helper.cc',
         'helper/packet-sink-helper.cc',
@@ -32,8 +31,6 @@ def build(bld):
         'helper/three-gpp-http-helper.cc',
         ]
 
-    if bld.env['FNCS'] and bld.env['CZMQ'] and bld.env['ZMQ']:
-        module.use.extend(['FNCS', 'CZMQ', 'ZMQ'])
 
     applications_test = bld.create_ns3_module_test_library('applications')
     applications_test.source = [
@@ -65,7 +62,6 @@ def build(bld):
         'model/udp-echo-server.h',
         'model/mim-client.h',
         'model/mim-server.h',
-        'model/fncs-application.h',
         'model/application-packet-probe.h',
         'model/three-gpp-http-client.h',
         'model/three-gpp-http-server.h',
