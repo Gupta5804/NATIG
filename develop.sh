@@ -20,8 +20,14 @@ RD2C_DIR="/rd2c"
 NS3_SRC_DIR="${RD2C_DIR}/ns-3-dev/src"
 PATCH_DIR="${RD2C_DIR}/patch"
 MODBUS_MODULE_DIR="${NS3_SRC_DIR}/modbus"
+OLD_DNP3_DIR="${NS3_SRC_DIR}/dnp3"
 
 echo "=== 2. CREATING CLEAN 'modbus' MODULE STRUCTURE ==="
+# Remove any legacy 'dnp3' module to avoid build conflicts
+if [ -d "${OLD_DNP3_DIR}" ]; then
+    echo "Removing legacy dnp3 module..."
+    rm -rf "${OLD_DNP3_DIR}"
+fi
 # Create the new directory structure for our clean module
 mkdir -p "${MODBUS_MODULE_DIR}/model"
 mkdir -p "${MODBUS_MODULE_DIR}/helper"
