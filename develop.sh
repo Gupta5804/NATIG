@@ -1,85 +1,59 @@
 #!/bin/bash
 
 #################################################################
-#           DEVELOPMENT WORKFLOW SCRIPT FOR NATIG
+#           FINAL DEVELOPMENT WORKFLOW SCRIPT
 #
-# This script simplifies the workflow to:
-#   1. Setup Environment
-#   2. Patch: Copy your custom files to the right locations.
-#   3. Compile: Rebuild the ns-3 simulator.
-#   4. Run: Execute the simulation.
-#
+# This version creates and uses a new, clean `modbus` module
+# to eliminate all legacy dependency errors.
 #################################################################
 
-set -e # Exit immediately if a command exits with a non-zero status.
+set -e # Exit immediately if a command exits.
 
 echo "=== 1. SETTING UP BUILD ENVIRONMENT ==="
-source /rd2c/RC/environmental.sh
-echo "Environment variables set."
+# Set the correct library path for HELICS, ZMQ, etc.
+export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH
+echo "Library path set."
 echo ""
-
-echo "=== 2. APPLYING CUSTOM PATCHES FROM 'patch/' DIRECTORY ==="
 
 # Define key directories
-RD2C_DIR="${RD2C:-/rd2c}"
-# Location of this repository
-REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
-# Patches live inside the repo
-PATCH_DIR="${REPO_DIR}/patch"
-NS3_DIR="${RD2C_DIR}/ns-3-dev"
-NS3_SRC_DIR="${NS3_DIR}/src"
-NS3_CONTRIB_DIR="${NS3_DIR}/contrib"
+RD2C_DIR="/rd2c"
+NS3_SRC_DIR="${RD2C_DIR}/ns-3-dev/src"
+PATCH_DIR="${RD2C_DIR}/patch"
+MODBUS_MODULE_DIR="${NS3_SRC_DIR}/modbus"
 
-sync_dir() {
-    local src="$1" dest="$2"
-    if [ -d "$src" ]; then
-        mkdir -p "$dest"
-        cp -rv "$src"/* "$dest/"
-    fi
-}
+echo "=== 2. CREATING CLEAN 'modbus' MODULE STRUCTURE ==="
+# Create the new directory structure for our clean module
+mkdir -p "${MODBUS_MODULE_DIR}/model"
+mkdir -p "${MODBUS_MODULE_DIR}/helper"
 
-# Synchronise patched modules with the ns-3 tree
-sync_dir "${PATCH_DIR}/applications"            "${NS3_SRC_DIR}/applications"
-sync_dir "${PATCH_DIR}/dnp3"                     "${NS3_SRC_DIR}/dnp3"
-cp -v "${PATCH_DIR}/dnp3/wscript" "${NS3_SRC_DIR}/dnp3/"
-sync_dir "${PATCH_DIR}/fncs"                     "${NS3_SRC_DIR}/fncs"
-sync_dir "${PATCH_DIR}/internet"                 "${NS3_SRC_DIR}/internet"
-sync_dir "${PATCH_DIR}/lte"                      "${NS3_SRC_DIR}/lte"
-sync_dir "${PATCH_DIR}/point-to-point-layout"    "${NS3_SRC_DIR}/point-to-point-layout"
-
-# Contrib modules
-sync_dir "${PATCH_DIR}/helics-backup"            "${NS3_CONTRIB_DIR}/helics"
-sync_dir "${PATCH_DIR}/nr"                       "${NS3_CONTRIB_DIR}/nr"
-
-# Copy patched build helper and other top-level files
-if [ -f "${PATCH_DIR}/make.sh" ]; then
-    cp -v "${PATCH_DIR}/make.sh" "${NS3_DIR}/"
-fi
-
+# Copy your patched files into the NEW modbus module directory
+echo "Copying patched files..."
+cp -v "${PATCH_DIR}/modbus/model/modbus-master-app.cc" "${MODBUS_MODULE_DIR}/model/"
+cp -v "${PATCH_DIR}/modbus/model/modbus-master-app.h"  "${MODBUS_MODULE_DIR}/model/"
+cp -v "${PATCH_DIR}/modbus/model/modbus-slave-app.cc"  "${MODBUS_MODULE_DIR}/model/"
+cp -v "${PATCH_DIR}/modbus/model/modbus-slave-app.h"   "${MODBUS_MODULE_DIR}/model/"
+cp -v "${PATCH_DIR}/modbus/helper/modbus-helper.cc"    "${MODBUS_MODULE_DIR}/helper/"
+cp -v "${PATCH_DIR}/modbus/helper/modbus-helper.h"     "${MODBUS_MODULE_DIR}/helper/"
+cp -v "${PATCH_DIR}/modbus/wscript"                    "${MODBUS_MODULE_DIR}/"
 echo ""
-echo "=== 3. COMPILING NS-3 ==="
 
-cd ${NS3_DIR}
+echo "=== 3. COMPILING NS-3 WITH THE NEW 'modbus' MODULE ==="
+cd ${RD2C_DIR}/ns-3-dev
+./waf configure --enable-examples --enable-tests
+./waf
 
-if [ -f "make.sh" ]; then
-    bash ./make.sh
-else
-    ./waf
-fi
-
-# Check if the compilation was successful
 if [ $? -ne 0 ]; then
     echo "ERROR: NS-3 compilation failed." >&2
     exit 1
 fi
-
 echo ""
+
 echo "=== 4. RUNNING SIMULATION ==="
-echo "Compilation successful. Executing run_ns3_only.sh..."
-
 cd ${RD2C_DIR}/integration/control
-bash ./run_ns3_only.sh
+# We will use a temporary run script to avoid any lingering issues
+# in the old run_ns3_only.sh.
+echo "Starting ns-3 simulation..."
+./build/ns3-helics-grid-dnp3 --conf="config/grid.json" --ns_config="config/ns_config.json"
 
 echo ""
-echo "=== WORKFLOW COMPLETE ==="
-
+echo "=== BUILD AND RUN COMPLETE! ==="

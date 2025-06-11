@@ -42,8 +42,7 @@
 
 #include "ns3/eps-bearer-tag.h"
 
-#include "ns3/dnp3-application-helper-new.h"
-#include "ns3/dnp3-simulator-impl.h"
+#include "ns3/modbus-helper.h"
 
 
 #include "ns3/core-module.h"
