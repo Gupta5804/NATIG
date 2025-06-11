@@ -140,6 +140,20 @@ export RD2C=/custom/path
 bash develop.sh
 ```
 
+### Optional: Compile ns-3 without FNCS
+
+If your simulation does not require the FNCS libraries, configure ns-3 with
+`--disable-fncs`:
+
+```bash
+cd /rd2c/ns-3-dev
+sudo ./waf configure --disable-fncs
+sudo ./waf
+sudo ./waf install
+```
+
+Disabling FNCS prevents build errors about a missing `fncs.hpp` header.
+
 ---
 
 ## Verification Run ⚙️
