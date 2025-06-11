@@ -131,7 +131,7 @@ def build(bld):
     if 'helics' in bld.env['MODULES_NOT_BUILT']:
         return
 
-    module = bld.create_ns3_module('helics', ['core', 'internet', 'modbus']) #Modbus needed by NATIG
+    module = bld.create_ns3_module('helics', ['core', 'internet']) #Modbus needed by NATIG
     module.source = [
         'model/helics.cc',
         'model/helics-application.cc',
