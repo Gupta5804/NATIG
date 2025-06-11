@@ -163,6 +163,8 @@ Expected result: logs from HELICS, GridLAB-D, and ns-3 appear; the simulation fi
 3. **Patch, compile and run** using the helper script from the repo root:
    `bash develop.sh`
    The script copies files from the repository's `patch/` folder into `/rd2c/ns-3-dev`, runs `make.sh` to configure and build ns-3, then launches the simulation.
+   
+   *Note: older versions of the patches included an unused `fncs-application` which required `fncs.hpp`. The patch files now omit this code. If you see build errors mentioning `fncs-application.cc`, make sure your `ns-3` source has the updated `patch/applications/wscript`.*
 
 ---
 
