@@ -10,9 +10,11 @@
 set -e # Exit immediately if a command exits.
 
 echo "=== 1. SETTING UP BUILD ENVIRONMENT ==="
-# Set the correct library path for HELICS, ZMQ, etc.
+# Set the library path for the linker
 export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH
-echo "Library path set."
+# Set the include path for the compiler
+export CXXFLAGS="-I/usr/local/include"
+echo "Environment configured."
 echo ""
 
 # Define key directories
@@ -43,9 +45,19 @@ cp -v "${PATCH_DIR}/modbus/helper/modbus-helper.h"     "${MODBUS_MODULE_DIR}/hel
 cp -v "${PATCH_DIR}/modbus/wscript"                    "${MODBUS_MODULE_DIR}/"
 echo ""
 
-echo "=== 3. COMPILING NS-3 WITH THE NEW 'modbus' MODULE ==="
+echo "=== 3. CLEANING AND COMPILING NS-3 ==="
 cd ${RD2C_DIR}/ns-3-dev
-./waf configure --enable-examples --enable-tests
+
+# First, perform a deep clean to remove any old configuration caches.
+echo "Cleaning previous build..."
+./waf distclean
+
+# Now, configure and build from a clean slate.
+# THIS IS THE CRITICAL CHANGE: We are telling waf where HELICS is installed.
+echo "Configuring new build with HELICS path..."
+./waf configure --enable-examples --enable-tests --with-helics=/usr/local
+
+echo "Building ns-3..."
 ./waf
 
 if [ $? -ne 0 ]; then
