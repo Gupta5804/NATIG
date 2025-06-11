@@ -11,9 +11,9 @@ def build(bld):
     ]
 
     # Define the headers that other parts of the simulation can include.
-    module.headers = bld.CPPPATH_ST % [
-        'model/modbus-master-app.h',
-        'model/modbus-slave-app.h',
-        'helper/modbus-helper.h',
-    ]
+    module.headers = [
+    'model/modbus-master-app.h',
+    'model/modbus-slave-app.h',
+    'helper/modbus-helper.h',
+]
 
