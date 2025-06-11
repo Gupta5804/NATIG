@@ -31,18 +31,24 @@ if [ -d "${OLD_DNP3_DIR}" ]; then
     rm -rf "${OLD_DNP3_DIR}"
 fi
 # Create the new directory structure for our clean module
+
+# Ensure the base directory exists
+mkdir -p "${MODBUS_MODULE_DIR}"
+# Create the required subdirectories
 mkdir -p "${MODBUS_MODULE_DIR}/model"
 mkdir -p "${MODBUS_MODULE_DIR}/helper"
 
+
 # Copy your patched files into the NEW modbus module directory
 echo "Copying patched files..."
-cp -v "${PATCH_DIR}/modbus/model/modbus-master-app.cc" "${MODBUS_MODULE_DIR}/model/"
-cp -v "${PATCH_DIR}/modbus/model/modbus-master-app.h"  "${MODBUS_MODULE_DIR}/model/"
-cp -v "${PATCH_DIR}/modbus/model/modbus-slave-app.cc"  "${MODBUS_MODULE_DIR}/model/"
-cp -v "${PATCH_DIR}/modbus/model/modbus-slave-app.h"   "${MODBUS_MODULE_DIR}/model/"
-cp -v "${PATCH_DIR}/modbus/helper/modbus-helper.cc"    "${MODBUS_MODULE_DIR}/helper/"
-cp -v "${PATCH_DIR}/modbus/helper/modbus-helper.h"     "${MODBUS_MODULE_DIR}/helper/"
-cp -v "${PATCH_DIR}/modbus/wscript"                    "${MODBUS_MODULE_DIR}/"
+# Copy entire dnplib and crypto directories
+cp -r "${PATCH_DIR}/modbus/dnplib" "${MODBUS_MODULE_DIR}/"
+cp -r "${PATCH_DIR}/modbus/crypto" "${MODBUS_MODULE_DIR}/"
+# Copy all model and helper source files
+cp -v "${PATCH_DIR}/modbus/model"/* "${MODBUS_MODULE_DIR}/model/"
+cp -v "${PATCH_DIR}/modbus/helper"/* "${MODBUS_MODULE_DIR}/helper/"
+# Copy the module wscript
+cp -v "${PATCH_DIR}/modbus/wscript" "${MODBUS_MODULE_DIR}/"
 echo ""
 
 echo "=== 3. CLEANING AND COMPILING NS-3 ==="
