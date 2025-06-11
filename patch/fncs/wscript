@@ -41,6 +41,7 @@ def configure(conf):
     if Options.options.disable_fncs:
         conf.report_optional_feature("fncs", "FNCS Integration", False,
                                      "disabled by user request")
+        conf.env['MODULES_NOT_BUILT'].append('fncs')
         return
         
     if Options.options.with_zmq:
