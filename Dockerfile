@@ -82,6 +82,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     pkg-config \
     libboost-all-dev \
     libzmq5 \
+    libzmq3-dev \
     libjsoncpp-dev \
     libxml2-dev \
     libsqlite3-dev \
