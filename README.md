@@ -60,9 +60,9 @@ cd <your_repo_name>
 
 # 2) Pull dependencies into the expected structure
 git clone https://github.com/nsnam/ns-3-dev-git.git ns-3-dev
-mkdir -p PUSH && cd PUSH
-git clone https://github.com/pnnl/NATIG.git
-cd ..
+# Optional: point scripts to this repo instead of /rd2c/PUSH/NATIG
+export NATIG_SRC=$(pwd)
+# If unset, scripts fall back to /rd2c/PUSH/NATIG
 
 # 3) Build the image  (⚠️ first time only – this is long!)
 docker build --network=host -f Dockerfile -t pnnl/natig:natigbase --no-cache .
@@ -89,18 +89,15 @@ cd <your_repo_name>
 
 ```bash
 git clone https://github.com/nsnam/ns-3-dev-git.git ns-3-dev
-mkdir PUSH && cd PUSH
-git clone https://github.com/pnnl/NATIG.git
-cd ..
+export NATIG_SRC=$(pwd)
+# If unset, scripts fall back to /rd2c/PUSH/NATIG
 ```
 
 Your tree now contains:
 
 ```
 <repo>
-├── ns-3-dev/
-└── PUSH/
-    └── NATIG/
+└── ns-3-dev/
 ```
 
 ### 3 · Build the Docker image
@@ -128,7 +125,7 @@ docker exec -it natigbase_container bash
 ### 6 · Compile ns-3 (one-time inside the container)
 
 ```bash
-cd /rd2c/PUSH/NATIG
+cd "$NATIG_SRC"
 ./build_ns3.sh "" /rd2c
 ```
 

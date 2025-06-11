@@ -2,6 +2,8 @@
 
 git pull
 RD2C=${RD2C:-/rd2c}
+# Path to the NATIG source (defaults to $RD2C/PUSH/NATIG)
+NATIG_SRC="${NATIG_SRC:-${RD2C}/PUSH/NATIG}"
 
 read -p "Do you want to save your current setup? [y/n] " answer
 
@@ -45,13 +47,13 @@ cp -r RC/code/internet/* ${RD2C}/ns-3-dev/src/internet/
 cp -r RC/code/lte/* ${RD2C}/ns-3-dev/src/lte/ 
 cp -r RC/code/gridlabd/* ${RD2C}/gridlab-d/tape_file/ 
 cp -r RC/code/trigger.player ${RD2C}/integration/control/
-cd ${RD2C}/PUSH/NATIG
+cd ${NATIG_SRC}
 ./build_helics.sh
 cd ${RD2C}/ns-3-dev
-cp -r ${RD2C}/PUSH/NATIG/RC/code/helics/helics-helper* ${RD2C}/ns-3-dev/contrib/helics/helper/
-cp -r ${RD2C}/PUSH/NATIG/RC/code/helics/dnp3-application-helper-new.* ${RD2C}/ns-3-dev/contrib/helics/helper/
-cp -r ${RD2C}/PUSH/NATIG/RC/code/helics/dnp3-application-new* ${RD2C}/ns-3-dev/contrib/helics/model/
-cp -r ${RD2C}/PUSH/NATIG/RC/code/helics/wscript ${RD2C}/ns-3-dev/contrib/helics/
+cp -r ${NATIG_SRC}/RC/code/helics/helics-helper* ${RD2C}/ns-3-dev/contrib/helics/helper/
+cp -r ${NATIG_SRC}/RC/code/helics/dnp3-application-helper-new.* ${RD2C}/ns-3-dev/contrib/helics/helper/
+cp -r ${NATIG_SRC}/RC/code/helics/dnp3-application-new* ${RD2C}/ns-3-dev/contrib/helics/model/
+cp -r ${NATIG_SRC}/RC/code/helics/wscript ${RD2C}/ns-3-dev/contrib/helics/
 
 
 #if [ -d "${RD2C}/gridlab-d/third_party/xerces-c-3.2.0" ]; then
@@ -77,7 +79,7 @@ cp -r ${RD2C}/PUSH/NATIG/RC/code/helics/wscript ${RD2C}/ns-3-dev/contrib/helics/
 #
 ## Export linker flags so ns-3 picks them up during the build
 #export LDFLAGS="-ljsoncpp -L/usr/local/include/jsoncpp/"
-#cd $RD2C/PUSH/NATIG
+#cd $RD${NATIG_SRC}
 #./build_ns3.sh "$1" ${RD2C}
 #
 ## Remove ns-3 build directory to save disk space

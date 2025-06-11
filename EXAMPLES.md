@@ -57,7 +57,7 @@ NOTE: to change the helics broker's port the gridlabd\_config.json needs to be u
 
 __3G star__: this is a directly connected network that has the control center at the center of the topology and the rest of the nodes are connected in a star pattern
 
-1. To enable this topology, open the grid.json either in /rd2c/PUSH/NATIG/RC/code/<exampleTag>-conf-<modelID> when using the conf input or in the /rd2c/integration/control/config folder when using the noconf input (see section __Commands to run the examples__ for more details about conf vs noconf).
+1. To enable this topology, open the grid.json either in ${NATIG_SRC}/RC/code/<exampleTag>-conf-<modelID> when using the conf input or in the /rd2c/integration/control/config folder when using the noconf input (see section __Commands to run the examples__ for more details about conf vs noconf).
 2. In section "Simulation" change UseDynTop to 0. When running the 3G example it will default the setup to a star topology
 
 ```
@@ -77,7 +77,7 @@ __3G star__: this is a directly connected network that has the control center at
 
 __3G ring__: This is directly connected network that has middle nodes connected using a ring pattern. Then the microgrid ns3 nodes and the control center ns3 node are connected to the individual middle node. 
 
-1. To enable this topology, open the grid.json either in /rd2c/PUSH/NATIG/RC/code/<exampleTag>-conf-<modelID> when using the conf input or in the /rd2c/integration/control/config folder when using the noconf input (see section __Commands to run the examples__ for more details about conf vs noconf).
+1. To enable this topology, open the grid.json either in ${NATIG_SRC}/RC/code/<exampleTag>-conf-<modelID> when using the conf input or in the /rd2c/integration/control/config folder when using the noconf input (see section __Commands to run the examples__ for more details about conf vs noconf).
 2. In section "Simulation" change UseDynTop to 1 as seen in the following output:
 ```
      "Simulation": [
@@ -169,7 +169,7 @@ __3G ring__: This is directly connected network that has middle nodes connected 
 
 __3G mesh__: this is a directly connected network that has middles connected in a mesh pattern. Then the microgrid ns3 nodes and the control center ns3 node are connected to the individual middle node. 
 
-1. To enable this topology, open the grid.json either in /rd2c/PUSH/NATIG/RC/code/<exampleTag>-conf-<modelID> when using the conf input or in the /rd2c/integration/control/config folder when using the noconf input (see section __Commands to run the examples__ for more details about conf vs noconf).
+1. To enable this topology, open the grid.json either in ${NATIG_SRC}/RC/code/<exampleTag>-conf-<modelID> when using the conf input or in the /rd2c/integration/control/config folder when using the noconf input (see section __Commands to run the examples__ for more details about conf vs noconf).
 2. In section "Simulation" change UseDynTop to 1 as seen in the following output:
 ```
      "Simulation": [
@@ -269,7 +269,7 @@ __3G mesh__: this is a directly connected network that has middles connected in 
 
 __4G and 5G topology__: currently the topology type of these two communication networks are statically set in the code. The Microgrid NS3 nodes are connected to the middle nodes using an all to all mesh. Then each middle nodes are connected to an individual User Equipment node using a direct connection. Each User Equipment can communicate to any Relay Antenna (GnB/EnB) nodes. Once the signal is past the cellular network part of the network, the signal is sent through a single connection link that connects the control center to the rest of the network. 
 
-1. To configure some of the elements of the 4G or 5G examples, open the topology.json either in /rd2c/PUSH/NATIG/RC/code/<exampleTag>-conf-<modelID> when using the conf input or in the /rd2c/integration/control/config folder when using the noconf input (see section __Commands to run the examples__ for more details about conf vs noconf).
+1. To configure some of the elements of the 4G or 5G examples, open the topology.json either in ${NATIG_SRC}/RC/code/<exampleTag>-conf-<modelID> when using the conf input or in the /rd2c/integration/control/config folder when using the noconf input (see section __Commands to run the examples__ for more details about conf vs noconf).
 2. The channel section. The values in that section are used accross all three available example (3G|4G|5G)
     1. __P2PDelay__: No longer used
     2. __CSMADelay__: Used to add some delay to the CSMA connections
@@ -367,14 +367,14 @@ __4G and 5G topology__: currently the topology type of these two communication n
 The following steps are assuming that the examples are run on docker:
 
 1. ` cd /rd2c/integration/control `: this command will bring you where the main code and configurations for the run will be located
-2. Running the examples out of the box. These commands are useful when you do not want to make any changes to the configurations or if you just pulled an updated version of the setup and want to make sure that the configurations files bring in any new input. The ` conf ` input will trigger the code to overwrite the configuration files in /rd2c/integration/control/config/ and the glm files in /rd2c/integration/control with the files found in /rd2c/PUSH/NATIG/RC/code/<exampleTag>-conf-<modelID> folders. For example, if running the 3G example with the IEEE 123 bus model, the configuration files and the glm files will be taken from /rd2c/PUSH/NATIG/RC/code/3G-conf-123/
+2. Running the examples out of the box. These commands are useful when you do not want to make any changes to the configurations or if you just pulled an updated version of the setup and want to make sure that the configurations files bring in any new input. The ` conf ` input will trigger the code to overwrite the configuration files in /rd2c/integration/control/config/ and the glm files in /rd2c/integration/control with the files found in ${NATIG_SRC}/RC/code/<exampleTag>-conf-<modelID> folders. For example, if running the 3G example with the IEEE 123 bus model, the configuration files and the glm files will be taken from ${NATIG_SRC}/RC/code/3G-conf-123/
     1. 3G with 123: ` sudo bash run.sh /rd2c/  3G "" 123 conf `
     2. 3G with 9500: ` sudo bash run.sh /rd2c/  3G "" 9500 conf `
     3. 4G with 123: ` sudo bash run.sh /rd2c/  4G "" 123 conf `
     4. 4G with 9500: ` sudo bash run.sh /rd2c/  4G "" 9500 conf `
     5. 5G with 123: ` sudo bash run.sh /rd2c/  5G "" 123 conf `
     6. 5G with 9500: ` sudo bash run.sh /rd2c/  5G "" 9500 conf `
-3. Running the examples with local changes to the config json files and glm files. Using the noconf input it will trigger the code to read the configuration files direct from /rd2c/integration/control/config and the glm files directly from /rd2c/integration/control/ without overwritting them with the files found in /rd2c/PUSH/NATIG/RC/code/<exampleTag>-conf-<modelID>. We recommand at least to do one run of the example with a conf input and then doing noconf changes once you have an updated version of the config file. 
+3. Running the examples with local changes to the config json files and glm files. Using the noconf input it will trigger the code to read the configuration files direct from /rd2c/integration/control/config and the glm files directly from /rd2c/integration/control/ without overwritting them with the files found in ${NATIG_SRC}/RC/code/<exampleTag>-conf-<modelID>. We recommand at least to do one run of the example with a conf input and then doing noconf changes once you have an updated version of the config file. 
     1. 3G with 123: ` sudo bash run.sh /rd2c/  3G "" 123 noconf `
     2. 3G with 9500: ` sudo bash run.sh /rd2c/  3G "" 9500 noconf `
     3. 4G with 123: ` sudo bash run.sh /rd2c/  4G "" 123 noconf `

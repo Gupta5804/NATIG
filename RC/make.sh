@@ -5,6 +5,7 @@
 #module load gcc/8.4.0
 
 export RD2C=${PWD}
+NATIG_SRC="${NATIG_SRC:-${NATIG_SRC}}"
 export FNCS_INSTALL=${RD2C}
 export GLD_INSTALL=${RD2C}
 export GLPATH=/rd2c/share/gridlabd/:/rd2c/lib/gridlabd/
@@ -188,62 +189,62 @@ git clone https://github.com/nsnam/ns-3-dev-git.git
 mv ns-3-dev-git ns-3-dev
 cd ns-3-dev
 git checkout ns-3.35
-cd ${RD2C}/PUSH/NATIG
+cd ${NATIG_SRC}
 cd ${RD2C}/ns-3-dev/contrib/
 rm -rf helics
 git clone --depth 1 --branch HELICS-v2.x-waf https://github.com/GMLC-TDC/helics-ns3.git; mv helics-ns3 helics
-cp -r ${RD2C}/PUSH/NATIG/RC/code/helics/helics-helper* ${RD2C}/ns-3-dev/contrib/helics/helper/
-cp -r ${RD2C}/PUSH/NATIG/RC/code/helics/dnp3-application-helper-new.* ${RD2C}/ns-3-dev/contrib/helics/helper/
-cp -r ${RD2C}/PUSH/NATIG/RC/code/helics/dnp3-application-new* ${RD2C}/ns-3-dev/contrib/helics/model/
+cp -r ${NATIG_SRC}/RC/code/helics/helics-helper* ${RD2C}/ns-3-dev/contrib/helics/helper/
+cp -r ${NATIG_SRC}/RC/code/helics/dnp3-application-helper-new.* ${RD2C}/ns-3-dev/contrib/helics/helper/
+cp -r ${NATIG_SRC}/RC/code/helics/dnp3-application-new* ${RD2C}/ns-3-dev/contrib/helics/model/
 cp -r ${RD2C}/ns-3-dev/contrib/helics/model/dnp3-application-new.h ${RD2C}/ns-3-dev/contrib/helics/model/dnp3-application-new.h
 cp -r ${RD2C}/ns-3-dev/contrib/helics/model/dnp3-application-new.cc ${RD2C}/ns-3-dev/contrib/helics/model/dnp3-application-new.cc
-cp -r ${RD2C}/PUSH/NATIG/RC/code/helics/wscript ${RD2C}/ns-3-dev/contrib/helics/
-cp -r ${RD2C}/PUSH/NATIG/RC/code/helics/helics-simulator-impl.cc ${RD2C}/ns-3-dev/contrib/helics/model/
+cp -r ${NATIG_SRC}/RC/code/helics/wscript ${RD2C}/ns-3-dev/contrib/helics/
+cp -r ${NATIG_SRC}/RC/code/helics/helics-simulator-impl.cc ${RD2C}/ns-3-dev/contrib/helics/model/
 cd ${RD2C}/ns-3-dev
-cp -r ../PUSH/NATIG/RC/code/make.sh .
+cp -r ${NATIG_SRC}/RC/code/make.sh .
 mkdir ${RD2C}/ns-3-dev/src/dnp3/ 
-cp -r ../PUSH/NATIG/RC/code/dnp3/crypto ${RD2C}/ns-3-dev/src/dnp3  
-cp -r ../PUSH/NATIG/RC/code/dnp3/dnplib ${RD2C}/ns-3-dev/src/dnp3  
-cp -r ../PUSH/NATIG/RC/code/dnp3/examples ${RD2C}/ns-3-dev/src/dnp3 
-cp -r ../PUSH/NATIG/RC/code/dnp3/helper ${RD2C}/ns-3-dev/src/dnp3 
+cp -r ${NATIG_SRC}/RC/code/dnp3/crypto ${RD2C}/ns-3-dev/src/dnp3  
+cp -r ${NATIG_SRC}/RC/code/dnp3/dnplib ${RD2C}/ns-3-dev/src/dnp3  
+cp -r ${NATIG_SRC}/RC/code/dnp3/examples ${RD2C}/ns-3-dev/src/dnp3 
+cp -r ${NATIG_SRC}/RC/code/dnp3/helper ${RD2C}/ns-3-dev/src/dnp3 
 mkdir ${RD2C}/ns-3-dev/src/dnp3/model 
-cp -r ../PUSH/NATIG/RC/code/dnp3/wscript ${RD2C}/ns-3-dev/src/dnp3/ 
-cp -r ../PUSH/NATIG/RC/code/dnp3/model/dnp3-application.h ${RD2C}/ns-3-dev/src/dnp3/model/ 
-cp -r ../PUSH/NATIG/RC/code/dnp3/model/dnp3-application.cc ${RD2C}/ns-3-dev/src/dnp3/model/dnp3-application.cc 
-cp -r ../PUSH/NATIG/RC/code/dnp3/model/dnp3-application.cc ${RD2C}/ns-3-dev/src/dnp3/model/dnp3-application.cc 
-cp -r ../PUSH/NATIG/RC/code/dnp3/model/dnp3-simulator-impl.* ${RD2C}/ns-3-dev/src/dnp3/model/ 
-cp -r ../PUSH/NATIG/RC/code/dnp3/model/tcptest* ${RD2C}/ns-3-dev/src/dnp3/model/ 
-cp -r ../PUSH/NATIG/RC/code/dnp3/model/dnp3-mim-* ${RD2C}/ns-3-dev/src/dnp3/model/ 
-cp -r ../PUSH/NATIG/RC/code/internet/* ${RD2C}/ns-3-dev/src/internet/ 
-cp -r ../PUSH/NATIG/RC/code/lte/* ${RD2C}/ns-3-dev/src/lte/ 
-cp -r ../PUSH/NATIG/RC/code/dnp3/ src
-cp -r ../PUSH/NATIG/RC/code/dnp3/model/dnp3-application.cc src/dnp3/model/dnp3-application.cc
-cp -r ../PUSH/NATIG/RC/code/internet/ipv4-l3-protocol.* src/internet/model/
-cp -r ../PUSH/NATIG/RC/code/internet/internet-stack-helper-MIM.* src/internet/helper/
-cp -r ../PUSH/NATIG/RC/code/internet/wscript src/internet/
-cp -r ../PUSH/NATIG/RC/code/lte/* src/lte/
-cp -r ../PUSH/NATIG/RC/code/point-to-point-layout/* src/point-to-point-layout/
+cp -r ${NATIG_SRC}/RC/code/dnp3/wscript ${RD2C}/ns-3-dev/src/dnp3/ 
+cp -r ${NATIG_SRC}/RC/code/dnp3/model/dnp3-application.h ${RD2C}/ns-3-dev/src/dnp3/model/ 
+cp -r ${NATIG_SRC}/RC/code/dnp3/model/dnp3-application.cc ${RD2C}/ns-3-dev/src/dnp3/model/dnp3-application.cc 
+cp -r ${NATIG_SRC}/RC/code/dnp3/model/dnp3-application.cc ${RD2C}/ns-3-dev/src/dnp3/model/dnp3-application.cc 
+cp -r ${NATIG_SRC}/RC/code/dnp3/model/dnp3-simulator-impl.* ${RD2C}/ns-3-dev/src/dnp3/model/ 
+cp -r ${NATIG_SRC}/RC/code/dnp3/model/tcptest* ${RD2C}/ns-3-dev/src/dnp3/model/ 
+cp -r ${NATIG_SRC}/RC/code/dnp3/model/dnp3-mim-* ${RD2C}/ns-3-dev/src/dnp3/model/ 
+cp -r ${NATIG_SRC}/RC/code/internet/* ${RD2C}/ns-3-dev/src/internet/ 
+cp -r ${NATIG_SRC}/RC/code/lte/* ${RD2C}/ns-3-dev/src/lte/ 
+cp -r ${NATIG_SRC}/RC/code/dnp3/ src
+cp -r ${NATIG_SRC}/RC/code/dnp3/model/dnp3-application.cc src/dnp3/model/dnp3-application.cc
+cp -r ${NATIG_SRC}/RC/code/internet/ipv4-l3-protocol.* src/internet/model/
+cp -r ${NATIG_SRC}/RC/code/internet/internet-stack-helper-MIM.* src/internet/helper/
+cp -r ${NATIG_SRC}/RC/code/internet/wscript src/internet/
+cp -r ${NATIG_SRC}/RC/code/lte/* src/lte/
+cp -r ${NATIG_SRC}/RC/code/point-to-point-layout/* src/point-to-point-layout/
 mkdir src/dnp3/
-cp -r ../PUSH/NATIG/RC/code/dnp3/crypto src/dnp3
-cp -r ../PUSH/NATIG/RC/code/dnp3/dnplib src/dnp3
-cp -r ../PUSH/NATIG/RC/code/dnp3/examples src/dnp3
-cp -r ../PUSH/NATIG/RC/code/dnp3/helper src/dnp3
+cp -r ${NATIG_SRC}/RC/code/dnp3/crypto src/dnp3
+cp -r ${NATIG_SRC}/RC/code/dnp3/dnplib src/dnp3
+cp -r ${NATIG_SRC}/RC/code/dnp3/examples src/dnp3
+cp -r ${NATIG_SRC}/RC/code/dnp3/helper src/dnp3
 mkdir src/dnp3/model
-cp -r ../PUSH/NATIG/RC/code/dnp3/wscript src/dnp3/
-cp -r ../PUSH/NATIG/RC/code/dnp3/model/dnp3-application.h src/dnp3/model/
-cp -r ../PUSH/NATIG/RC/code/dnp3/model/dnp3-application.cc src/dnp3/model/dnp3-application.cc
-cp -r ../PUSH/NATIG/RC/code/dnp3/model/dnp3-application.cc src/dnp3/model/dnp3-application.cc
-cp -r ../PUSH/NATIG/RC/code/dnp3/model/dnp3-simulator-impl.* src/dnp3/model/
-cp -r ../PUSH/NATIG/RC/code/dnp3/model/tcptest* src/dnp3/model/
-cp -r ../PUSH/NATIG/RC/code/dnp3/model/dnp3-mim-* src/dnp3/model/
-cp -r ../PUSH/NATIG/RC/code/internet/* src/internet/
-cp -r ../PUSH/NATIG/RC/code/lte/* src/lte/
-cp -r ../PUSH/NATIG/RC/code/helics/helics-helper* /rd2c/ns-3-dev/contrib/helics/helper/
-cp -r ../PUSH/NATIG/RC/code/helics/dnp3-application-helper-new.* /rd2c/ns-3-dev/contrib/helics/helper/
-cp -r ../PUSH/NATIG/RC/code/helics/dnp3-application-new* /rd2c/ns-3-dev/contrib/helics/model/
-cp -r ../PUSH/NATIG/RC/code/helics/dnp3-application-new.cc /rd2c/ns-3-dev/contrib/helics/model/dnp3-application-new.cc
-cp -r ../PUSH/NATIG/RC/code/helics/dnp3-application-new.h /rd2c/ns-3-dev/contrib/helics/model/dnp3-application-new.h
-cp -r ../PUSH/NATIG/RC/code/helics/wscript /rd2c/ns-3-dev/contrib/helics/
+cp -r ${NATIG_SRC}/RC/code/dnp3/wscript src/dnp3/
+cp -r ${NATIG_SRC}/RC/code/dnp3/model/dnp3-application.h src/dnp3/model/
+cp -r ${NATIG_SRC}/RC/code/dnp3/model/dnp3-application.cc src/dnp3/model/dnp3-application.cc
+cp -r ${NATIG_SRC}/RC/code/dnp3/model/dnp3-application.cc src/dnp3/model/dnp3-application.cc
+cp -r ${NATIG_SRC}/RC/code/dnp3/model/dnp3-simulator-impl.* src/dnp3/model/
+cp -r ${NATIG_SRC}/RC/code/dnp3/model/tcptest* src/dnp3/model/
+cp -r ${NATIG_SRC}/RC/code/dnp3/model/dnp3-mim-* src/dnp3/model/
+cp -r ${NATIG_SRC}/RC/code/internet/* src/internet/
+cp -r ${NATIG_SRC}/RC/code/lte/* src/lte/
+cp -r ${NATIG_SRC}/RC/code/helics/helics-helper* /rd2c/ns-3-dev/contrib/helics/helper/
+cp -r ${NATIG_SRC}/RC/code/helics/dnp3-application-helper-new.* /rd2c/ns-3-dev/contrib/helics/helper/
+cp -r ${NATIG_SRC}/RC/code/helics/dnp3-application-new* /rd2c/ns-3-dev/contrib/helics/model/
+cp -r ${NATIG_SRC}/RC/code/helics/dnp3-application-new.cc /rd2c/ns-3-dev/contrib/helics/model/dnp3-application-new.cc
+cp -r ${NATIG_SRC}/RC/code/helics/dnp3-application-new.h /rd2c/ns-3-dev/contrib/helics/model/dnp3-application-new.h
+cp -r ${NATIG_SRC}/RC/code/helics/wscript /rd2c/ns-3-dev/contrib/helics/
 ./make.sh ${RD2C} 
 if [ "$1" == "5G" ]; then
     echo "installing 5G"
@@ -253,12 +254,12 @@ if [ "$1" == "5G" ]; then
     cd nr
     git checkout 5g-lena-v1.2.y
     cd ../../
-    cp -r ${RD2C}/PUSH/NATIG/patch/nr/* contrib/nr/
+    cp -r ${NATIG_SRC}/patch/nr/* contrib/nr/
     ./make.sh ${RD2C}
 fi
 
 #cd ../
 #cp -r PUSH/NATIG/integration/ .
 #cd integration/control/
-#cp ../../PUSH/NATIG/RC/code/ns3-helics-grid-dnp3-5G.cc .
-#cp ../../PUSH/NATIG/RC/code/ieee8500.glm .
+#cp ../${NATIG_SRC}/RC/code/ns3-helics-grid-dnp3-5G.cc .
+#cp ../${NATIG_SRC}/RC/code/ieee8500.glm .

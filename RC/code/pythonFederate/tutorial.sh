@@ -3,6 +3,7 @@
 
 # ==== set root and output
 export RD2C=$1
+NATIG_SRC="${NATIG_SRC:-${RD2C}/PUSH/NATIG}"
 export FNCS_INSTALL=${RD2C}
 export PATH=$PATH:${FNCS_INSTALL}/bin
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${FNCS_INSTALL}/lib
@@ -35,15 +36,15 @@ fi
 #Copying the points file to the config file
 if [[ "$5" == "conf" ]]
 then
-cp ../../PUSH/NATIG/RC/code/points-${4}/* config/
+cp ${NATIG_SRC}/RC/code/points-${4}/* config/
 fi
 
 if [[ "$2" == "4G" ]]
 then
 if [[ "$5" == "conf" ]]
 then
-    cp -r ../../PUSH/NATIG/RC/code/4G-conf-${4}/*.json config/
-    cp -r ../../PUSH/NATIG/RC/code/4G-conf-${4}/*.glm .
+    cp -r ${NATIG_SRC}/RC/code/4G-conf-${4}/*.json config/
+    cp -r ${NATIG_SRC}/RC/code/4G-conf-${4}/*.glm .
 fi
 modelName="ns3-helics-grid-dnp3-4G"
 fi
@@ -51,8 +52,8 @@ if [[ "$2" == "5G" ]]
 then
 if [[ "$5" == "conf" ]]
 then
-    cp -r ../../PUSH/NATIG/RC/code/5G-conf-${4}/*.json config/
-    cp -r ../../PUSH/NATIG/RC/code/5G-conf-${4}/*.glm .
+    cp -r ${NATIG_SRC}/RC/code/5G-conf-${4}/*.json config/
+    cp -r ${NATIG_SRC}/RC/code/5G-conf-${4}/*.glm .
 fi
 modelName="ns3-helics-grid-dnp3-5G"
 fi
@@ -60,8 +61,8 @@ if [[ "$2" == "3G" ]]
 then
 if [[ "$5" == "conf" ]]
 then
-    cp -r ../../PUSH/NATIG/RC/code/3G-conf-${4}/*.json config/
-    cp -r ../../PUSH/NATIG/RC/code/3G-conf-${4}/*.glm .
+    cp -r ${NATIG_SRC}/RC/code/3G-conf-${4}/*.json config/
+    cp -r ${NATIG_SRC}/RC/code/3G-conf-${4}/*.glm .
 fi
 modelName="ns3-helics-grid-dnp3"
 fi
