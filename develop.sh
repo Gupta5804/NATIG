@@ -52,10 +52,9 @@ cd ${RD2C_DIR}/ns-3-dev
 echo "Cleaning previous build..."
 ./waf distclean
 
-# Now, configure and build from a clean slate.
-# THIS IS THE CRITICAL CHANGE: We are telling waf where HELICS is installed.
-echo "Configuring new build with HELICS path..."
-./waf configure --enable-examples --enable-tests --with-helics=/usr/local
+# THIS IS THE FINAL FIX: Pass CXXFLAGS directly to configure
+echo "Configuring new build..."
+CXXFLAGS="-I/usr/local/include" ./waf configure --enable-examples --enable-tests --with-helics=/usr/local
 
 echo "Building ns-3..."
 ./waf
