@@ -25,7 +25,7 @@ MODBUS_MODULE_DIR="${NS3_SRC_DIR}/modbus"
 OLD_DNP3_DIR="${NS3_SRC_DIR}/dnp3"
 # Set up HELICS module
 echo "Setting up HELICS module..."
-bash "${RD2C_DIR}/NATIG/build_helics.sh"
+bash "${RD2C_DIR}/build_helics.sh"
 
 
 echo "=== 2. CREATING CLEAN 'modbus' MODULE STRUCTURE ==="
