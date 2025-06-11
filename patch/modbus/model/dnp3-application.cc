@@ -60,7 +60,9 @@ using namespace std;
 #include "ns3/object.hpp"
 #include "ns3/asdu.hpp"
 //#include "ns3/global-variables.h"
+#ifdef FNCS
 #include "fncs.hpp"
+#endif
 #include "ns3/seq-ts-header.h"
 #include <cstdlib>
 #include "ns3/helics.h"
