@@ -154,7 +154,7 @@ make
 make install
 cd ${RD2C}/gridlab-d
 autoreconf -if
-./configure --prefix=${RD2C} --with-xerces=${RD2C} --with-helics=${RD2C} --with-fncs=${RD2C} --enable-silent-rules 'CFLAGS=-g -O2 -w' 'CXXFLAGS=-g -O2 -w -std=c++14' 'LDFLAGS=-g -O2 -w'
+./configure --prefix=${RD2C} --with-xerces=${RD2C} --with-helics=${RD2C} --disable-fncs --enable-silent-rules 'CFLAGS=-g -O2 -w' 'CXXFLAGS=-g -O2 -w -std=c++14' 'LDFLAGS=-g -O2 -w'
 #./configure --with-helics=/usr/local --prefix=$GLD_INSTALL --enable-silent-rules 'CFLAGS=-g -O2 -w' 'CXXFLAGS=-g -O2 -w -std=c++14' 'LDFLAGS=-g -O2 -w' \
 make
 make install

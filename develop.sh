@@ -54,7 +54,7 @@ echo "Cleaning previous build..."
 
 # THIS IS THE FINAL FIX: Pass CXXFLAGS directly to configure
 echo "Configuring new build..."
-CXXFLAGS="-I/usr/local/include" ./waf configure --enable-examples --enable-tests --with-helics=/usr/local
+CXXFLAGS="-I/usr/local/include" ./waf configure --enable-examples --enable-tests --with-helics=/usr/local --disable-fncs
 
 echo "Building ns-3..."
 ./waf
