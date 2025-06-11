@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# Path to the NATIG source (defaults to ${NATIG_SRC})
-NATIG_SRC="${NATIG_SRC:-${RD2C:-/rd2c}/PUSH/NATIG}"
+# Path to the NATIG source. If NATIG_SRC is not provided, default to the
+# directory containing this script so we always use the local checkout.
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+NATIG_SRC="${NATIG_SRC:-${SCRIPT_DIR}}"
 
 cd /rd2c/ns-3-dev/contrib/
 rm -r helics

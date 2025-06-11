@@ -53,6 +53,12 @@ cp -v "${PATCH_DIR}/modbus/model"/* "${MODBUS_MODULE_DIR}/model/"
 cp -v "${PATCH_DIR}/modbus/helper"/* "${MODBUS_MODULE_DIR}/helper/"
 # Copy the module wscript
 cp -v "${PATCH_DIR}/modbus/wscript" "${MODBUS_MODULE_DIR}/"
+
+# Copy FNCS and applications patches so the build picks up the correct files
+cp -v "${PATCH_DIR}/fncs/wscript" "${NS3_SRC_DIR}/fncs/"
+mkdir -p "${NS3_SRC_DIR}/applications/model"
+cp -v "${PATCH_DIR}/applications/model"/fncs-application.* "${NS3_SRC_DIR}/applications/model/"
+cp -v "${PATCH_DIR}/applications/wscript" "${NS3_SRC_DIR}/applications/"
 echo ""
 
 echo "=== 3. CLEANING AND COMPILING NS-3 ==="
