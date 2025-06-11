@@ -37,9 +37,10 @@ using namespace std;
 #include "fncs-application.h"
 #include "ns3/random-variable-stream.h"
 
-//#ifdef FNCS
-#include </rd2c/include/fncs.hpp>
-//#endif
+// The FNCS header should be located via the build system include paths.
+// Use a generic include rather than an absolute one so the code works
+// regardless of where FNCS is installed.
+#include <fncs.hpp>
 
 #include <algorithm>
 #include <sstream>

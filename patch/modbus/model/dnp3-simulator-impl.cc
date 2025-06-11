@@ -38,7 +38,7 @@
 #include <vector>
 
 #ifdef FNCS
-#include </rd2c/include/fncs.hpp>
+#include <fncs.hpp>
 #include <exception>
 typedef std::vector<std::pair<std::string,std::string> > match_list_t;
 #endif
