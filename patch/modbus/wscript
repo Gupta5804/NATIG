@@ -1,19 +1,24 @@
 def build(bld):
-    # Define our new, clean 'modbus' module.
-    # It correctly depends on the necessary ns-3 modules and 'helics'.
-    module = bld.create_ns3_module('modbus', ['core', 'network', 'internet', 'point-to-point', 'helics'])
+    # Define our new, clean 'modbus' module. It depends on the core
+    # ns-3 libraries as well as the custom HELICS contrib module.
+    module = bld.create_ns3_module('modbus',
+                                   ['core', 'network', 'internet',
+                                    'point-to-point', 'helics'])
 
-    # List only the source files for your custom Modbus applications.
+    # Source files for the Modbus applications.
     module.source = [
         'model/modbus-master-app.cc',
         'model/modbus-slave-app.cc',
         'helper/modbus-helper.cc',
     ]
 
-    # Define the headers that other parts of the simulation can include.
-    module.headers = [
-    'model/modbus-master-app.h',
-    'model/modbus-slave-app.h',
-    'helper/modbus-helper.h',
-]
+    # Header files that other modules can include.
+    headers = bld(features='ns3header')
+    headers.module = 'modbus'
+    headers.source = [
+        'model/modbus-master-app.h',
+        'model/modbus-slave-app.h',
+        'helper/modbus-helper.h',
+    ]
+
 
