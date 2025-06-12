@@ -65,8 +65,8 @@ echo "=== 3. CLEANING AND COMPILING NS-3 ==="
 cd ${RD2C_DIR}/ns-3-dev
 
 # First, perform a deep clean to remove any old configuration caches.
-echo "Cleaning previous build..."
-./waf distclean
+#echo "Cleaning previous build..."
+#./waf distclean
 
 # THIS IS THE FINAL FIX: Pass CXXFLAGS directly to configure
 echo "Configuring new build..."
