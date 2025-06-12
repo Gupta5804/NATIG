@@ -20,3 +20,9 @@ even though `build_helics.sh` lives at the repository root.
 
 Keep this mount in mind when running `develop.sh` or related scripts
 so that path lookups succeed.
+
+The `ns-3-dev` directory is intentionally excluded from version control
+(see `.gitignore`). For builds to succeed, place your local `ns-3-dev`
+checkout inside the repository root. When launched via `rundocker.sh`,
+this directory will appear inside the container as `/rd2c/ns-3-dev`,
+which is the location expected by `develop.sh` and other scripts.
