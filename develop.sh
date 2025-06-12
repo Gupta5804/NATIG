@@ -40,6 +40,16 @@ cp -v "${PATCH_DIR}/modbus/helper/modbus-helper.h"     "${MODBUS_MODULE_DIR}/hel
 cp -v "${PATCH_DIR}/modbus/wscript"                    "${MODBUS_MODULE_DIR}/"
 echo ""
 
+# Ensure LTE patches are applied
+LTE_MODEL_DIR="${NS3_SRC_DIR}/lte/model"
+LTE_HELPER_DIR="${NS3_SRC_DIR}/lte/helper"
+mkdir -p "${LTE_MODEL_DIR}" "${LTE_HELPER_DIR}"
+cp -v "${PATCH_DIR}/lte/model/epc-pgw-application.cc" "${LTE_MODEL_DIR}/"
+cp -v "${PATCH_DIR}/lte/model/epc-pgw-application.h"  "${LTE_MODEL_DIR}/"
+cp -v "${PATCH_DIR}/lte/helper/no-backhaul-epc-helper.cc" "${LTE_HELPER_DIR}/"
+cp -v "${PATCH_DIR}/lte/helper/no-backhaul-epc-helper.h"  "${LTE_HELPER_DIR}/"
+echo ""
+
 echo "=== 2. PREPARING MAIN SCENARIO FILE ==="
 # Copy your main C++ file from the integration directory to the scratch
 # directory so that the ns-3 build system can compile it.
