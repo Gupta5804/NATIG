@@ -1076,6 +1076,12 @@ void Icmpv6DestinationUnreachable::SetPacket (Ptr<Packet> p)
   m_packet = p->Copy ();
 }
 
+Ptr<Packet> Icmpv6DestinationUnreachable::GetPacket () const
+{
+  NS_LOG_FUNCTION (this);
+  return m_packet;
+}
+
 void Icmpv6DestinationUnreachable::Print (std::ostream& os) const
 {
   NS_LOG_FUNCTION (this << &os);
@@ -1169,6 +1175,12 @@ void Icmpv6TooBig::SetPacket (Ptr<Packet> p)
   NS_LOG_FUNCTION (this << *p);
   NS_ASSERT (p->GetSize () <= 1280);
   m_packet = p->Copy ();
+}
+
+Ptr<Packet> Icmpv6TooBig::GetPacket () const
+{
+  NS_LOG_FUNCTION (this);
+  return m_packet;
 }
 
 uint32_t Icmpv6TooBig::GetMtu () const
@@ -1271,11 +1283,17 @@ Icmpv6TimeExceeded::~Icmpv6TimeExceeded ()
 }
 
 
-void Icmpv6TimeExceeded::SetPacket (Ptr<Packet> p) 
+void Icmpv6TimeExceeded::SetPacket (Ptr<Packet> p)
 {
   NS_LOG_FUNCTION (this << *p);
   NS_ASSERT (p->GetSize () <= 1280);
   m_packet = p->Copy ();
+}
+
+Ptr<Packet> Icmpv6TimeExceeded::GetPacket () const
+{
+  NS_LOG_FUNCTION (this);
+  return m_packet;
 }
 
 void Icmpv6TimeExceeded::Print (std::ostream& os) const
@@ -1371,6 +1389,12 @@ void Icmpv6ParameterError::SetPacket (Ptr<Packet> p)
   NS_LOG_FUNCTION (this << *p);
   NS_ASSERT (p->GetSize () <= 1280);
   m_packet = p->Copy ();
+}
+
+Ptr<Packet> Icmpv6ParameterError::GetPacket () const
+{
+  NS_LOG_FUNCTION (this);
+  return m_packet;
 }
 
 uint32_t Icmpv6ParameterError::GetPtr () const
@@ -1938,6 +1962,12 @@ void Icmpv6OptionRedirected::SetPacket (Ptr<Packet> packet)
   NS_ASSERT (packet->GetSize () <= 1280);
   m_packet = packet->Copy ();
   SetLength (1 + (m_packet->GetSize () / 8));
+}
+
+Ptr<Packet> Icmpv6OptionRedirected::GetPacket () const
+{
+  NS_LOG_FUNCTION (this);
+  return m_packet;
 }
 
 void Icmpv6OptionRedirected::Print (std::ostream& os) const

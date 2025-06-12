@@ -1065,6 +1065,11 @@ public:
    * \param p the incorrect packet
    */
   void SetPacket (Ptr<Packet> p);
+  /**
+   * \brief Get the packet that triggered the error.
+   * \return stored packet copy
+   */
+  Ptr<Packet> GetPacket () const;
 
   /**
    * \brief Print information.
@@ -1133,6 +1138,11 @@ public:
    * \param p the incorrect packet
    */
   void SetPacket (Ptr<Packet> p);
+  /**
+   * \brief Get the offending packet for this error message.
+   * \return stored packet
+   */
+  Ptr<Packet> GetPacket () const;
 
   /**
    * \brief Get the MTU field.
@@ -1219,6 +1229,11 @@ public:
    * \param p the incorrect packet
    */
   void SetPacket (Ptr<Packet> p);
+  /**
+   * \brief Retrieve the packet that triggered the error.
+   * \return stored packet
+   */
+  Ptr<Packet> GetPacket () const;
 
   /**
    * \brief Print information.
@@ -1288,6 +1303,11 @@ public:
    * \param p the incorrect packet
    */
   void SetPacket (Ptr<Packet> p);
+  /**
+   * \brief Access the incorrect packet stored in this header.
+   * \return stored packet copy
+   */
+  Ptr<Packet> GetPacket () const;
 
   /**
    * \brief Get the pointer field.
@@ -1735,6 +1755,11 @@ public:
    * \param packet the redirected packet
    */
   void SetPacket (Ptr<Packet> packet);
+  /**
+   * \brief Return the redirected packet stored in this option.
+   * \return redirected packet
+   */
+  Ptr<Packet> GetPacket () const;
 
   /**
    * \brief Print information.
