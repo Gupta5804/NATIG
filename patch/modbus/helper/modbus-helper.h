@@ -8,6 +8,7 @@
 #include "ns3/modbus-slave-app.h"
 
 namespace ns3 {
+namespace modbus {
 
 class ModbusMasterHelper
 {
@@ -33,6 +34,7 @@ private:
   ObjectFactory m_factory;
 };
 
+} // namespace modbus
 } // namespace ns3
 
 #endif // MODBUS_HELPER_H

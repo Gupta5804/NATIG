@@ -8,6 +8,7 @@
 #include "ns3/network-module.h"
 
 namespace ns3 {
+namespace modbus {
 
 class ModbusSlaveApp : public Application
 {
@@ -29,6 +30,7 @@ private:
   std::list<Ptr<Socket>> m_socketList;
 };
 
+} // namespace modbus
 } // namespace ns3
 #endif
 

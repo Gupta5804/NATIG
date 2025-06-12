@@ -10,13 +10,14 @@
 #include <list>
 
 namespace ns3 {
+namespace modbus {
 
 NS_LOG_COMPONENT_DEFINE ("ModbusSlaveApp");
 
 TypeId
 ModbusSlaveApp::GetTypeId (void)
 {
-  static TypeId tid = TypeId ("ns3::ModbusSlaveApp")
+  static TypeId tid = TypeId ("ns3::modbus::ModbusSlaveApp")
     .SetParent<Application> ()
     .SetGroupName ("Applications")
     .AddConstructor<ModbusSlaveApp> ()
@@ -125,5 +126,6 @@ ModbusSlaveApp::HandleRead (Ptr<Socket> socket)
     }
 }
 
+} // namespace modbus
 } // namespace ns3
 

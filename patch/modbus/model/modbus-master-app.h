@@ -8,6 +8,7 @@
 #include "ns3/network-module.h"
 
 namespace ns3 {
+namespace modbus {
 
 class ModbusMasterApp : public Application
 {
@@ -32,6 +33,7 @@ private:
   DataRate    m_dataRate;
 };
 
+} // namespace modbus
 } // namespace ns3
 #endif
 

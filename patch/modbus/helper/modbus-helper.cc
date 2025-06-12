@@ -2,10 +2,11 @@
 #include "ns3/names.h"
 
 namespace ns3 {
+namespace modbus {
 
 ModbusMasterHelper::ModbusMasterHelper()
 {
-  m_factory.SetTypeId("ns3::ModbusMasterApp");
+  m_factory.SetTypeId("ns3::modbus::ModbusMasterApp");
 }
 
 void ModbusMasterHelper::SetAttribute(std::string name, const AttributeValue &value)
@@ -37,7 +38,7 @@ Ptr<ModbusMasterApp> ModbusMasterHelper::InstallPriv(Ptr<Node> node) const
 
 ModbusSlaveHelper::ModbusSlaveHelper()
 {
-  m_factory.SetTypeId("ns3::ModbusSlaveApp");
+  m_factory.SetTypeId("ns3::modbus::ModbusSlaveApp");
 }
 
 void ModbusSlaveHelper::SetAttribute(std::string name, const AttributeValue &value)
@@ -67,4 +68,5 @@ Ptr<ModbusSlaveApp> ModbusSlaveHelper::InstallPriv(Ptr<Node> node) const
   return app;
 }
 
+} // namespace modbus
 } // namespace ns3

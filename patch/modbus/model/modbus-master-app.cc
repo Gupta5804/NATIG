@@ -9,13 +9,14 @@
 #include "ns3/uinteger.h"
 
 namespace ns3 {
+namespace modbus {
 
 NS_LOG_COMPONENT_DEFINE ("ModbusMasterApp");
 
 TypeId
 ModbusMasterApp::GetTypeId (void)
 {
-  static TypeId tid = TypeId ("ns3::ModbusMasterApp")
+  static TypeId tid = TypeId ("ns3::modbus::ModbusMasterApp")
     .SetParent<Application> ()
     .SetGroupName ("Applications")
     .AddConstructor<ModbusMasterApp> ()
@@ -115,5 +116,6 @@ ModbusMasterApp::SendData (void)
   m_socket->Send (packet);
 }
 
+} // namespace modbus
 } // namespace ns3
 
