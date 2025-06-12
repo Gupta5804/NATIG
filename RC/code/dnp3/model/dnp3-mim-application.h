@@ -212,10 +212,8 @@ private:
   void send_control_binary(Dnp3Application::ControlType type, DnpIndex_t index, ControlOutputRelayBlock::Code code);
   void send_control_analog(Dnp3Application::ControlType type, DnpIndex_t index, double value);
 
-  // In the case of TCP, each socket accept returns a new socket, so the
-  // listening socket is stored separately from the accepted sockets
-  Ptr<Socket>     m_socket1;       //!< Listening socket
-  Ptr<Socket>     m_socket2;       //!< Listening socket
+  // Socket used for both TCP and UDP operation
+  Ptr<Socket>     m_socket;        //!< Application socket
   std::list<Ptr<Socket> > m_socketList; //!< the accepted sockets
 
   Address         m_local;        //!< Local address to bind to
