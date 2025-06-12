@@ -1,5 +1,8 @@
 ## -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
 
+def configure(conf):
+    conf.env.append_value('CXXDEFINES', 'SECURITY_ENABLED')
+
 def build(bld):
     module = bld.create_ns3_module('modbus', ['core', 'network', 'internet', 'point-to-point', 'helics'])
 
@@ -32,6 +35,11 @@ def build(bld):
         'helper/dnp3-application-helper.cc',
         'helper/dnp3-mim-application-helper.cc',
         'helper/modbus-helper.cc',
+        'crypto/aes.c',
+        'crypto/sha1.c',
+        'crypto/sha2.c',
+        'crypto/wrap.c',
+        'crypto/temp_wrap.c',
         ]
 
     headers = bld(features='ns3header')
@@ -64,6 +72,10 @@ def build(bld):
         'model/modbus-master-app.h',
         'model/modbus-slave-app.h',
         'model/tcptest-application.h',
+        'crypto/aes.h',
+        'crypto/sha1.h',
+        'crypto/sha2.h',
+        'crypto/wrap.h',
         ]
 
     #if bld.env.ENABLE_EXAMPLES:
