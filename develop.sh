@@ -20,6 +20,7 @@ echo ""
 # Define key directories
 RD2C_DIR="/rd2c"
 NS3_SRC_DIR="${RD2C_DIR}/ns-3-dev/src"
+NS3_CONTRIB_DIR="${RD2C_DIR}/ns-3-dev/contrib"
 PATCH_DIR="${RD2C_DIR}/patch"
 MODBUS_MODULE_DIR="${NS3_SRC_DIR}/modbus"
 OLD_DNP3_DIR="${NS3_SRC_DIR}/dnp3"
@@ -58,6 +59,8 @@ cp -v "${PATCH_DIR}/applications/wscript" "${NS3_SRC_DIR}/applications/"
 # Overlay patched Internet module files to ensure new headers are used
 echo "Applying Internet module patches..."
 cp -rv "${PATCH_DIR}/internet"/* "${NS3_SRC_DIR}/internet/"
+# Ensure the HELICS build script ignores example programs
+cp -v "${RD2C_DIR}/RC/code/helics/wscript" "${NS3_CONTRIB_DIR}/helics/"
 echo ""
 
 echo "=== 3. CLEANING AND COMPILING NS-3 ==="
