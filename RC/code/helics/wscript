@@ -1,6 +1,6 @@
 def build(bld):
     # Build the HELICS module without any additional examples
-    module = bld.create_ns3_module('helics', ['core', 'network', 'internet'])
+    module = bld.create_ns3_module('helics', ['core', 'network', 'internet'], lib='helics')
     module.source = [
         'model/helics-application.cc',
         'model/helics-static-source-application.cc',
