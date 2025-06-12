@@ -20,9 +20,11 @@ echo ""
 # Define key directories
 RD2C_DIR="/rd2c"
 NS3_SRC_DIR="${RD2C_DIR}/ns-3-dev/src"
+NS3_CONTRIB_DIR="${RD2C_DIR}/ns-3-dev/contrib"
 PATCH_DIR="${RD2C_DIR}/patch"
 MODBUS_MODULE_DIR="${NS3_SRC_DIR}/modbus"
 OLD_DNP3_DIR="${NS3_SRC_DIR}/dnp3"
+CUSTOM_DNP3_DIR="${RD2C_DIR}/RC/code/dnp3"
 # Set up HELICS module
 echo "Setting up HELICS module..."
 bash "${RD2C_DIR}/build_helics.sh"
@@ -33,6 +35,11 @@ echo "=== 2. CREATING CLEAN 'modbus' MODULE STRUCTURE ==="
 if [ -d "${OLD_DNP3_DIR}" ]; then
     echo "Removing legacy dnp3 module..."
     rm -rf "${OLD_DNP3_DIR}"
+fi
+# Copy customized dnp3 module used by HELICS
+if [ -d "${CUSTOM_DNP3_DIR}" ]; then
+    echo "Copying custom dnp3 module..."
+    cp -rv "${CUSTOM_DNP3_DIR}" "${NS3_SRC_DIR}/"
 fi
 # Remove any previously copied modbus module to ensure a clean state
 if [ -d "${MODBUS_MODULE_DIR}" ]; then
@@ -52,6 +59,8 @@ cp -v "${PATCH_DIR}/applications/wscript" "${NS3_SRC_DIR}/applications/"
 # Overlay patched Internet module files to ensure new headers are used
 echo "Applying Internet module patches..."
 cp -rv "${PATCH_DIR}/internet"/* "${NS3_SRC_DIR}/internet/"
+# Ensure the HELICS build script ignores example programs
+cp -v "${RD2C_DIR}/RC/code/helics/wscript" "${NS3_CONTRIB_DIR}/helics/"
 echo ""
 
 echo "=== 3. CLEANING AND COMPILING NS-3 ==="
