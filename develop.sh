@@ -72,6 +72,7 @@ cd ${RD2C_DIR}/ns-3-dev
 
 # THIS IS THE FINAL FIX: Pass CXXFLAGS directly to configure
 echo "Configuring new build..."
+export LDFLAGS="-L/usr/local/lib -lhelicsSharedLib -ljsoncpp${LDFLAGS:+ $LDFLAGS}"
 CXXFLAGS="-I/usr/local/include" ./waf configure --enable-examples --enable-tests --disable-fncs
 
 echo "Building ns-3..."
