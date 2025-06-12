@@ -1,84 +1,13 @@
-## -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
-
-def configure(conf):
-    conf.env.append_value('CXXDEFINES', 'SECURITY_ENABLED')
-
 def build(bld):
     module = bld.create_ns3_module('modbus', ['core', 'network', 'internet', 'point-to-point', 'helics'])
-
     module.source = [
-        'dnplib/app.cpp',
-        'dnplib/asdu.cpp',
-        'dnplib/common.cpp',
-        'dnplib/datalink.cpp',
-        'dnplib/dummy_timer.cpp',
-        'dnplib/endpoint.cpp',
-        'dnplib/event_interface.cpp',
-        'dnplib/factory.cpp',
-        'dnplib/lpdu.cpp',
-        'dnplib/master.cpp',
-        'dnplib/object.cpp',
-        'dnplib/outstation.cpp',
-        'dnplib/security.cpp',
-        'dnplib/station.cpp',
-        'dnplib/stats.cpp',
-        'dnplib/timer_interface.cpp',
-        'dnplib/transmit_interface.cpp',
-        'dnplib/transport.cpp',
-        'dnplib/version.cpp',
-        'model/dnp3-application.cc',
-        'model/dnp3-mim-application.cc',
-        'model/dnp3-simulator-impl.cc',
         'model/modbus-master-app.cc',
         'model/modbus-slave-app.cc',
-        'model/tcptest-application.cc',
-        'helper/dnp3-application-helper.cc',
-        'helper/dnp3-mim-application-helper.cc',
         'helper/modbus-helper.cc',
-        'crypto/aes.c',
-        'crypto/sha1.c',
-        'crypto/sha2.c',
-        'crypto/wrap.c',
-        'crypto/temp_wrap.c',
-        ]
-
-    headers = bld(features='ns3header')
-    headers.module = 'modbus'
-    headers.source = [
-        'dnplib/app.hpp',
-        'dnplib/asdu.hpp',
-        'dnplib/common.hpp',
-        'dnplib/datalink.hpp',
-        'dnplib/dummy_timer.hpp',
-        'dnplib/endpoint.hpp',
-        'dnplib/event_interface.hpp',
-        'dnplib/factory.hpp',
-        'dnplib/lpdu.hpp',
-        'dnplib/master.hpp',
-        'dnplib/object.hpp',
-        'dnplib/outstation.hpp',
-        'dnplib/security.hpp',
-        'dnplib/station.hpp',
-        'dnplib/stats.hpp',
-        'dnplib/timer_interface.hpp',
-        'dnplib/transmit_interface.hpp',
-        'dnplib/transport.hpp',
-        'helper/dnp3-application-helper.h',
-        'helper/dnp3-mim-application-helper.h',
-        'helper/modbus-helper.h',
-        'model/dnp3-application.h',
-        'model/dnp3-mim-application.h',
-        'model/dnp3-simulator-impl.h',
+    ]
+    module.headers = [
         'model/modbus-master-app.h',
         'model/modbus-slave-app.h',
-        'model/tcptest-application.h',
-        'crypto/aes.h',
-        'crypto/sha1.h',
-        'crypto/sha2.h',
-        'crypto/wrap.h',
-        ]
+        'helper/modbus-helper.h',
+    ]
 
-    #if bld.env.ENABLE_EXAMPLES:
-    #    bld.recurse('examples')
-
-    # bld.ns3_python_bindings()

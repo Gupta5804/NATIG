@@ -45,10 +45,7 @@ mkdir -p "${MODBUS_MODULE_DIR}/helper"
 
 # Copy your patched files into the NEW modbus module directory
 echo "Copying patched files..."
-# Copy entire dnplib and crypto directories
-cp -r "${PATCH_DIR}/modbus/dnplib" "${MODBUS_MODULE_DIR}/"
-cp -r "${PATCH_DIR}/modbus/crypto" "${MODBUS_MODULE_DIR}/"
-# Copy all model and helper source files
+# Copy only the minimal source files for the clean module
 cp -v "${PATCH_DIR}/modbus/model"/* "${MODBUS_MODULE_DIR}/model/"
 cp -v "${PATCH_DIR}/modbus/helper"/* "${MODBUS_MODULE_DIR}/helper/"
 # Copy the module wscript
@@ -73,9 +70,7 @@ echo "Configuring new build..."
 CXXFLAGS="-I/usr/local/include" ./waf configure --enable-examples --enable-tests --with-helics=/usr/local --disable-fncs
 
 echo "Building ns-3..."
-./waf
-
-if [ $? -ne 0 ]; then
+if ! ./waf; then
     echo "ERROR: NS-3 compilation failed." >&2
     exit 1
 fi
