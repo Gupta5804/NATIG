@@ -157,11 +157,11 @@ EpcPgwApplication::DoDispose ()
 
 EpcPgwApplication::EpcPgwApplication (const Ptr<VirtualNetDevice> tunDevice, Ipv4Address s5Addr,
                                       const Ptr<Socket> s5uSocket, const Ptr<Socket> s5cSocket)
-  : m_pgwS5Addr (s5Addr),
+  : ip("7.0.0.2"),
+    m_pgwS5Addr (s5Addr),
     m_s5uSocket (s5uSocket),
     m_s5cSocket (s5cSocket),
     m_tunDevice (tunDevice),
-    ip("7.0.0.2"),
     m_gtpuUdpPort (2152), // fixed by the standard
     m_gtpcUdpPort (2123)  // fixed by the standard
 {
@@ -173,11 +173,11 @@ EpcPgwApplication::EpcPgwApplication (const Ptr<VirtualNetDevice> tunDevice, Ipv
 
 EpcPgwApplication::EpcPgwApplication (const Ptr<VirtualNetDevice> tunDevice, Ipv4Address s5Addr,
                                       const Ptr<Socket> s5uSocket, const Ptr<Socket> s5cSocket, std::string ip_)
-   : m_pgwS5Addr (s5Addr),
+   : ip(ip_),
+     m_pgwS5Addr (s5Addr),
      m_s5uSocket (s5uSocket),
      m_s5cSocket (s5cSocket),
      m_tunDevice (tunDevice),
-     ip(ip_),
      m_gtpuUdpPort (2152), // fixed by the standard
      m_gtpcUdpPort (2123)  // fixed by the standard
 {
