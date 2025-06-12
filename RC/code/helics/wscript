@@ -1,7 +1,13 @@
+def configure(conf):
+    conf.env['LIBPATH_HELICS'] = ['/usr/local/lib']
+    conf.env['LIB_HELICS'] = ['helicsSharedLib']
+    conf.env['LIB_JSONCPP'] = ['jsoncpp']
+    conf.env['ENABLE_HELICS'] = True
+
 def build(bld):
     # Build the HELICS module without any additional examples
     module = bld.create_ns3_module('helics', ['core', 'network', 'internet'])
-    module.use.extend(['helicsSharedLib', 'jsoncpp'])
+    module.use.extend(['HELICS', 'JSONCPP'])
     module.source = [
         'model/helics-application.cc',
         'model/helics-static-source-application.cc',
