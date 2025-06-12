@@ -899,8 +899,7 @@ MasterSecurity::MasterSecurity(Master* app_p, bool aggressiveMode) :
     assert (sizeof(temp)/sizeof(Stats::Element) == NUM_STATS);
     memcpy(statElements, temp, sizeof(temp));
     // MA - Master Authentication
-    //snprintf(name, sizeof(name), "MA %6d ", app_p->addr);
-    app_p->addr.CopyTo((unsigned char*)name);
+    snprintf(name, sizeof(name), "MA %6d ", app_p->addr);
     stats = Stats( name, app_p->addr, app_p->debug_p, statElements, NUM_STATS,
 		   app_p->db_p, EventInterface::SA_AB_ST);
 }
@@ -1134,8 +1133,7 @@ OutstationSecurity::OutstationSecurity(Outstation* app_p, bool aggressiveMode):
     assert (sizeof(temp)/sizeof(Stats::Element) == NUM_STATS);
     memcpy(statElements, temp, sizeof(temp));
     // OA - Outstation Authentication
-    //snprintf(name, sizeof(name), "OA %6d ", app_p->addr);
-    app_p->addr.CopyTo((unsigned char*)name);
+    snprintf(name, sizeof(name), "OA %6d ", app_p->addr);
     stats = Stats( name, app_p->addr, app_p->debug_p, statElements, NUM_STATS,
 		   app_p->db_p, EventInterface::SA_AB_ST);
 
