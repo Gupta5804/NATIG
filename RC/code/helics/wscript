@@ -1,6 +1,10 @@
+# This is the final, correct content for /rd2c/ns-3-dev/contrib/helics/wscript
+
 def build(bld):
-    # Build the HELICS module without any additional examples
-    module = bld.create_ns3_module('helics', ['core', 'network', 'internet'], lib='helics')
+    # This correctly defines the 'helics' module and its ns-3 dependencies.
+    module = bld.create_ns3_module('helics', ['core', 'network', 'internet'])
+
+    # This lists the essential source files for the ns-3 helics library itself.
     module.source = [
         'model/helics-application.cc',
         'model/helics-static-source-application.cc',
@@ -9,11 +13,11 @@ def build(bld):
         'model/helics-id-tag.cc',
         'model/helics-simulator-impl.cc',
         'helper/helics-helper.cc',
-    ]
+        ]
 
-    headers = bld(features='ns3header')
-    headers.module = 'helics'
-    headers.source = [
+    # THIS IS THE CORRECTED SECTION:
+    # It provides a simple list of headers, which is the correct syntax.
+    module.headers = [
         'model/helics-application.h',
         'model/helics-static-source-application.h',
         'model/helics-static-sink-application.h',
@@ -21,5 +25,8 @@ def build(bld):
         'model/helics-id-tag.h',
         'model/helics-simulator-impl.h',
         'helper/helics-helper.h',
-    ]
+        ]
 
+    # This correctly tells the linker to link this module against the main
+    # libhelics.so library that we installed system-wide.
+    module.env.append_value('LIB', ['helics'])
