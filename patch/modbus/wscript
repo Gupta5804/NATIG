@@ -1,5 +1,8 @@
 ## -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
 
+def configure(conf):
+    conf.env.append_value('CXXDEFINES', 'SECURITY_ENABLED')
+
 def build(bld):
     module = bld.create_ns3_module('modbus', ['core', 'network', 'internet', 'point-to-point', 'helics'])
 
