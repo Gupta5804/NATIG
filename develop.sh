@@ -1,93 +1,83 @@
 #!/bin/bash
 
 #################################################################
-#           FINAL DEVELOPMENT WORKFLOW SCRIPT
+#           FINAL PRODUCTION BUILD SCRIPT
 #
-# This version creates and uses a new, clean `modbus` module
-# to eliminate all legacy dependency errors.
+# This script builds your main simulation program now that all
+# C++ code and dependencies are correct.
 #################################################################
 
-set -e # Exit immediately if a command exits.
-
-echo "=== 1. SETTING UP BUILD ENVIRONMENT ==="
-# Set the library path for the linker
-export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH
-# Set the include path for the compiler
-export CXXFLAGS="-I/usr/local/include"
-echo "Environment configured."
-echo ""
+set -e
 
 # Define key directories
 RD2C_DIR="/rd2c"
 NS3_SRC_DIR="${RD2C_DIR}/ns-3-dev/src"
-NS3_CONTRIB_DIR="${RD2C_DIR}/ns-3-dev/contrib"
 PATCH_DIR="${RD2C_DIR}/patch"
+SCRATCH_DIR="${RD2C_DIR}/ns-3-dev/scratch"
 MODBUS_MODULE_DIR="${NS3_SRC_DIR}/modbus"
 OLD_DNP3_DIR="${NS3_SRC_DIR}/dnp3"
-CUSTOM_DNP3_DIR="${RD2C_DIR}/RC/code/dnp3"
-# Set up HELICS module
-echo "Setting up HELICS module..."
-bash "${RD2C_DIR}/build_helics.sh"
 
+echo "=== 1. PREPARING SOURCE & PATCHES ==="
 
-echo "=== 2. CREATING CLEAN 'modbus' MODULE STRUCTURE ==="
 # Remove any legacy 'dnp3' module to avoid build conflicts
 if [ -d "${OLD_DNP3_DIR}" ]; then
     echo "Removing legacy dnp3 module..."
     rm -rf "${OLD_DNP3_DIR}"
 fi
-# Copy customized dnp3 module used by HELICS
-if [ -d "${CUSTOM_DNP3_DIR}" ]; then
-    echo "Copying custom dnp3 module..."
-    cp -rv "${CUSTOM_DNP3_DIR}" "${NS3_SRC_DIR}/"
-fi
-# Remove any previously copied modbus module to ensure a clean state
-if [ -d "${MODBUS_MODULE_DIR}" ]; then
-    echo "Removing old modbus module..."
-    rm -rf "${MODBUS_MODULE_DIR}"
-fi
-# Copy the patched modbus module fresh
-echo "Copying patched modbus module..."
-cp -rv "${PATCH_DIR}/modbus" "${MODBUS_MODULE_DIR}"
 
-# Copy FNCS and applications patches so the build picks up the correct files
-cp -v "${PATCH_DIR}/fncs/wscript" "${NS3_SRC_DIR}/fncs/"
-mkdir -p "${NS3_SRC_DIR}/applications/model"
-cp -v "${PATCH_DIR}/applications/model"/fncs-application.* "${NS3_SRC_DIR}/applications/model/"
-cp -v "${PATCH_DIR}/applications/wscript" "${NS3_SRC_DIR}/applications/"
+# Create the new directory structure for our clean module
+mkdir -p "${MODBUS_MODULE_DIR}/model"
+mkdir -p "${MODBUS_MODULE_DIR}/helper"
 
-# Overlay patched Internet module files to ensure new headers are used
-echo "Applying Internet module patches..."
-cp -rv "${PATCH_DIR}/internet"/* "${NS3_SRC_DIR}/internet/"
-# Ensure the HELICS build script ignores example programs
-cp -v "${RD2C_DIR}/RC/code/helics/wscript" "${NS3_CONTRIB_DIR}/helics/"
+# Copy your patched files into the NEW modbus module directory
+echo "Copying patched files..."
+cp -v "${PATCH_DIR}/modbus/model/modbus-master-app.cc" "${MODBUS_MODULE_DIR}/model/"
+cp -v "${PATCH_DIR}/modbus/model/modbus-master-app.h"  "${MODBUS_MODULE_DIR}/model/"
+cp -v "${PATCH_DIR}/modbus/model/modbus-slave-app.cc"  "${MODBUS_MODULE_DIR}/model/"
+cp -v "${PATCH_DIR}/modbus/model/modbus-slave-app.h"   "${MODBUS_MODULE_DIR}/model/"
+cp -v "${PATCH_DIR}/modbus/helper/modbus-helper.cc"    "${MODBUS_MODULE_DIR}/helper/"
+cp -v "${PATCH_DIR}/modbus/helper/modbus-helper.h"     "${MODBUS_MODULE_DIR}/helper/"
+cp -v "${PATCH_DIR}/modbus/wscript"                    "${MODBUS_MODULE_DIR}/"
+echo ""
+
+echo "=== 2. PREPARING MAIN SCENARIO FILE ==="
+# Copy your main C++ file from the integration directory to the scratch
+# directory so that the ns-3 build system can compile it.
+cp -v "${RD2C_DIR}/integration/control/ns3-helics-grid-dnp3.cc" "${SCRATCH_DIR}/"
+
+# Create the wscript to build the main program. It must link to your modbus module.
+cat > "${SCRATCH_DIR}/wscript" << EOF2
+def build(bld):
+    bld.create_ns3_program('ns3-helics-grid-dnp3',
+                           ['core', 'network', 'internet', 'point-to-point', 'csma', 'wifi', 'mobility', 'applications', 'modbus', 'helics'])
+    bld.source = 'ns3-helics-grid-dnp3.cc'
+EOF2
+
+echo "Main scenario prepared successfully."
 echo ""
 
 echo "=== 3. CLEANING AND COMPILING NS-3 ==="
 cd ${RD2C_DIR}/ns-3-dev
 
-# First, perform a deep clean to remove any old configuration caches.
-#echo "Cleaning previous build..."
-#./waf distclean
+echo "Cleaning previous build..."
+./waf distclean
 
-# THIS IS THE FINAL FIX: Pass CXXFLAGS directly to configure
 echo "Configuring new build..."
-export LDFLAGS="-L/usr/local/lib -lhelicsSharedLib -ljsoncpp${LDFLAGS:+ $LDFLAGS}"
-CXXFLAGS="-I/usr/local/include" ./waf configure --enable-examples --enable-tests --disable-fncs
+./waf configure --enable-examples --enable-tests
 
 echo "Building ns-3..."
 if ! ./waf; then
     echo "ERROR: NS-3 compilation failed." >&2
     exit 1
 fi
+
 echo ""
 
 echo "=== 4. RUNNING SIMULATION ==="
 cd ${RD2C_DIR}/integration/control
-# We will use a temporary run script to avoid any lingering issues
-# in the old run_ns3_only.sh.
-echo "Starting ns-3 simulation..."
-./build/ns3-helics-grid-dnp3 --conf="config/grid.json" --ns_config="config/ns_config.json"
+
+echo "Build successful! Running the main simulation..."
+${SCRATCH_DIR}/build/ns3-helics-grid-dnp3 --conf="config/grid.json" --ns_config="config/ns_config.json" --helicsConfig="config/helics_config.json"
 
 echo ""
-echo "=== BUILD AND RUN COMPLETE! ==="
+echo "=== SIMULATION COMPLETE! ==="

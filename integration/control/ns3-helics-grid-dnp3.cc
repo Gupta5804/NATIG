@@ -522,7 +522,6 @@ main (int argc, char *argv[])
   {
     //LogComponentEnable ("IntagrationExample", LOG_LEVEL_INFO);
     // LogComponentEnable ("HelicsSimulatorImpl", LOG_LEVEL_LOGIC);
-    //LogComponentEnable ("Dnp3ApplicationNew", LOG_LEVEL_INFO);
     // LogComponentEnable ("HelicsApplication", LOG_LEVEL_LOGIC);
     //LogComponentEnable ("Names", LOG_LEVEL_LOGIC);
   }
