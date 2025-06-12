@@ -48,7 +48,7 @@ using namespace std;
 
 namespace ns3 {
 
-class Outstation : BaseApplication
+class Outstation : public BaseApplication
 {
 public:
     static const unsigned int MAX_POINTS      = 79;
@@ -160,10 +160,8 @@ public:
     void set_stationName(string name);
     void set_publishCallback(const std::function<void(std::string, std::string, std::string)>& callback);
 private:
-#ifdef SECURITY_ENABLED
     friend class SecureAuthentication;
     friend class OutstationSecurity;
-#endif
     // call when a new fragment has been rxd by the transport function
     void processRxdFragment(map<string, float> analog_points, map<string, uint16_t> bin_points);
 

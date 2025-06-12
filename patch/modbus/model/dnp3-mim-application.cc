@@ -50,7 +50,7 @@ using namespace std;
 #include "ns3/event_interface.hpp"
 #include "ns3/object.hpp"
 #include "ns3/asdu.hpp"
-#include "ns3/global-variables.h"
+// #include "ns3/global-variables.h"
 
 
 namespace ns3 {

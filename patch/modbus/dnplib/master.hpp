@@ -44,7 +44,7 @@ namespace ns3 {
 // none of the states or methods are timing dependent to facilitate
 // debugging
 // this class is NOT reentrant
-class Master : BaseApplication
+class Master : public BaseApplication
 {
 public:
 
@@ -97,11 +97,9 @@ public:
     void transmitEmpty(Lpdu::UserData data);
 
 private:
-#ifdef SECURITY_ENABLED
     friend class SecureAuthentication;
     friend class MasterSecurity;
     friend class TestSecurity;
-#endif
     friend class TestMaster;
     
 
