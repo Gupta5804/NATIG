@@ -347,155 +347,55 @@ void Dnp3Application::makeTcpConnection(void) {
     MakeCallback (&Dnp3Application::HandlePeerError, this));
 }
 
-void Dnp3Application::makeUdpConnection(void) {
-  NS_LOG_FUNCTION (this);
+void Dnp3Application::makeUdpConnection(void)
+{
+  NS_LOG_FUNCTION(this);
 
-   // Create the socket if not already Onoff
   if (!m_socket)
-       {
-         m_socket = Socket::CreateSocket (GetNode (), m_tid);
-         if (Inet6SocketAddress::IsMatchingType (m_peer))
-           {
-             if (m_socket->Bind6 () == -1)
-               {
-                 NS_FATAL_ERROR ("Failed to bind socket");
-               }
-           }
-         else if (InetSocketAddress::IsMatchingType (m_peer) ||
-                  PacketSocketAddress::IsMatchingType (m_peer))
-           {
-             if (m_socket->Bind () == -1)
-               {
-                 NS_FATAL_ERROR ("Failed to bind socket");
-               }
-           }
-         m_socket->Connect (m_peer);
-         m_socket->SetAllowBroadcast (true);
-         m_socket->ShutdownRecv ();
-   
-         m_socket->SetConnectCallback (
-           MakeCallback (&OnOffApplication::ConnectionSucceeded, this),
-           MakeCallback (&OnOffApplication::ConnectionFailed, this));
-       }
-     m_cbrRateFailSafe = m_cbrRate;
-
-
-  //Packet sink
-    m_socket = Socket::CreateSocket (GetNode (), m_tid);
-    if (m_socket->Bind (m_local) == -1)
-           {
-             NS_FATAL_ERROR ("Failed to bind socket");
-           }
-         m_socket->Listen ();
-         m_socket->ShutdownSend ();
-         if (addressUtils::IsMulticast (m_local))
-          {
-             Ptr<UdpSocket> udpSocket = DynamicCast<UdpSocket> (m_socket);
-             if (udpSocket)
-               {
-                 // equivalent to setsockopt (MCAST_JOIN_GROUP)
-                 udpSocket->MulticastJoinGroup (0, m_local);
-               }
-             else
-               {
-                 NS_FATAL_ERROR ("Error: joining multicast on a non-UDP socket");
-               }
-           }
-       }
-   
-     m_socket->SetRecvCallback (MakeCallback (&PacketSink::HandleRead, this));
-     m_socket->SetAcceptCallback (
-       MakeNullCallback<bool, Ptr<Socket>, const Address &> (),
-       MakeCallback (&PacketSink::HandleAccept, this));
-     m_socket->SetCloseCallbacks (
-       MakeCallback (&PacketSink::HandlePeerClose, this),
-       MakeCallback (&PacketSink::HandlePeerError, this));
-
-  if (m_socket == 0)
     {
-      TypeId tid = TypeId::LookupByName ("ns3::Ipv4RawSocketFactory");
-      m_socket = Socket::CreateSocket (GetNode (), tid);
+      TypeId tid = UdpSocketFactory::GetTypeId();
+      m_socket = Socket::CreateSocket(GetNode(), tid);
 
-       if (Ipv4Address::IsMatchingType(m_localAddress) == true)
+      if (Ipv4Address::IsMatchingType(m_localAddress))
         {
-          InetSocketAddress local = InetSocketAddress (Ipv4Address::GetAny (), m_localPort);
+          InetSocketAddress local = InetSocketAddress(Ipv4Address::GetAny(), m_localPort);
           m_socket->Bind(local);
         }
-      else if (Ipv6Address::IsMatchingType(m_localAddress) == true)
+      else if (Ipv6Address::IsMatchingType(m_localAddress))
         {
-          Inet6SocketAddress local = Inet6SocketAddress (Ipv6Address::GetAny (), m_localPort);
+          Inet6SocketAddress local = Inet6SocketAddress(Ipv6Address::GetAny(), m_localPort);
           m_socket->Bind(local);
         }
       else
         {
-          InetSocketAddress local = InetSocketAddress (Ipv4Address::GetAny (), m_localPort);
+          InetSocketAddress local = InetSocketAddress(Ipv4Address::GetAny(), m_localPort);
           m_socket->Bind(local);
-          //NS_ASSERT_MSG (false, "Incompatible address type: " << m_localAddress);
         }
-//Added TWE
-      TypeId tid = TypeId::LookupByName ("ns3::UdpSocketFactory");
-      mim_socket = Socket::CreateSocket (GetNode (), tid);
-
-       if (Ipv4Address::IsMatchingType(m_remoteAddress) == true)
-        {
-          InetSocketAddress local = InetSocketAddress (Ipv4Address::GetAny (), m_remotePort);
-        mim_socket->Bind(local);
-        }
-      else if (Ipv6Address::IsMatchingType(m_remoteAddress) == true)
-        {
-          Inet6SocketAddress local = Inet6SocketAddress (Ipv6Address::GetAny (), m_remotePort);
-          mim_socket->Bind(local);
-        }
-      else
-        {
-          InetSocketAddress local = InetSocketAddress (Ipv4Address::GetAny (), m_remotePort);
-         mim_socket->Bind(local);
-          NS_ASSERT_MSG (false, "Incompatible address type: " << m_localAddress);
-        }
-
     }
-    m_socket->SetRecvCallback (MakeCallback (&Dnp3Application::HandleRead, this));
 
-    if(m_isMaster == true) {
+  m_socket->SetRecvCallback(MakeCallback(&Dnp3Application::HandleRead, this));
+  m_socket->SetAcceptCallback(
+      MakeNullCallback<bool, Ptr<Socket>, const Address &>(),
+      MakeCallback(&Dnp3Application::HandleAccept, this));
+  m_socket->SetCloseCallbacks(
+      MakeCallback(&Dnp3Application::HandlePeerClose, this),
+      MakeCallback(&Dnp3Application::HandlePeerError, this));
 
-        startMaster();
-        if (m_name.compare("MIM")!= 0) {
-            NS_LOG_INFO("I'm Master");
-            periodic_poll(0);
-            Simulator::Schedule(Seconds(11), &Dnp3Application::send_control_binary, this, Dnp3Application::SELECT_OPERATE, 0, ControlOutputRelayBlock::TRIP);
-            Simulator::Schedule(Seconds(21), &Dnp3Application::send_control_binary, this, Dnp3Application::DIRECT, 0, ControlOutputRelayBlock::CLOSE);
-            Simulator::Schedule(Seconds(31), &Dnp3Application::send_control_analog, this, Dnp3Application::SELECT_OPERATE, 0, 3);
-            Simulator::Schedule(Seconds(41), &Dnp3Application::send_control_analog, this, Dnp3Application::DIRECT, 0, 5);
-        } else {
-            NS_LOG_INFO("I'm MIM Master");
-            if(m_attackStartTime)
-            {
-                //Schedule for start of the attack (in seconds)
-                Simulator::Schedule(Seconds(m_attackStartTime), &Dnp3Application::set_attack, this, true); //virtual method
-            }
-            if(m_attackEndTime) {
-                //Schedule for end of the attack (in seconds)
-                Simulator::Schedule(Seconds(m_attackEndTime), &Dnp3Application::set_attack, this, false); //virtual method
-            }
+  if (m_isMaster)
+    {
+      NS_LOG_INFO("I'm Master");
+      Simulator::Schedule(Seconds(10), &Dnp3Application::ConnectToPeer, this, m_socket, m_remotelPort);
+      startMaster();
+      if (m_name.compare("MIM") != 0)
+        {
+          periodic_poll(0);
         }
-
-    } else {
-        if (m_name.compare("MIM")!= 0) {
-            NS_LOG_INFO("I'm Outstation");
-        } else {
-                NS_LOG_INFO("I'm MIM Outstation");
-                if(m_attackStartTime)
-                {
-                    //Schedule for start of the attack (in seconds)
-                    Simulator::Schedule(Seconds(m_attackStartTime), &Dnp3Application::set_attack, this, true); //virtual method
-                }
-                if(m_attackEndTime) {
-                    //Schedule for end of the attack (in seconds)
-                    Simulator::Schedule(Seconds(m_attackEndTime), &Dnp3Application::set_attack, this, false); //virtual method
-                }
-        }
-        m_socket->Connect (InetSocketAddress (Ipv4Address::ConvertFrom(m_remoteAddress), m_remotelPort));
-        startOutstation(m_socket);
+    }
+  else
+    {
+      NS_LOG_INFO(m_name.compare("MIM") != 0 ? "I'm Outstation" : "I'm MIM Outstation");
+      m_socket->Listen();
+      startOutstation(m_socket);
     }
 }
 
