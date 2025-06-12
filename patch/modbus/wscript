@@ -5,7 +5,9 @@ def build(bld):
         'model/modbus-slave-app.cc',
         'helper/modbus-helper.cc',
     ]
-    module.headers = [
+    headers = bld(features='ns3header')
+    headers.module = 'modbus'
+    headers.source = [
         'model/modbus-master-app.h',
         'model/modbus-slave-app.h',
         'helper/modbus-helper.h',
