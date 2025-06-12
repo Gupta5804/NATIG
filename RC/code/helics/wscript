@@ -12,6 +12,8 @@ def build(bld):
     ]
     # Link against the installed HELICS library
     module.env.append_value('LIB', 'helics')
+    # Tell the linker where to find libhelics
+    module.env.append_value('LIBPATH', ['/usr/local/lib'])
 
     headers = bld(features='ns3header')
     headers.module = 'helics'
