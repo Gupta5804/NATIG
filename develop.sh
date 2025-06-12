@@ -34,22 +34,14 @@ if [ -d "${OLD_DNP3_DIR}" ]; then
     echo "Removing legacy dnp3 module..."
     rm -rf "${OLD_DNP3_DIR}"
 fi
-# Create the new directory structure for our clean module
-
-# Ensure the base directory exists
-mkdir -p "${MODBUS_MODULE_DIR}"
-# Create the required subdirectories
-mkdir -p "${MODBUS_MODULE_DIR}/model"
-mkdir -p "${MODBUS_MODULE_DIR}/helper"
-
-
-# Copy your patched files into the NEW modbus module directory
-echo "Copying patched files..."
-# Copy only the minimal source files for the clean module
-cp -v "${PATCH_DIR}/modbus/model"/* "${MODBUS_MODULE_DIR}/model/"
-cp -v "${PATCH_DIR}/modbus/helper"/* "${MODBUS_MODULE_DIR}/helper/"
-# Copy the module wscript
-cp -v "${PATCH_DIR}/modbus/wscript" "${MODBUS_MODULE_DIR}/"
+# Remove any previously copied modbus module to ensure a clean state
+if [ -d "${MODBUS_MODULE_DIR}" ]; then
+    echo "Removing old modbus module..."
+    rm -rf "${MODBUS_MODULE_DIR}"
+fi
+# Copy the patched modbus module fresh
+echo "Copying patched modbus module..."
+cp -rv "${PATCH_DIR}/modbus" "${MODBUS_MODULE_DIR}"
 
 # Copy FNCS and applications patches so the build picks up the correct files
 cp -v "${PATCH_DIR}/fncs/wscript" "${NS3_SRC_DIR}/fncs/"
