@@ -59,8 +59,8 @@ echo ""
 echo "=== 3. CLEANING AND COMPILING NS-3 ==="
 cd ${RD2C_DIR}/ns-3-dev
 
-echo "Cleaning previous build..."
-./waf distclean
+#echo "Cleaning previous build..."
+#./waf distclean
 
 echo "Configuring new build..."
 ./waf configure --enable-examples --enable-tests
