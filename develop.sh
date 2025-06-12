@@ -48,6 +48,10 @@ cp -v "${PATCH_DIR}/fncs/wscript" "${NS3_SRC_DIR}/fncs/"
 mkdir -p "${NS3_SRC_DIR}/applications/model"
 cp -v "${PATCH_DIR}/applications/model"/fncs-application.* "${NS3_SRC_DIR}/applications/model/"
 cp -v "${PATCH_DIR}/applications/wscript" "${NS3_SRC_DIR}/applications/"
+
+# Overlay patched Internet module files to ensure new headers are used
+echo "Applying Internet module patches..."
+cp -rv "${PATCH_DIR}/internet"/* "${NS3_SRC_DIR}/internet/"
 echo ""
 
 echo "=== 3. CLEANING AND COMPILING NS-3 ==="
