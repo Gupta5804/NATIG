@@ -101,6 +101,7 @@ DnpStat_t Master::getSecAuthStat( DnpAddr_t stationAddr, int index)
 #ifdef SECURITY_ENABLED
     return stationMap[ stationAddr]->secAuth.stats.get( index);
 #endif
+    return 0;
 }
 
 DnpStat_t Master::getState() const
@@ -113,6 +114,7 @@ DnpStat_t Master::getSecAuthState() const
 #ifdef SECURITY_ENABLED
     return stn_p->secAuth.stats.get(SecureAuthentication::STATE);
 #endif
+    return 0;
 }
 
 DnpStat_t Master::rxData(Bytes* buf, Uptime_t timeRxd)
