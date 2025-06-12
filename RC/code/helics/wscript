@@ -17,8 +17,6 @@ def build(bld):
         'model/helics-simulator-impl.cc',
         'helper/helics-helper.cc',
         'model/helics.cc',
-        'model/dnp3-application-new.cc',
-        'helper/dnp3-application-helper-new.cc',
     ]
     # Link against the installed HELICS library
     # Expect libhelicsSharedLib.so to be installed
@@ -38,6 +36,4 @@ def build(bld):
         'model/helics-simulator-impl.h',
         'helper/helics-helper.h',
         'model/helics.h',
-        'model/dnp3-application-new.h',
-        'helper/dnp3-application-helper-new.h',
     ]
