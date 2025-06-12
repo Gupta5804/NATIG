@@ -72,7 +72,7 @@ cd ${RD2C_DIR}/ns-3-dev
 
 # THIS IS THE FINAL FIX: Pass CXXFLAGS directly to configure
 echo "Configuring new build..."
-CXXFLAGS="-I/usr/local/include" ./waf configure --enable-examples --enable-tests --with-helics=/usr/local --disable-fncs
+CXXFLAGS="-I/usr/local/include" ./waf configure --enable-examples --enable-tests --disable-fncs
 
 echo "Building ns-3..."
 if ! ./waf; then
