@@ -11,6 +11,8 @@ def build(bld):
         'helper/helics-helper.cc',
     ]
     # Link against the installed HELICS library
+    # Expect libhelicsSharedLib.so to be installed
+    module.env.append_value('LIB', 'helicsSharedLib')
     module.env.append_value('LIBPATH', ['/usr/local/lib'])
     module.env.append_value('LIB', 'helics')
     # Tell the linker where to find libhelics
