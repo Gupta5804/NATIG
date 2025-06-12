@@ -813,212 +813,27 @@ main (int argc, char *argv[])
 
   }
 
-  //Getting a list MIM nodes
-  std::string IDsMIM = configObject["MIM"][0]["listMIM"].asString();
-  size_t pos = 0;
-  std::string delimiter = ",";
-  std::vector<std::string> val;
-  std::string token;
-  std::string VI = IDsMIM;
-  while ((pos = VI.find(delimiter)) != std::string::npos) {
-	  token = VI.substr(0, pos);
-	  val.push_back(token);
-	  VI.erase(0, pos + delimiter.length());
-  }
-  val.push_back(VI);
+  // Create Modbus master/slave applications
+  ApplicationContainer modbusMasterApp, modbusSlaveApp;
 
-  uint16_t port = 20000;
-  uint16_t master_port = 40000;
-  ApplicationContainer dnpOutstationApp, dnpMasterApp;
-  //Ptr<Node> hubNode = star.GetHub ();
-  std::vector<uint16_t> mimPort;
-  //changing the parameters of the nodes in the network
-  Simulator::Schedule (Seconds (3.2), &updatePower); 
-
-  for (i = 0;i < configObject["microgrid"].size();i++)
+  for (i = 0; i < configObject["microgrid"].size(); i++)
   {
-    mimPort.push_back(master_port);
-    auto ep_name = configObject["microgrid"][i]["name"].asString();
-    std::cout << "Microgrid network node: " << ep_name << " " << Microgrid.GetN() << " " << configObject["microgrid"][i].size() << " " << i << std::endl;
-    Ptr<Node> tempnode1 = Microgrid.Get(i); //star.GetSpokeNode (i);
-    //std::cout << "hub:" << star.GetHubIpv4Address(i) << ", spike:" << star.GetSpokeIpv4Address(i) << std::endl;
+    Ptr<Node> tempnode1 = Microgrid.Get(i);
 
-    auto cc_name = configObject["controlCenter"]["name"].asString();
-    std::cout << "Control Center network node: " << cc_name << std::endl;
-    
-    int ID = 1; //i+1;
-    if (ring){
-          ID = 1;
-    }
-    //auto ep_name = configObject["microgrid"][i]["name"].asString();
-    std::string IDx = "SS_";
-    if (std::string(ep_name).find(IDx) != std::string::npos){
-        ep_name = "SS_"+std::to_string(i+1);
-    }
-    std::cout << ep_name << std::endl;
-    interface[i] = i+1;
-    Dnp3ApplicationHelperNew dnp3Master ("ns3::UdpSocketFactory", InetSocketAddress (hubNode.Get(0)->GetObject<Ipv4>()->GetAddress(ID,0).GetLocal(), master_port));  //star.GetHubIpv4Address(i), master_port));
+    modbus::ModbusSlaveHelper modbusSlaveHelper;
+    modbusSlaveHelper.SetAttribute("LocalPort", UintegerValue(502));
+    modbusSlaveApp.Add(modbusSlaveHelper.Install(tempnode1));
 
-    dnp3Master.SetAttribute("LocalPort", UintegerValue(master_port));
-    dnp3Master.SetAttribute("RemoteAddress", AddressValue(tempnode1->GetObject<Ipv4>()->GetAddress(1,0).GetLocal()));//star.GetSpokeIpv4Address (i)));
-    dnp3Master.SetAttribute("RemotePort", UintegerValue(port));
-    dnp3Master.SetAttribute("JitterMinNs", DoubleValue (std::stoi(topologyConfigObject["Channel"][0]["jitterMin"].asString())));
-    dnp3Master.SetAttribute("JitterMaxNs", DoubleValue (std::stoi(topologyConfigObject["Channel"][0]["jitterMax"].asString())));
-    dnp3Master.SetAttribute("isMaster", BooleanValue (true));
-    dnp3Master.SetAttribute("Name", StringValue (cc_name+ep_name)); //"_SS_"+std::to_string(i+1)));
-    dnp3Master.SetAttribute("PointsFilename", StringValue (pointFileDir+"/points_"+ep_name+".csv")); //pointFileDir+"/points_SS_"+std::to_string(i+1)+".csv"));
-    dnp3Master.SetAttribute("MasterDeviceAddress", UintegerValue(1));
-    dnp3Master.SetAttribute("StationDeviceAddress", UintegerValue(i+2));
-    dnp3Master.SetAttribute("IntegrityPollInterval", UintegerValue(10));
-    dnp3Master.SetAttribute("EnableTCP", BooleanValue (false));
-  
-    Ptr<Dnp3ApplicationNew> master = dnp3Master.Install (hubNode.Get(0), std::string(cc_name+ep_name)); //"_SS_"+std::to_string(i+1)));
-    dnpMasterApp.Add(master);
-
-    Dnp3ApplicationHelperNew dnp3Outstation ("ns3::UdpSocketFactory", InetSocketAddress (tempnode1->GetObject<Ipv4>()->GetAddress(1,0).GetLocal(), port)); //star.GetSpokeIpv4Address (i), port));
-    dnp3Outstation.SetAttribute("LocalPort", UintegerValue(port));
-    dnp3Outstation.SetAttribute("RemoteAddress", AddressValue(hubNode.Get(0)->GetObject<Ipv4>()->GetAddress(ID,0).GetLocal())); //star.GetHubIpv4Address(i)));
-    dnp3Outstation.SetAttribute("RemotePort", UintegerValue(master_port));
-    dnp3Outstation.SetAttribute("isMaster", BooleanValue (false));
-    dnp3Outstation.SetAttribute("Name", StringValue (ep_name)); //"SS_"+std::to_string(i+1)));
-    dnp3Outstation.SetAttribute("PointsFilename", StringValue (pointFileDir+"/points_"+ep_name+".csv")); //pointFileDir+"/points_SS_"+std::to_string(i+1)+".csv"));
-    dnp3Outstation.SetAttribute("MasterDeviceAddress", UintegerValue(1));
-    dnp3Outstation.SetAttribute("StationDeviceAddress", UintegerValue(i+2));
-    dnp3Outstation.SetAttribute("EnableTCP", BooleanValue (false));
-
-    Ptr<Dnp3ApplicationNew> slave = dnp3Outstation.Install (tempnode1, std::string(ep_name)); //"SS_"+std::to_string(i+1)));
-    dnpOutstationApp.Add(slave);
-    Simulator::Schedule(MilliSeconds(1005), &Dnp3ApplicationNew::periodic_poll, master, std::stoi(configObject["Simulation"][0]["PollReqFreq"].asString()));
-    // Simulator::Schedule(MilliSeconds(2005), &Dnp3HelicsApplication::send_control_binary, master,
-    //   Dnp3HelicsApplication::DIRECT, 0, ControlOutputRelayBlock::CLOSE);
-      // Dnp3HelicsApplication::DIRECT, 0, ControlOutputRelayBlock::TRIP);
-    Simulator::Schedule(MilliSeconds(3005), &Dnp3ApplicationNew::send_control_analog, master, 
-      Dnp3ApplicationNew::DIRECT, 0, -16);
-    master_port += 1;
-
+    modbus::ModbusMasterHelper modbusMasterHelper;
+    modbusMasterHelper.SetAttribute("PeerAddress", AddressValue(tempnode1->GetObject<Ipv4>()->GetAddress(1,0).GetLocal()));
+    modbusMasterHelper.SetAttribute("PeerPort", UintegerValue(502));
+    modbusMasterApp.Add(modbusMasterHelper.Install(hubNode.Get(0)));
   }
 
-  int control = std::stoi(configObject["Controller"][0]["use"].asString());
-  if (control){
-      std::vector<NodeContainer> nodes;
-      nodes.push_back(hubNode);
-      nodes.push_back(MIMNode);
-      nodes.push_back(Microgrid);
-      Simulator::Schedule(MilliSeconds(2005+period_routing), changeRoute, nodes, 2, configObject["Controller"][0]["actionFile"].asString());// was 6005
-  }
-
-  fedName = helics_federate->getName();
-  std::cout << "Federate name: " << helics_federate->getName().c_str() << std::endl;
-  int ep_count = helics_federate->getEndpointCount();
-  for(int i=0; i < ep_count; i++){
-    helics::Endpoint ep = helics_federate->getEndpoint(i);
-    std::string epName = ep.getName();
-    std::string ep_info = ep.getInfo();
-    size_t pos = epName.find(fedName);
-    if(pos != std::string::npos) {
-        epName.erase(pos, fedName.length()+1);
-      }
-    std::cout << "Endpoint name: " << epName << std::endl;
- }
-
-  //Adding the MIM node
-  //Adding the Dnp3 application to man in the middle attack
-  //int MIM_ID = 0;
-  if (includeMIM == 1){
-    for (int x = 0; x < val.size(); x++){ //std::stoi(configObject["MIM"][0]["NumberAttackers"].asString()); x++){
-      /*int MIM_ID = std::stoi(val[x]) + 1; //x+1;
-      auto ep_name = configObject["MIM"][MIM_ID]["name"].asString();
-      Ptr<Node> tempnode = MIMNode.Get(MIM_ID-1); //star.GetSpokeNode (MIM_ID-1);
-      Names::Add(ep_name, tempnode);
-      std::string enamestring = ep_name;
-      Ptr<Ipv4> ip = Names::Find<Node>(enamestring)->GetObject<Ipv4>();
-      int ID = MIM_ID;
-      if (ring){
-          ID = 1;
-      }
-   
-      auto ep_name2 = configObject["microgrid"][MIM_ID-1]["name"].asString();
-      std::string IDx = "SS_";
-      if (std::string(ep_name2).find(IDx) != std::string::npos){
-	      ep_name2 = "SS_"+std::to_string(i+1);
-      }*/
-	    int MIM_ID = std::stoi(val[x]) + 1; //x+1;
-                  auto ep_name = configObject["MIM"][MIM_ID]["name"].asString();
-                  std::string ID2 = "SS_";
-                  auto ep_name2 = configObject["microgrid"][MIM_ID-1]["name"].asString();
-                  if (std::string(ep_name2).find(ID2) != std::string::npos){
-                      ep_name2 = "SS_"+std::to_string(MIM_ID);
-                  }
-		  //std::cout << "adding node " << ep_name2 << std::endl;
-                  Ptr<Node> tempnode = MIMNode.Get(MIM_ID-1); //star.GetSpokeNode (MIM_ID-1);
-                  Names::Add(ep_name, tempnode);
-                  std::string enamestring = ep_name;
-                  Ptr<Ipv4> ip = Names::Find<Node>(enamestring)->GetObject<Ipv4>();
-                  int ID = MIM_ID-1;
-
-
-      ip->GetObject<Ipv4L3ProtocolMIM> ()->victimAddr = hubNode.Get(0)->GetObject<Ipv4>()->GetAddress(ID,0).GetLocal(); //star.GetHubIpv4Address(MIM_ID-1);
-
-
-      //scenario 1, 2 and 3
-      Dnp3ApplicationHelperNew dnp3MIM1 ("ns3::UdpSocketFactory", InetSocketAddress (MIMNode.Get(MIM_ID-1)->GetObject<Ipv4>()->GetAddress(1,0).GetLocal(), port)); //star.GetSpokeIpv4Address(MIM_ID-1),port)); 
-      dnp3MIM1.SetAttribute("LocalPort", UintegerValue(port));
-      dnp3MIM1.SetAttribute("RemoteAddress", AddressValue(hubNode.Get(0)->GetObject<Ipv4>()->GetAddress(ID, 0).GetLocal())); //star.GetHubIpv4Address(MIM_ID-1)));
-      if(std::stoi(attack["MIM-"+std::to_string(MIM_ID)+"-attack_type"]) == 3 || std::stoi(attack["MIM-"+std::to_string(MIM_ID)+"-attack_type"]) == 4){
-          dnp3MIM1.SetAttribute("RemoteAddress2", AddressValue(Microgrid.Get(MIM_ID-1)->GetObject<Ipv4>()->GetAddress(1,0).GetLocal()));
-      }
-      dnp3MIM1.SetAttribute("RemotePort", UintegerValue(mimPort[MIM_ID-1]));
-
-      dnp3MIM1.SetAttribute ("PointsFilename", StringValue (pointFileDir+"/points_"+ep_name2+".csv"));
-      dnp3MIM1.SetAttribute("JitterMinNs", DoubleValue (500));
-      dnp3MIM1.SetAttribute("JitterMaxNs", DoubleValue (1000));
-      dnp3MIM1.SetAttribute("isMaster", BooleanValue (false));
-      dnp3MIM1.SetAttribute ("Name", StringValue (enamestring));
-      dnp3MIM1.SetAttribute("MasterDeviceAddress", UintegerValue(1));
-      dnp3MIM1.SetAttribute("StationDeviceAddress", UintegerValue(2));
-      dnp3MIM1.SetAttribute("IntegrityPollInterval", UintegerValue (10));
-      dnp3MIM1.SetAttribute("EnableTCP", BooleanValue (false));
-      dnp3MIM1.SetAttribute("AttackSelection", UintegerValue(std::stoi(attack["MIM-"+std::to_string(MIM_ID)+"-attack_type"])));
-
-      dnp3MIM1.SetAttribute("RealVal", StringValue(attack["MIM-"+std::to_string(MIM_ID)+"-real_val"]));
-
-      if (std::stoi(attack["MIM-"+std::to_string(MIM_ID)+"-attack_type"]) == 2 || std::stoi(attack["MIM-"+std::to_string(MIM_ID)+"-attack_type"]) == 4){
-         if(attack["MIM-"+std::to_string(MIM_ID)+"-scenario_id"] == "b"){
-            dnp3MIM1.SetAttribute("Value_attck_max", StringValue(attack["MIM-"+std::to_string(MIM_ID)+"-attack_val"]));
-            dnp3MIM1.SetAttribute("Value_attck_min", StringValue(attack["MIM-"+std::to_string(MIM_ID)+"-real_val"]));
-            dnp3MIM1.SetAttribute("NodeID", StringValue (attack["MIM-"+std::to_string(MIM_ID)+"-node_id"])); 
-            dnp3MIM1.SetAttribute("PointID", StringValue (attack["MIM-"+std::to_string(MIM_ID)+"-point_id"])); 
-         }
-         if(attack["MIM-"+std::to_string(MIM_ID)+"-scenario_id"] == "a"){
-            dnp3MIM1.SetAttribute("Value_attck", StringValue(attack["MIM-"+std::to_string(MIM_ID)+"-attack_val"]));
-            dnp3MIM1.SetAttribute("NodeID", StringValue (attack["MIM-"+std::to_string(MIM_ID)+"-node_id"])); 
-            dnp3MIM1.SetAttribute("PointID", StringValue (attack["MIM-"+std::to_string(MIM_ID)+"-point_id"])); 
-          }
-      }
-
-      if(std::stoi(attack["MIM-"+std::to_string(MIM_ID)+"-attack_type"]) == 3){
-         dnp3MIM1.SetAttribute("Value_attck", StringValue(attack["MIM-"+std::to_string(MIM_ID)+"-attack_val"]));
-         dnp3MIM1.SetAttribute("NodeID", StringValue (attack["MIM-"+std::to_string(MIM_ID)+"-node_id"])); 
-         dnp3MIM1.SetAttribute("PointID", StringValue (attack["MIM-"+std::to_string(MIM_ID)+"-point_id"])); 
-      }
-
-      dnp3MIM1.SetAttribute("AttackStartTime", StringValue(attack["MIM-"+std::to_string(MIM_ID)+"-Start"])); 
-      dnp3MIM1.SetAttribute("AttackEndTime", StringValue(attack["MIM-"+std::to_string(MIM_ID)+"-End"])); 
-      dnp3MIM1.SetAttribute("mitmFlag", BooleanValue(true));
-      Ptr<Dnp3ApplicationNew> mim = dnp3MIM1.Install (tempnode, enamestring);
-      ApplicationContainer dnpMIMApp(mim);
-      dnpMIMApp.Start (Seconds (start));
-      dnpMIMApp.Stop (simTime);
-
-    }
-  }
-
-
-
-  dnpMasterApp.Start (Seconds (start));
-  dnpMasterApp.Stop (simTime);
-  dnpOutstationApp.Start (Seconds (start));
-  dnpOutstationApp.Stop (simTime);
+  modbusMasterApp.Start (Seconds (start));
+  modbusMasterApp.Stop (simTime);
+  modbusSlaveApp.Start (Seconds (start));
+  modbusSlaveApp.Stop (simTime);
 
 
   std::cout << "Setting up Bots" << std::endl;
@@ -1027,7 +842,7 @@ main (int argc, char *argv[])
     std::string str_on_time = configObject["DDoS"][0]["TimeOn"].asString();
     std::string str_off_time = configObject["DDoS"][0]["TimeOff"].asString();
     int TCP_SINK_PORT = 9000;
-    int UDP_SINK_PORT = master_port; //mimPort[2]-10;
+    int UDP_SINK_PORT = 502; //mimPort[2]-10;
     int MAX_BULK_BYTES = std::stof(configObject["DDoS"][0]["PacketSize"].asString()); //20971520000;
     std::string DDOS_RATE = configObject["DDoS"][0]["Rate"].asString(); //"2000kb/s";
 
