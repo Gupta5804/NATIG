@@ -51,23 +51,19 @@ cp -r ${NATIG_SRC}/RC/code/dnp3/model/tcptest* src/dnp3/model/
 cp -r ${NATIG_SRC}/RC/code/dnp3/model/dnp3-mim-* src/dnp3/model/
 cp -r ${NATIG_SRC}/RC/code/internet/* src/internet/
 cp -r ${NATIG_SRC}/RC/code/lte/* src/lte/
-cp -r ${NATIG_SRC}/RC/code/helics/helics-helper* /rd2c/ns-3-dev/contrib/helics/helper/
-cp -r ${NATIG_SRC}/RC/code/helics/dnp3-application-helper-new.* /rd2c/ns-3-dev/contrib/helics/helper/
-cp -r ${NATIG_SRC}/RC/code/helics/dnp3-application-new* /rd2c/ns-3-dev/contrib/helics/model/
-cp -r ${NATIG_SRC}/RC/code/helics/dnp3-application-new-Docker.cc /rd2c/ns-3-dev/contrib/helics/model/dnp3-application-new.cc
-cp -r ${NATIG_SRC}/RC/code/helics/dnp3-application-new-Docker.h /rd2c/ns-3-dev/contrib/helics/model/dnp3-application-new.h
-cp -r ${NATIG_SRC}/RC/code/helics/wscript /rd2c/ns-3-dev/contrib/helics/
+cp -r "${NATIG_SRC}"/RC/code/helics/helics-helper* /rd2c/ns-3-dev/contrib/helics/helper/
+cp -r "${NATIG_SRC}"/RC/code/helics/wscript /rd2c/ns-3-dev/contrib/helics/
 # Pass linker flags through sudo so that ns-3 builds with the proper libraries
-sudo env "LDFLAGS=$LDFLAGS" ./make.sh $2
+sudo env "LDFLAGS=$LDFLAGS" ./make.sh "$2"
 if [ "$1" == "5G" ]; then
     echo "installing 5G"
-    cd contrib
+    cd contrib || exit
     git config --global http.sslverify false
     git clone https://gitlab.com/cttc-lena/nr.git
-    cd nr
+    cd nr || exit
     git checkout 5g-lena-v1.2.y
     cd ../../
-    cp -r ${NATIG_SRC}/patch/nr/* contrib/nr/
-    sudo env "LDFLAGS=$LDFLAGS" ./make.sh $2
+    cp -r "${NATIG_SRC}"/patch/nr/* contrib/nr/
+    sudo env "LDFLAGS=$LDFLAGS" ./make.sh "$2"
 fi
-mkdir $2/integration/control/physicalDevOutput
+mkdir "$2"/integration/control/physicalDevOutput
