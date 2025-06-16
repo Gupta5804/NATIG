@@ -27,7 +27,8 @@ Simply, run `run.sh` bash script. This script will run `helics_broker`, `gridlab
 - `gridlabd_config.json`: Helics configuration file for microgrids run on GridLAB-D.
 - `killall.sh`: Kill processes run by `run.sh` bash script.
 - `ns_config.json`: Helics configuration file for NS3 nodes corresponding to `cc_config.json` and `gridlabd_config.json`.
-- `ns3-helics-grid-dnp3.cc`: A NS3 model file. The program need to load `grid.json` and `ns_config.json`.
+- `ns3-helics-grid-modbus.cc`:
+  NS3 model file that loads `grid.json` and `ns_config.json`.
 - `run.sh`: Bash script file that run helics broker and three Helics federates: microgrids (GridLAB-D), filter (NS3), and control center (python).
 - `IEEE_123_Dynamic.glm`: Main GridLAB-D model file based on IEEE 123 test feeder. It includes other submodules: `IEEE_123_Diesels.glm`, `IEEE_123_Inverters_Mixed.glm`, and `IEEE_123_Recorders.glm`. The model needs climate file `WA-Yakima.tmy2` climate, player files `Gen2_Pref.player`, `Gen3_Pref.player`, `Gen4_Pref.player`.
 - `config_helper.py`: A python program that creates configuration files (`cc_config.json`, `grid.json`, `gridlabd_config.json`, `ns_config.json`) and point files (`points_mg1.csv`, `points_mg2.csv`, `points_mg3.csv`, `points_substation.csv`).
