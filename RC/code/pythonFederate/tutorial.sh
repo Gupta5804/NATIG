@@ -46,7 +46,7 @@ then
     cp -r ${NATIG_SRC}/RC/code/4G-conf-${4}/*.json config/
     cp -r ${NATIG_SRC}/RC/code/4G-conf-${4}/*.glm .
 fi
-modelName="ns3-helics-grid-dnp3-4G"
+modelName="ns3-helics-grid-modbus-4G"
 fi
 if [[ "$2" == "5G" ]]
 then
@@ -55,7 +55,7 @@ then
     cp -r ${NATIG_SRC}/RC/code/5G-conf-${4}/*.json config/
     cp -r ${NATIG_SRC}/RC/code/5G-conf-${4}/*.glm .
 fi
-modelName="ns3-helics-grid-dnp3-5G"
+modelName="ns3-helics-grid-modbus-5G"
 fi
 if [[ "$2" == "3G" ]]
 then
@@ -64,7 +64,7 @@ then
     cp -r ${NATIG_SRC}/RC/code/3G-conf-${4}/*.json config/
     cp -r ${NATIG_SRC}/RC/code/3G-conf-${4}/*.glm .
 fi
-modelName="ns3-helics-grid-dnp3"
+modelName="ns3-helics-grid-modbus"
 fi
 
 #sbatch run-helics.sh ${helicsLOGlevel} ${helicsOutFile}
@@ -73,7 +73,7 @@ v2=$( grep 'brokerPort' ${PWD}/config/gridlabd_config.json | sed -r 's/^[^:]*:(.
 cd ${ROOT_PATH} && \
 helics_broker --slowresponding --federates=2 --port=$v2 --loglevel=${helicsLOGlevel} >> ${helicsOutFile} 2>&1 & \
  #helics_app tracer test.txt --config-file endpoints.txt --loglevel 7 --timedelta 1 >> tracer.txt 2>&1 & \
-cd -
+cd - || exit
 
 # ===== starting GridLAB-D ===== 
 gldDir="${ROOT_PATH}"
@@ -94,7 +94,7 @@ fi
 #sbatch run-gridlabd.sh ${OUT_DIR} ${gldModelFile} ${gldOutFile}
 cd ${gldDir} && \
    gridlabd -D OUT_FOLDER=${OUT_DIR} ${gldModelFile} >> ${gldOutFile} 2>&1 & \
-   cd -
+   cd - || exit
 
 
 

@@ -21,10 +21,10 @@ ROOT_PATH="${PWD}" # "/rd2c/integration/control"
 OUT_DIR="${ROOT_PATH}/output"
 
 
-if test ! -d ${OUT_DIR}
+if test ! -d "${OUT_DIR}"
 then
   echo "==== Simulation output folder does not exist yet. Creating ... ===="
-  mkdir ${OUT_DIR}
+  mkdir "${OUT_DIR}"
 else
   echo "==== Simulation output folder already exists. ===="
 fi
@@ -32,10 +32,10 @@ fi
 # ===== starting HELICS broker =====
 helicsLOGlevel=1
 helicsOutFile="${OUT_DIR}/helics_broker.log"
-if test -e $helicsOutFile
+if test -e "$helicsOutFile"
 then
   echo "$helicsOutFile exists. Deleting..."
-  rm $helicsOutFile
+  rm "$helicsOutFile"
 fi
 
 if [[ "$5" == "conf" ]]
@@ -47,28 +47,28 @@ if [[ "$2" == "4G" ]]
 then
 if [[ "$5" == "conf" ]]
 then
-    cp -r ${NATIG_SRC}/RC/code/4G-conf-${4}/*.json config/
-    cp -r ${NATIG_SRC}/RC/code/4G-conf-${4}/*.glm .
+    cp -r "${NATIG_SRC}/RC/code/4G-conf-${4}"/*.json config/
+    cp -r "${NATIG_SRC}/RC/code/4G-conf-${4}"/*.glm .
 fi
-modelName="ns3-helics-grid-dnp3-4G"
+modelName="ns3-helics-grid-modbus-4G"
 fi
 if [[ "$2" == "5G" ]]
 then
 if [[ "$5" == "conf" ]]
 then
-    cp -r ${NATIG_SRC}/RC/code/5G-conf-${4}/*.json config/
-    cp -r ${NATIG_SRC}/RC/code/5G-conf-${4}/*.glm .
+    cp -r "${NATIG_SRC}/RC/code/5G-conf-${4}"/*.json config/
+    cp -r "${NATIG_SRC}/RC/code/5G-conf-${4}"/*.glm .
 fi
-modelName="ns3-helics-grid-dnp3-5G"
+modelName="ns3-helics-grid-modbus-5G"
 fi
 if [[ "$2" == "3G" ]]
 then
 if [[ "$5" == "conf" ]]
 then
-    cp -r ${NATIG_SRC}/RC/code/3G-conf-${4}/*.json config/
-    cp -r ${NATIG_SRC}/RC/code/3G-conf-${4}/*.glm .
+    cp -r "${NATIG_SRC}/RC/code/3G-conf-${4}"/*.json config/
+    cp -r "${NATIG_SRC}/RC/code/3G-conf-${4}"/*.glm .
 fi
-modelName="ns3-helics-grid-dnp3"
+modelName="ns3-helics-grid-modbus"
 fi
 
 #sbatch run-helics.sh ${helicsLOGlevel} ${helicsOutFile}

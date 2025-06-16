@@ -22,8 +22,8 @@ fi
 
 cd ${ROOT_PATH} && \
   helics_broker --federates=2 --loglevel=${helicsLOGlevel} >> ${helicsOutFile} 2>&1 & \
-  #helics_app tracer test.txt --config-file endpoints.txt --loglevel 7 --timedelta 1 >> tracer.txt 2>&1 & \
-  cd -
+  #helics_app tracer test.txt --config-file endpoints.txt --loglevel 7 --timedelta 1 >> tracer.txt 2>&1 &
+  cd - || exit
 
 # ===== starting GridLAB-D ===== 
 gldDir="${ROOT_PATH}"
@@ -36,7 +36,7 @@ then
 fi
 cd ${gldDir} && \
    gridlabd -D OUT_FOLDER=${OUT_DIR} ${gldModelFile} >> ${gldOutFile} 2>&1 & \
-   cd -
+   cd - || exit
 
 
 # ccDir="${ROOT_PATH}"
@@ -55,7 +55,7 @@ cd ${gldDir} && \
 # ===== setting up ns-3 configurations =====
 ns3Dir="/rd2c/ns-3-dev"
 ns3Scratch="${ns3Dir}/scratch"
-modelName="ns3-helics-grid-dnp3-direct-analog"
+modelName="ns3-helics-grid-modbus-direct-analog"
 ns3Model="${ns3Scratch}/${modelName}"
 configDir="${ROOT_PATH}/direct-analog-config/"
 helicsConfig="${configDir}/ns_config.json"
@@ -72,6 +72,6 @@ if test -e $ns3OutFile
 cd ${ns3Dir} && \
 cp ${ROOT_PATH}/${modelName}.cc ${ns3Model}.cc && \
   ./waf --run "scratch/${modelName} --helicsConfig=${helicsConfig} --microGridConfig=${microGridConfig} --pointFileDir=${configDir} --pcapFileDir=$pcapFileDir" >> ${ns3OutFile} 2>&1 & \
-  cd -
+  cd - || exit
 
 exit 0

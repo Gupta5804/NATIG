@@ -29,14 +29,14 @@ fi
 #  cd -
 
 #cd ${ROOT_PATH} && \
-#helics_broker --federates=2 --port=5010 --config="${ROOT_PATH}/config/ns_config.json" --loglevel=${helicsLOGlevel} >> ${helicsOutFile} 2>&1 & \
-##helics_app tracer test.txt --config-file endpoints.txt --loglevel 7 --timedelta 1 >> tracer.txt 2>&1 & \
+#helics_broker --federates=2 --port=5010 --config="${ROOT_PATH}/config/ns_config.json" --loglevel=${helicsLOGlevel} >> ${helicsOutFile} 2>&1 &
+##helics_app tracer test.txt --config-file endpoints.txt --loglevel 7 --timedelta 1 >> tracer.txt 2>&1 &
 #cd -
 
 cd ${ROOT_PATH} && \
 helics_broker --slowresponding --federates=2 --port=6000 --loglevel=${helicsLOGlevel} >> ${helicsOutFile} 2>&1 & \
-#helics_app tracer test.txt --config-file endpoints.txt --loglevel 7 --timedelta 1 >> tracer.txt 2>&1 & \
-cd -
+#helics_app tracer test.txt --config-file endpoints.txt --loglevel 7 --timedelta 1 >> tracer.txt 2>&1 &
+cd - || exit
 
 # ===== starting GridLAB-D ===== 
 gldDir="${ROOT_PATH}"
@@ -49,7 +49,7 @@ then
 fi
 cd ${gldDir} && \
    gridlabd -D OUT_FOLDER=${OUT_DIR} ${gldModelFile} >> ${gldOutFile} 2>&1 & \
-   cd -
+   cd - || exit
 
 
 # ccDir="${ROOT_PATH}"
@@ -68,9 +68,9 @@ cd ${gldDir} && \
 # ===== setting up ns-3 configurations =====
 ns3Dir="/rd2c/ns-3-dev"
 ns3Scratch="${ns3Dir}/scratch"
-#modelName="ns3-helics-grid-dnp3-4G"
-#modelName="ns3-helics-grid-dnp3-5G" 
-modelName="ns3-helics-grid-dnp3"
+#modelName="ns3-helics-grid-modbus-4G"
+#modelName="ns3-helics-grid-modbus-5G"
+modelName="ns3-helics-grid-modbus"
 
 ns3Model="${ns3Scratch}/${modelName}"
 configDir="${ROOT_PATH}/config/"
@@ -90,8 +90,8 @@ if test -e $ns3OutFile
 cd ${ns3Dir} && \
 cp ${ROOT_PATH}/${modelName}.cc ${ns3Model}.cc && \
 sudo ./make.sh && \
-  #./waf --run "scratch/${modelName}" >> ${ns3OutFile} 2>&1 & \
+  #./waf --run "scratch/${modelName}" >> ${ns3OutFile} 2>&1 &
   mpirun -np 1 ./waf --run "scratch/${modelName} --helicsConfig=${helicsConfig} --microGridConfig=${microGridConfig} --topologyConfig=${topologyConfig} --pointFileDir=${configDir} --pcapFileDir=$pcapFileDir" >> ${ns3OutFile} 2>&1 & \
-  cd -
+  cd - || exit
 
 exit 0

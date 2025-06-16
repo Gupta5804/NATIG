@@ -27,9 +27,9 @@ if [ -d "${RD2C}/integration" ]; then
 fi
 cp -r integration ${RD2C}
 cp -r RC/code/run.sh ${RD2C}/integration/control 
-cp -r RC/code/ns3-helics-grid-dnp3-4G-Docker.cc ${RD2C}/integration/control/ns3-helics-grid-dnp3-4G.cc  
-cp -r RC/code/ns3-helics-grid-dnp3-5G-Docker.cc ${RD2C}/integration/control/ns3-helics-grid-dnp3-5G.cc 
-cp -r RC/code/ns3-helics-grid-dnp3-Docker.cc ${RD2C}/integration/control/ns3-helics-grid-dnp3.cc
+cp -r RC/code/ns3-helics-grid-dnp3-4G-Docker.cc ${RD2C}/integration/control/ns3-helics-grid-modbus-4G.cc
+cp -r RC/code/ns3-helics-grid-dnp3-5G-Docker.cc ${RD2C}/integration/control/ns3-helics-grid-modbus-5G.cc
+cp -r RC/code/ns3-helics-grid-dnp3-Docker.cc ${RD2C}/integration/control/ns3-helics-grid-modbus.cc
 rm -rf ${RD2C}/ns-3-dev/src/dnp3
 mkdir -p ${RD2C}/ns-3-dev/src/dnp3
 cp -r RC/code/dnp3/crypto ${RD2C}/ns-3-dev/src/dnp3  

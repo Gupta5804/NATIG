@@ -18,10 +18,10 @@ export OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
 
 ROOT_PATH="${PWD}" # "/rd2c/integration/control"
 OUT_DIR="${ROOT_PATH}/output"
-if test ! -d ${OUT_DIR}
+if test ! -d "${OUT_DIR}"
 then
   echo "==== Simulation output folder does not exist yet. Creating ... ===="
-  mkdir ${OUT_DIR}
+  mkdir "${OUT_DIR}"
 else
   echo "==== Simulation output folder already exists. ===="
 fi
@@ -29,30 +29,30 @@ fi
 # ===== starting HELICS broker =====
 helicsLOGlevel=1
 helicsOutFile="${OUT_DIR}/helics_broker.log"
-if test -e $helicsOutFile
+if test -e "$helicsOutFile"
 then
   echo "$helicsOutFile exists. Deleting..."
-  rm $helicsOutFile
+  rm "$helicsOutFile"
 fi
 
 
 if [[ "$2" == "4G" ]]
 then
-cp -r ${NATIG_SRC}/RC/code/4G-conf-${4}/*.json config/
-cp -r ${NATIG_SRC}/RC/code/4G-conf-${4}/*.glm .
-modelName="ns3-helics-grid-dnp3-4G"
+cp -r "${NATIG_SRC}/RC/code/4G-conf-${4}"/*.json config/
+cp -r "${NATIG_SRC}/RC/code/4G-conf-${4}"/*.glm .
+modelName="ns3-helics-grid-modbus-4G"
 fi
 if [[ "$2" == "5G" ]]
 then
-cp -r ${NATIG_SRC}/RC/code/5G-conf-${4}/*.json config/
-cp -r ${NATIG_SRC}/RC/code/5G-conf-${4}/*.glm .
-modelName="ns3-helics-grid-dnp3-5G"
+cp -r "${NATIG_SRC}/RC/code/5G-conf-${4}"/*.json config/
+cp -r "${NATIG_SRC}/RC/code/5G-conf-${4}"/*.glm .
+modelName="ns3-helics-grid-modbus-5G"
 fi
 if [[ "$2" == "3G" ]]
 then
-cp -r ${NATIG_SRC}/RC/code/3G-conf-${4}/*.json config/
-cp -r ${NATIG_SRC}/RC/code/3G-conf-${4}/*.glm .
-modelName="ns3-helics-grid-dnp3"
+cp -r "${NATIG_SRC}/RC/code/3G-conf-${4}"/*.json config/
+cp -r "${NATIG_SRC}/RC/code/3G-conf-${4}"/*.glm .
+modelName="ns3-helics-grid-modbus"
 fi
 
 #sbatch run-helics.sh ${helicsLOGlevel} ${helicsOutFile}
@@ -61,7 +61,7 @@ v2=$( grep 'brokerPort' ${PWD}/config/gridlabd_config.json | sed -r 's/^[^:]*:(.
 cd ${ROOT_PATH} && \
 #helics_broker --federates=2 --port=$v2 --loglevel=${helicsLOGlevel} >> ${helicsOutFile} 2>&1 & \
  #helics_app tracer test.txt --config-file endpoints.txt --loglevel 7 --timedelta 1 >> tracer.txt 2>&1 & \
-cd -
+cd - || exit
 
 # ===== starting GridLAB-D ===== 
 gldDir="${ROOT_PATH}"
@@ -82,7 +82,7 @@ fi
 #sbatch run-gridlabd.sh ${OUT_DIR} ${gldModelFile} ${gldOutFile}
 cd ${gldDir} && \
 #gridlabd -D OUT_FOLDER=${OUT_DIR} ${gldModelFile} >> ${gldOutFile} 2>&1 & \
-   cd -
+   cd - || exit
 
 
 # ccDir="${ROOT_PATH}"
@@ -124,7 +124,7 @@ cd ${ns3Dir} && \
 cp ${ROOT_PATH}/${modelName}.cc ${ns3Model}.cc && \
 ./make.sh "$1" && \
   ./waf --run "scratch/${modelName} --helicsConfig=${helicsConfig} --microGridConfig=${microGridConfig} --topologyConfig=${topologyConfig} --pointFileDir=${configDir} --pcapFileDir=$pcapFileDir" >> ${ns3OutFile} 2>&1 & \
-  cd -
+  cd - || exit
 
 if [[ "$3" == "RC" ]]
 then
