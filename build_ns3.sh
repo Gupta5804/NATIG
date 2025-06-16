@@ -27,6 +27,7 @@ cd ns-3-dev || exit
 git checkout ns-3.35
 cd "${NATIG_SRC}" || exit
 ./build_helics.sh
+cp -f "${NATIG_SRC}"/RC/code/helics/wscript /rd2c/ns-3-dev/contrib/helics/
 cd /rd2c/ns-3-dev || exit
 cp -r "${NATIG_SRC}"/RC/code/make.sh .
 # The following block copied the DNP3 sources and wscript into ns-3-dev.
@@ -54,7 +55,6 @@ cp -r "${NATIG_SRC}"/RC/code/point-to-point-layout/* src/point-to-point-layout/
 cp -r "${NATIG_SRC}"/RC/code/internet/* src/internet/
 cp -r "${NATIG_SRC}"/RC/code/lte/* src/lte/
 cp -r "${NATIG_SRC}"/RC/code/helics/helics-helper* /rd2c/ns-3-dev/contrib/helics/helper/
-cp -r "${NATIG_SRC}"/RC/code/helics/wscript /rd2c/ns-3-dev/contrib/helics/
 # Pass linker flags through sudo so that ns-3 builds with the proper libraries
 sudo env "LDFLAGS=$LDFLAGS" ./make.sh "$2"
 if [ "$1" == "5G" ]; then
