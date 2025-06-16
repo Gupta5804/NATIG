@@ -62,6 +62,7 @@ echo ""
 echo "=== 2. PREPARING MAIN SCENARIO FILE ==="
 # Copy the Modbus-based main C++ file to the ns-3 scratch directory so it
 # will be compiled with the rest of ns-3.
+rm -f "${SCRATCH_DIR}/ns3-helics-grid-dnp3*.cc" "${SCRATCH_DIR}/wscript"
 cp -v "${RD2C_DIR}/RC/code/ns3-helics-grid-modbus.cc" "${SCRATCH_DIR}/"
 
 # Create the wscript to build the main program. It must link to your modbus module.
