@@ -8,6 +8,9 @@ def build(bld):
     # Build the HELICS module without any additional examples
     module = bld.create_ns3_module('helics', ['core', 'network', 'internet'])
     module.use.extend(['HELICS', 'JSONCPP'])
+    # Explicitly link the HELICS shared library so that symbols such as
+    # helics::loadTimeFromString are resolved correctly at link time.
+    module.lib = ['helicsSharedLib']
     module.source = [
         'model/helics-application.cc',
         'model/helics-static-source-application.cc',
