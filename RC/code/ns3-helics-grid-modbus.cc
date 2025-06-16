@@ -308,9 +308,9 @@ void Throughput (){
 
 void updateUETable(NodeContainer subNodes, NodeContainer ueNodes){
     std::stringstream addrTrans;
-    for (int i = 0; i < subNodes.GetN(); i++){
+    for (uint32_t i = 0; i < subNodes.GetN(); i++){
       int cc = 0;
-      for (int j = 0; j < ueNodes.GetN(); j++){
+      for (uint32_t j = 0; j < ueNodes.GetN(); j++){
         cc += 1;
         addrTrans << subNodes.Get(i)->GetObject<Ipv4>()->GetAddress(cc,0).GetLocal() << ": " << ueNodes.Get(j)->GetObject<Ipv4>()->GetAddress(1,0).GetLocal() << endl;
     }
@@ -334,30 +334,30 @@ void updateUETable(NodeContainer subNodes, NodeContainer ueNodes){
 void setRoutingTable(NodeContainer remoteHostContainer, NodeContainer subNodes, NodeContainer MIM, NodeContainer ueNodes, Ipv4Address gateway){
     Ipv4StaticRoutingHelper ipv4RoutingHelper;
     Ptr<Ipv4StaticRouting> remoteHostStaticRouting = ipv4RoutingHelper.GetStaticRouting (remoteHostContainer.Get(0)->GetObject<Ipv4> ());
-  for (int i = 0; i < ueNodes.GetN(); i++){
+  for (uint32_t i = 0; i < ueNodes.GetN(); i++){
       remoteHostStaticRouting->AddNetworkRouteTo (ueNodes.Get(i)->GetObject<Ipv4>()->GetAddress(1,0).GetLocal(), Ipv4Mask ("255.255.0.0"), gateway, 1);
       int cc = 0;
-      for (int j = 0; j < MIM.GetN(); j++){
+      for (uint32_t j = 0; j < MIM.GetN(); j++){
         cc += 1;
         remoteHostStaticRouting->AddNetworkRouteTo (subNodes.Get(i)->GetObject<Ipv4>()->GetAddress(cc,0).GetLocal(), Ipv4Mask ("255.255.0.0"), gateway, 1, 0);
       }
   }
 
-  for (int i = 0; i < ueNodes.GetN(); i++){
+  for (uint32_t i = 0; i < ueNodes.GetN(); i++){
     Ptr<Ipv4StaticRouting> ueNodeStaticRouting = ipv4RoutingHelper.GetStaticRouting (ueNodes.Get(i)->GetObject<Ipv4>());
     int cc = 0;
-    for (int j = 0; j < subNodes.GetN(); j++){
+    for (uint32_t j = 0; j < subNodes.GetN(); j++){
       cc += 1;
       ueNodeStaticRouting->AddNetworkRouteTo(subNodes.Get(j)->GetObject<Ipv4>()->GetAddress(cc,0).GetLocal(), Ipv4Mask("255.255.0.0"), MIM.Get(i)->GetObject<Ipv4>()->GetAddress(1,0).GetLocal(), 2, 0);
     }
   }
 
-  for (int i = 0; i < MIM.GetN(); i++){
+  for (uint32_t i = 0; i < MIM.GetN(); i++){
     Ipv4Address addr2_ = ueNodes.Get(i)->GetObject<Ipv4>()->GetAddress (2, 0).GetLocal ();
     Ptr<Ipv4StaticRouting> subNodeStaticRouting = ipv4RoutingHelper.GetStaticRouting (MIM.Get(i)->GetObject<Ipv4>());
     subNodeStaticRouting->AddNetworkRouteTo (remoteHostContainer.Get(0)->GetObject<Ipv4>()->GetAddress(1,0).GetLocal(), Ipv4Mask ("255.255.0.0"), addr2_, 1);
     int cc = 0;
-    for (int j = 0; j < subNodes.GetN(); j++){
+    for (uint32_t j = 0; j < subNodes.GetN(); j++){
         cc += 1;
         int ind = i;
         subNodeStaticRouting = ipv4RoutingHelper.GetStaticRouting (MIM.Get(ind)->GetObject<Ipv4>());
@@ -365,10 +365,10 @@ void setRoutingTable(NodeContainer remoteHostContainer, NodeContainer subNodes, 
     }
   }
 
-  for (int i = 0; i < subNodes.GetN(); i++){
+  for (uint32_t i = 0; i < subNodes.GetN(); i++){
     int cc = 0;
     Ptr<Ipv4StaticRouting> subNodeStaticRouting3 = ipv4RoutingHelper.GetStaticRouting (subNodes.Get(i)->GetObject<Ipv4>());
-    for (int j = 0; j < MIM.GetN(); j++){
+    for (uint32_t j = 0; j < MIM.GetN(); j++){
         cc += 1;
         Ptr<Ipv4> ipv4_2 = MIM.Get(j)->GetObject<Ipv4>();
         Ptr<Ipv4> ipv4 = subNodes.Get(j)->GetObject<Ipv4>();
@@ -705,7 +705,7 @@ main (int argc, char *argv[])
 	      em->SetAttribute ("ErrorRate", DoubleValue (std::stof(topologyConfigObject["Node"][h]["error"].asString())));//0.00001));
 	      NetRing[h].Get (0)->SetAttribute ("ReceiveErrorModel", PointerValue (em));
 	    }
-	    for (int x = 0; x < NetRing[h].GetN(); x++){
+            for (uint32_t x = 0; x < NetRing[h].GetN(); x++){
 	      Ipv4InterfaceContainer interfacesSub = ipv4Sub.Assign(NetRing[h].Get(x));
               //Ipv4InterfaceContainer interfacesSubCC = ipv4Sub.Assign(NetRing[h].Get(1));
 	    }
@@ -909,7 +909,7 @@ main (int argc, char *argv[])
     bool DDoS = std::stoi(configObject["DDoS"][0]["Active"].asString());
 
     /*if (DDoS){
-            for (int k = 0; k < botNodes.GetN(); ++k)
+            for (uint32_t k = 0; k < botNodes.GetN(); ++k)
             {
                 Ptr<Ipv4StaticRouting> remoteHostStaticRouting = ipv4RoutingHelper.GetStaticRouting (botNodes.Get(k)->GetObject<Ipv4> ());
                 if (configObject["DDoS"][0]["endPoint"].asString().find("subNode") != std::string::npos){
@@ -936,7 +936,7 @@ main (int argc, char *argv[])
                  apps.Start(Seconds(BOT_START));
                  apps.Stop(Seconds(BOT_STOP));
                }else  if (configObject["DDoS"][0]["endPoint"].asString().find("subNode") != std::string::npos){
-		  for (int k = 0; k < botNodes.GetN(); ++k)
+                  for (uint32_t k = 0; k < botNodes.GetN(); ++k)
                   {
                       V4PingHelper pingHelper(Microgrid.Get((k%numThreads)+std::stoi(configObject["DDoS"][0]["NodeID"][0].asString()))->GetObject<Ipv4>()->GetAddress(1,0).GetLocal());
                       ApplicationContainer apps = pingHelper.Install(botNodes);
@@ -945,7 +945,7 @@ main (int argc, char *argv[])
 		  }
                }
             }
-                for (int k = 0; k < botNodes.GetN(); ++k)
+                for (uint32_t k = 0; k < botNodes.GetN(); ++k)
                 {
                     if (configObject["DDoS"][0]["endPoint"].asString().find("subNode") != std::string::npos){
                         //OnOffHelper onoff("ns3::UdpSocketFactory", Address(InetSocketAddress(Microgrid.Get(k+6)->GetObject<Ipv4>()->GetAddress(1,0).GetLocal(), UDP_SINK_PORT))); //remoteHostAddr, UDP_SINK_PORT)));
@@ -1024,13 +1024,13 @@ main (int argc, char *argv[])
   }
 
   NodeContainer endpointNodes;
-    for (int i = 0; i < hubNode.GetN(); i++){
+    for (uint32_t i = 0; i < hubNode.GetN(); i++){
         endpointNodes.Add (hubNode.Get (i));
     }
-    for (int i = 0; i < MIMNode.GetN(); i++){
+    for (uint32_t i = 0; i < MIMNode.GetN(); i++){
         endpointNodes.Add (MIMNode.Get (i));
     }
-    for (int i = 0; i < Microgrid.GetN(); i++){
+    for (uint32_t i = 0; i < Microgrid.GetN(); i++){
         endpointNodes.Add (Microgrid.Get (i));
     }
 
