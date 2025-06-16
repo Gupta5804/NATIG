@@ -479,7 +479,6 @@ main (int argc, char *argv[])
   std::string pcapFileDir = "./";
   uint32_t i;
   Time simTime = Seconds(180);
-  int attackSelection = 2; //std::stoi(parameters["attackSel"]); //Default is to have no attack selection
   int attackStartTime = 120; //std::stoi(parameters["start"]);
   int attackEndTime   = 180; //std::stoi(parameters["end"]);
   CommandLine cmd;
@@ -565,7 +564,6 @@ main (int argc, char *argv[])
 
   simTime = Seconds(std::stof(configObject["Simulation"][0]["SimTime"].asString()));
   float start = std::stof(configObject["Simulation"][0]["StartTime"].asString());
-  int includeMIM = std::stoi(configObject["Simulation"][0]["includeMIM"].asString());
 
   NodeContainer Microgrid;
   Microgrid.Create(configObject["microgrid"].size());
@@ -575,7 +573,6 @@ main (int argc, char *argv[])
   NodeContainer hubNode;
 
   bool ring = stoi(configObject["Simulation"][0]["UseDynTop"].asString()) == 1; //false; //true;
-  bool star_bool = stoi(configObject["Simulation"][0]["UseDynTop"].asString()) == 0; ////true; //false;
 
   //Ring topology start
   NodeContainer nodes;
@@ -901,9 +898,7 @@ main (int argc, char *argv[])
     int BOT_STOP = std::stof(configObject["DDoS"][0]["End"].asString());;
     std::string str_on_time = configObject["DDoS"][0]["TimeOn"].asString();
     std::string str_off_time = configObject["DDoS"][0]["TimeOff"].asString();
-    int TCP_SINK_PORT = 9000;
     int UDP_SINK_PORT = master_port; //mimPort[2]-10;
-    int MAX_BULK_BYTES = std::stof(configObject["DDoS"][0]["PacketSize"].asString()); //20971520000;
     std::string DDOS_RATE = configObject["DDoS"][0]["Rate"].asString(); //"2000kb/s";
 
     bool DDoS = std::stoi(configObject["DDoS"][0]["Active"].asString());
