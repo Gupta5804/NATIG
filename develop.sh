@@ -46,16 +46,16 @@ cp -v "${PATCH_DIR}/lte/helper/no-backhaul-epc-helper.h"  "${LTE_HELPER_DIR}/"
 echo ""
 
 echo "=== 2. PREPARING MAIN SCENARIO FILE ==="
-# Copy your main C++ file from the integration directory to the scratch
-# directory so that the ns-3 build system can compile it.
-cp -v "${RD2C_DIR}/integration/control/ns3-helics-grid-dnp3.cc" "${SCRATCH_DIR}/"
+# Copy the Modbus-based main C++ file to the ns-3 scratch directory so it
+# will be compiled with the rest of ns-3.
+cp -v "${RD2C_DIR}/RC/code/ns3-helics-grid-modbus.cc" "${SCRATCH_DIR}/"
 
 # Create the wscript to build the main program. It must link to your modbus module.
 cat > "${SCRATCH_DIR}/wscript" << EOF2
 def build(bld):
-    bld.create_ns3_program('ns3-helics-grid-dnp3',
+    bld.create_ns3_program('ns3-helics-grid-modbus',
                            ['core', 'network', 'internet', 'point-to-point', 'csma', 'wifi', 'mobility', 'applications', 'modbus', 'helics'])
-    bld.source = 'ns3-helics-grid-dnp3.cc'
+    bld.source = 'ns3-helics-grid-modbus.cc'
 EOF2
 
 echo "Main scenario prepared successfully."
@@ -82,7 +82,7 @@ echo "=== 4. RUNNING SIMULATION ==="
 cd ${RD2C_DIR}/integration/control
 
 echo "Build successful! Running the main simulation..."
-${SCRATCH_DIR}/build/ns3-helics-grid-dnp3 --conf="config/grid.json" --ns_config="config/ns_config.json" --helicsConfig="config/helics_config.json"
+${SCRATCH_DIR}/build/ns3-helics-grid-modbus --conf="config/grid.json" --ns_config="config/ns_config.json" --helicsConfig="config/helics_config.json"
 
 echo ""
 echo "=== SIMULATION COMPLETE! ==="
