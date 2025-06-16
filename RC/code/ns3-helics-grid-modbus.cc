@@ -806,7 +806,7 @@ main (int argc, char *argv[])
 	 std::string my_str = configObject["MIM"][j][item].asString();
 	 my_str.erase(remove(my_str.begin(), my_str.end(), '"'), my_str.end());
 	 std::cout << "This is the keys value: " << ID << "  and the value is " << my_str << std::endl;
-         attack.insert(pair<std::string,std::string >(ID, my_str));
+        attack.insert(std::pair<std::string, std::string>(ID, my_str));
      }
 
   }
