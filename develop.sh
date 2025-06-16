@@ -25,6 +25,20 @@ if [ -d "${OLD_DNP3_DIR}" ]; then
     rm -rf "${OLD_DNP3_DIR}"
 fi
 
+# Also remove any leftover dnp3 sources from the HELICS contrib module
+HELICS_CONTRIB_DIR="${NS3_SRC_DIR}/../contrib/helics"
+if [ -d "${HELICS_CONTRIB_DIR}/model" ]; then
+    echo "Cleaning HELICS model directory..."
+    rm -f "${HELICS_CONTRIB_DIR}"/model/dnp3-* 2>/dev/null || true
+fi
+if [ -d "${HELICS_CONTRIB_DIR}/helper" ]; then
+    echo "Cleaning HELICS helper directory..."
+    rm -f "${HELICS_CONTRIB_DIR}"/helper/dnp3-* 2>/dev/null || true
+fi
+
+# Replace the HELICS wscript with the clean version to compile only HELICS files
+cp -v "${RD2C_DIR}/RC/code/helics/wscript" "${HELICS_CONTRIB_DIR}/wscript"
+
 # Create the new directory structure for our clean module
 mkdir -p "${MODBUS_MODULE_DIR}"
 
