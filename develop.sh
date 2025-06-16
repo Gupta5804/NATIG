@@ -26,18 +26,13 @@ if [ -d "${OLD_DNP3_DIR}" ]; then
 fi
 
 # Create the new directory structure for our clean module
-mkdir -p "${MODBUS_MODULE_DIR}/model"
-mkdir -p "${MODBUS_MODULE_DIR}/helper"
+mkdir -p "${MODBUS_MODULE_DIR}"
 
 # Copy your patched files into the NEW modbus module directory
 echo "Copying patched files..."
-cp -v "${PATCH_DIR}/modbus/model/modbus-master-app.cc" "${MODBUS_MODULE_DIR}/model/"
-cp -v "${PATCH_DIR}/modbus/model/modbus-master-app.h"  "${MODBUS_MODULE_DIR}/model/"
-cp -v "${PATCH_DIR}/modbus/model/modbus-slave-app.cc"  "${MODBUS_MODULE_DIR}/model/"
-cp -v "${PATCH_DIR}/modbus/model/modbus-slave-app.h"   "${MODBUS_MODULE_DIR}/model/"
-cp -v "${PATCH_DIR}/modbus/helper/modbus-helper.cc"    "${MODBUS_MODULE_DIR}/helper/"
-cp -v "${PATCH_DIR}/modbus/helper/modbus-helper.h"     "${MODBUS_MODULE_DIR}/helper/"
-cp -v "${PATCH_DIR}/modbus/wscript"                    "${MODBUS_MODULE_DIR}/"
+cp -rv "${PATCH_DIR}/modbus/model" "${MODBUS_MODULE_DIR}/"
+cp -rv "${PATCH_DIR}/modbus/helper" "${MODBUS_MODULE_DIR}/"
+cp -v  "${PATCH_DIR}/modbus/wscript" "${MODBUS_MODULE_DIR}/"
 echo ""
 
 # Ensure LTE patches are applied
