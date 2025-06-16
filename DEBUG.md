@@ -3,7 +3,7 @@
 Debug commands:
 
 1. the command ` ps aux ` can give you details on how the run is doing when running an example of NATIG
-2. the command ` tail output/ns3-helics-grid-dnp3<Example tag>.log ` allows you to see if the run is progressing or not. If after 10 minutes there are no changes to the output then there is an issue with the run. 
+2. the command ` tail output/ns3-helics-grid-modbus<Example tag>.log ` allows you to see if the run is progressing or not. If after 10 minutes there are no changes to the output then there is an issue with the run.
     1. Example tag options: ` -4G ` when running the 4G LTE example
     2. Example tag options: ` -5G ` when running the 5G example
     3. Example tag options: empty when running the 3G examples
@@ -40,21 +40,21 @@ root     86310  0.0  0.0   5824  1592 pts/1    S    01:46   0:00 bash run.sh /rd
 root     86316 15.2  3.2 1007564 469684 pts/1  Rl   01:46  19:46 gridlabd -D OUT_FOLDER=/rd2c/integration/control/output /rd2c/integration
 root     86317 33.2  0.0 390188 10400 pts/1    Sl   01:46  43:14 /usr/local/lib/python3.6/site-packages/helics_apps/data/bin/helics_broker
 root     86324  0.0  0.0   5824  1884 pts/1    S    01:46   0:00 bash run.sh /rd2c/ 5G RC 9500 conf
-root     88258  0.0  0.3 133352 55640 pts/1    S    01:47   0:01 python3 ./waf --run scratch/ns3-helics-grid-dnp3-5G --helicsConfig=/rd2c/
+root     88258  0.0  0.3 133352 55640 pts/1    S    01:47   0:01 python3 ./waf --run scratch/ns3-helics-grid-modbus-5G --helicsConfig=/rd2c/
 root     88260  0.0  0.0  13728  9292 pts/1    S    01:47   0:00 /usr/local/bin/python3 -c #! /usr/bin/env python # encoding: utf-8 # WARN
 root     88261  0.0  0.0  13728  9644 pts/1    S    01:47   0:00 /usr/local/bin/python3 -c #! /usr/bin/env python # encoding: utf-8 # WARN
 root     88262  0.0  0.0  13728  9500 pts/1    S    01:47   0:00 /usr/local/bin/python3 -c #! /usr/bin/env python # encoding: utf-8 # WARN
 root     88263  0.0  0.0  13728  9320 pts/1    S    01:47   0:00 /usr/local/bin/python3 -c #! /usr/bin/env python # encoding: utf-8 # WARN
 root     88264  0.0  0.0  13728  9604 pts/1    S    01:47   0:00 /usr/local/bin/python3 -c #! /usr/bin/env python # encoding: utf-8 # WARN
 root     88265  0.0  0.0  13728  9344 pts/1    S    01:47   0:00 /usr/local/bin/python3 -c #! /usr/bin/env python # encoding: utf-8 # WARN
-root     88267 68.7  1.7 731200 248460 pts/1   Sl   01:47  88:52 /rd2c/ns-3-dev/build/scratch/ns3-helics-grid-dnp3-5G --helicsConfig=/rd2c
+root     88267 68.7  1.7 731200 248460 pts/1   Sl   01:47  88:52 /rd2c/ns-3-dev/build/scratch/ns3-helics-grid-modbus-5G --helicsConfig=/rd2c
 root     99995  0.0  0.0   8648  3316 pts/1    R+   03:56   0:00 ps aux
 ```
 
-Example when running 5G: ` tail output/ns3-helics-grid-dnp3-5G.log `, when the run is working propoerly:
+Example when running 5G: ` tail output/ns3-helics-grid-modbus-5G.log `, when the run is working propoerly:
 
 ```
-root@97323560c94f:/rd2c/integration/control# tail output/ns3-helics-grid-dnp3-5G.log 
+root@97323560c94f:/rd2c/integration/control# tail output/ns3-helics-grid-modbus-5G.log
 2024-09-04 16:25:12  MS (   10) Warn: Rx Unauth Seg = 9589
 2024-09-04 16:25:12  MS (    9) Warn: Rx Unauth Seg = 15959
 2024-09-04 16:25:12  MS (    9) Warn: Rx Unauth Seg = 15960
