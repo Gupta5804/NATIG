@@ -145,7 +145,7 @@ cp -r integration $RD2C
 cp -r RC/code/run.sh ${RD2C}/integration/control
 cp -r RC/code/ns3-helics-grid-dnp3-4G.cc ${RD2C}/integration/control/ns3-helics-grid-modbus-4G.cc
 cp -r RC/code/ns3-helics-grid-dnp3-5G.cc ${RD2C}/integration/control/ns3-helics-grid-modbus-5G.cc
-cp -r RC/code/ns3-helics-grid-dnp3.cc ${RD2C}/integration/control/ns3-helics-grid-modbus.cc
+cp -r RC/code/ns3-helics-grid-modbus.cc "${RD2C}"/integration/control/ns3-helics-grid-modbus.cc
 cp -r RC/code/gridlabd/* ${RD2C}/gridlab-d/tape_file/
 cp -r RC/code/trigger.player ${RD2C}/integration/control/
 
