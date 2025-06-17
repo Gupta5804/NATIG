@@ -3,7 +3,7 @@
 def configure(conf):
     """Configure HELICS and JSONCPP library paths."""
     conf.check_cxx(
-        lib="helicsSharedLib",
+        lib="helics-shared",
         libpath=["/usr/local/lib"],
         uselib_store="HELICS",
         mandatory=True,
@@ -23,8 +23,6 @@ def build(bld):
     module = bld.create_ns3_module('helics', ['core', 'network', 'internet'])
     # Link against HELICS and JSONCPP that were found in configure()
     module.uselib = ['HELICS', 'JSONCPP']
-    # Additional explicit library reference ensures HELICS symbols resolve
-    module.lib = ['helicsSharedLib']
     module.source = [
         'model/helics-application.cc',
         'model/helics-static-source-application.cc',
@@ -34,9 +32,9 @@ def build(bld):
         'model/helics-simulator-impl.cc',
         'helper/helics-helper.cc',
         'model/helics.cc',
-        '../../../patch/modbus/helper/modbus-helper.cc',
-        '../../../patch/modbus/model/modbus-master-app.cc',
-        '../../../patch/modbus/model/modbus-slave-app.cc',
+        'helper/modbus-helper.cc',
+        'model/modbus-master-app.cc',
+        'model/modbus-slave-app.cc',
     ]
 
     headers = bld(features='ns3header')
@@ -50,4 +48,7 @@ def build(bld):
         'model/helics-simulator-impl.h',
         'helper/helics-helper.h',
         'model/helics.h',
+        'helper/modbus-helper.h',
+        'model/modbus-master-app.h',
+        'model/modbus-slave-app.h',
     ]
