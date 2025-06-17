@@ -52,3 +52,4 @@ def build(bld):
         '../../../patch/modbus/model/modbus-master-app.h',
         '../../../patch/modbus/model/modbus-slave-app.h',
     ]
+
