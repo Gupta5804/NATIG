@@ -300,7 +300,7 @@ void Throughput (){
 	}
 	FILE * pFile;
 	pFile = fopen (loc2.c_str(),"a");
-        map<int, std::string>::iterator it;
+        std::map<int, std::string>::iterator it;
         for (it = monitor.begin(); it != monitor.end(); it++)
         {
               fprintf(pFile, it->second.c_str());
