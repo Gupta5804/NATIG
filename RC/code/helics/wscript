@@ -32,9 +32,9 @@ def build(bld):
         'model/helics-simulator-impl.cc',
         'helper/helics-helper.cc',
         'model/helics.cc',
-        'helper/modbus-helper.cc',
-        'model/modbus-master-app.cc',
-        'model/modbus-slave-app.cc',
+        '../../../patch/modbus/helper/modbus-helper.cc',
+        '../../../patch/modbus/model/modbus-master-app.cc',
+        '../../../patch/modbus/model/modbus-slave-app.cc',
     ]
 
     headers = bld(features='ns3header')
@@ -48,7 +48,7 @@ def build(bld):
         'model/helics-simulator-impl.h',
         'helper/helics-helper.h',
         'model/helics.h',
-        'helper/modbus-helper.h',
-        'model/modbus-master-app.h',
-        'model/modbus-slave-app.h',
+        '../../../patch/modbus/helper/modbus-helper.h',
+        '../../../patch/modbus/model/modbus-master-app.h',
+        '../../../patch/modbus/model/modbus-slave-app.h',
     ]
