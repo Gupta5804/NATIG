@@ -2,22 +2,29 @@
 
 def configure(conf):
     """Configure HELICS and JSONCPP library paths."""
-    conf.check_cxx(lib='helicsSharedLib', libpath=['/usr/local/lib'],
-                   uselib_store='HELICS', mandatory=True)
-    conf.check_cxx(lib='jsoncpp', libpath=['/usr/local/lib'],
-                   uselib_store='JSONCPP', mandatory=True)
-    conf.env['ENABLE_HELICS'] = True
+    conf.check_cxx(
+        lib="helicsSharedLib",
+        libpath=["/usr/local/lib"],
+        uselib_store="HELICS",
+        mandatory=True,
+    )
+    conf.check_cxx(
+        lib="jsoncpp",
+        libpath=["/usr/local/lib"],
+        uselib_store="JSONCPP",
+        mandatory=True,
+    )
+    conf.env["ENABLE_HELICS"] = True
+
 
 
 def build(bld):
     """Build the helics ns-3 module with Modbus support."""
     module = bld.create_ns3_module('helics', ['core', 'network', 'internet'])
+    # Link against HELICS and JSONCPP that were found in configure()
     module.uselib = ['HELICS', 'JSONCPP']
+    # Additional explicit library reference ensures HELICS symbols resolve
     module.lib = ['helicsSharedLib']
-    # Explicitly add library paths in case the uselib configuration is not
-    # propagated correctly by waf.
-    module.env.append_value('LIBPATH', ['/usr/local/lib'])
-    module.env.append_value('LIB', ['helicsSharedLib', 'jsoncpp'])
     module.source = [
         'model/helics-application.cc',
         'model/helics-static-source-application.cc',
