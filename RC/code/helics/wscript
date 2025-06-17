@@ -1,13 +1,19 @@
+# -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
+
 def configure(conf):
-    conf.env['LIBPATH_HELICS'] = ['/usr/local/lib']
-    conf.env['LIB_HELICS'] = ['helicsSharedLib']
-    conf.env['LIB_JSONCPP'] = ['jsoncpp']
+    """Configure HELICS and JSONCPP library paths."""
+    conf.check_cxx(lib='helicsSharedLib', libpath=['/usr/local/lib'],
+                   uselib_store='HELICS', mandatory=True)
+    conf.check_cxx(lib='jsoncpp', libpath=['/usr/local/lib'],
+                   uselib_store='JSONCPP', mandatory=True)
     conf.env['ENABLE_HELICS'] = True
 
+
 def build(bld):
-    # Build the HELICS module without any additional examples
+    """Build the helics ns-3 module with Modbus support."""
     module = bld.create_ns3_module('helics', ['core', 'network', 'internet'])
-    module.use.extend(['HELICS', 'JSONCPP'])
+    module.uselib = ['HELICS', 'JSONCPP']
+    module.lib = ['helicsSharedLib']
     module.source = [
         'model/helics-application.cc',
         'model/helics-static-source-application.cc',
@@ -17,13 +23,10 @@ def build(bld):
         'model/helics-simulator-impl.cc',
         'helper/helics-helper.cc',
         'model/helics.cc',
+        '../../../patch/modbus/helper/modbus-helper.cc',
+        '../../../patch/modbus/model/modbus-master-app.cc',
+        '../../../patch/modbus/model/modbus-slave-app.cc',
     ]
-    # Link against the installed HELICS library
-    # Expect libhelicsSharedLib.so to be installed
-    module.env.append_value('LIBPATH', ['/usr/local/lib'])
-    module.env.append_value('LIB', ['helicsSharedLib', 'jsoncpp'])
-    # module.env.append_value('LIB', 'helics')
-    # Tell the linker where to find libhelics
 
     headers = bld(features='ns3header')
     headers.module = 'helics'
