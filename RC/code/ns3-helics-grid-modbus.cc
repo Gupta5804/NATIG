@@ -284,9 +284,9 @@ void Throughput (){
 		}
 
 
-		if (((double)flow->second.rxBytes*8)/((double)flow->second.timeLastRxPacket.GetSeconds()-(double)flow->second.timeFirstTxPacket.GetSeconds())/1024 > 0 )
-		{
-			double rx = (double)flow->second.rxBytes;
+                if (((double)flow->second.rxBytes*8)/((double)flow->second.timeLastRxPacket.GetSeconds()-(double)flow->second.timeFirstTxPacket.GetSeconds())/1024 > 0 )
+                {
+                        // rx is unused; keep the calculation inline below
 			if (ID == 10){
                             netStatsOut << Simulator::Now ().GetSeconds () << " " <<  t.sourcePort << " (" << proto << " " << t.sourceAddress << " / " << t.sourcePort << " --> " << t.destinationAddress << " / " << t.destinationPort << ") " << ((double)flow->second.rxBytes*8)/((double)flow->second.timeLastRxPacket.GetSeconds()-(double)flow->second.timeFirstTxPacket.GetSeconds())/1024 << " " << flow->second.lostPackets << " " <<  (double)flow->second.rxBytes << " " << flow->second.txBytes << " " << ((double)flow->second.txPackets-(double)flow->second.rxPackets)/(double)flow->second.txPackets << " " << (flow->second.delaySum.GetSeconds()/flow->second.rxPackets) << " " << flow->second.txPackets << " " << flow->second.rxPackets << " " << (flow->second.jitterSum.GetSeconds()/(flow->second.rxPackets))  << std::endl;
                             monitor[t.sourcePort] = netStatsOut.str();
@@ -413,7 +413,7 @@ void changeRoute (std::vector<NodeContainer> nodes, int index, std::string fileI
           }
           int ID = 0;
 
-          int NewIndex = 1 + (rand() % int(nodes[2].GetN()));//random - (rand() % int(ueNodes.GetN()/2));
+          uint32_t NewIndex = 1 + (rand() % int(nodes[2].GetN())); //random - (rand() % int(ueNodes.GetN()/2))
           if (NewIndex > nodes[2].GetN()){
               NewIndex =  1;
           }
@@ -424,9 +424,9 @@ void changeRoute (std::vector<NodeContainer> nodes, int index, std::string fileI
           std::map<int, int> min;
           std::map<int, int> max;
           int nextNode_ind = NewIndex; //(rand() % int(ueNodes.GetN())-2);
-          int nextNode_TP = 10000000;
-          int count = 0;
-          struct stat buffer;
+          // int nextNode_TP = 10000000;
+          // int count = 0;
+          // struct stat buffer;
 
           std::string line;
           std::ifstream infile("/people/belo700/RD2C/RC/integration/control/AgentDecisions.txt"); //fileID.c_str());
@@ -442,7 +442,7 @@ void changeRoute (std::vector<NodeContainer> nodes, int index, std::string fileI
                token = line.substr(0, pos);
                line.erase(0, pos + delimiter.length());
                int ID = std::stoi(token) - 1;
-               int NewIndex = std::stoi(line) + 1;
+               uint32_t NewIndex = std::stoi(line) + 1;
 	       //std::cout << nodes[1].GetN() << std::endl;
 	       //std::cout << nodes[1].Get(ID)->GetObject<Ipv4>() << std::endl;
 	       //std::cout << nodes[1].Get(ID)->GetObject<Ipv4>()->GetNInterfaces() << std::endl;
@@ -484,7 +484,7 @@ main (int argc, char *argv[])
   uint32_t i;
   Time simTime = Seconds(180);
   // int attackStartTime = 120; //std::stoi(parameters["start"]);
-  int attackEndTime   = 180; //std::stoi(parameters["end"]);
+  // int attackEndTime   = 180; //std::stoi(parameters["end"]);
   CommandLine cmd;
   Json::Value configObject;
   Json::Value helicsConfigObject;
@@ -853,9 +853,9 @@ main (int argc, char *argv[])
     auto cc_name = configObject["controlCenter"]["name"].asString();
     std::cout << "Control Center network node: " << cc_name << std::endl;
     
-    int ID = 1; //i+1;
+    // int ID = 1; // i+1; (unused)
     if (ring){
-          ID = 1;
+          // ID = 1;
     }
     //auto ep_name = configObject["microgrid"][i]["name"].asString();
     std::string IDx = "SS_";

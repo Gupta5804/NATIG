@@ -14,6 +14,10 @@ def build(bld):
     module = bld.create_ns3_module('helics', ['core', 'network', 'internet'])
     module.uselib = ['HELICS', 'JSONCPP']
     module.lib = ['helicsSharedLib']
+    # Explicitly add library paths in case the uselib configuration is not
+    # propagated correctly by waf.
+    module.env.append_value('LIBPATH', ['/usr/local/lib'])
+    module.env.append_value('LIB', ['helicsSharedLib', 'jsoncpp'])
     module.source = [
         'model/helics-application.cc',
         'model/helics-static-source-application.cc',
