@@ -3,7 +3,7 @@
 def configure(conf):
     """Configure HELICS and JSONCPP library paths."""
     conf.check_cxx(
-        lib="helicsSharedLib",
+        lib="helics-shared",
         libpath=["/usr/local/lib"],
         uselib_store="HELICS",
         mandatory=True,
@@ -23,8 +23,6 @@ def build(bld):
     module = bld.create_ns3_module('helics', ['core', 'network', 'internet'])
     # Link against HELICS and JSONCPP that were found in configure()
     module.uselib = ['HELICS', 'JSONCPP']
-    # Additional explicit library reference ensures HELICS symbols resolve
-    module.lib = ['helicsSharedLib']
     module.source = [
         'model/helics-application.cc',
         'model/helics-static-source-application.cc',
@@ -50,4 +48,8 @@ def build(bld):
         'model/helics-simulator-impl.h',
         'helper/helics-helper.h',
         'model/helics.h',
+        '../../../patch/modbus/helper/modbus-helper.h',
+        '../../../patch/modbus/model/modbus-master-app.h',
+        '../../../patch/modbus/model/modbus-slave-app.h',
     ]
+
