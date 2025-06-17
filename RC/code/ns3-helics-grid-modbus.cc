@@ -105,8 +105,12 @@ int period_routing = 150;
 void readMicroGridConfig(std::string fpath, Json::Value& configobj)
 {
     std::ifstream tifs(fpath);
-    Json::Reader configreader;
-    configreader.parse(tifs, configobj);
+    Json::CharReaderBuilder builder;
+    std::string errs;
+    if (!Json::parseFromStream(builder, tifs, &configobj, &errs))
+    {
+        NS_LOG_ERROR("Failed to parse JSON config: " << errs);
+    }
 }
 
 int dirExists(const char *path)
@@ -142,12 +146,12 @@ void Throughput (){
         std::string loc = std::getenv("RD2C");
         std::string loc1 = loc + "/integration/control/TP-Prob.txt";
         std::string loc2 = loc + "/integration/control/TP.txt";
-        string proto;
-        map< FlowId, FlowMonitor::FlowStats > stats = flowMonitor->GetFlowStats();
+        std::string proto;
+        std::map< FlowId, FlowMonitor::FlowStats > stats = flowMonitor->GetFlowStats();
         std::vector <Ptr<FlowProbe>> xx = flowMonitor->GetAllProbes();
-        for (int i = 0; i < xx.size(); i ++){
-            map< FlowId, FlowProbe::FlowStats > probstats = xx[i]->GetStats();
-            for (map< FlowId, FlowProbe::FlowStats>::iterator
+        for (uint32_t i = 0; i < xx.size(); i ++){
+            std::map< FlowId, FlowProbe::FlowStats > probstats = xx[i]->GetStats();
+            for (std::map< FlowId, FlowProbe::FlowStats>::iterator
                         flow=probstats.begin(); flow!=probstats.end(); flow++)
             {
                 Ipv4FlowClassifier::FiveTuple  t = classifier->FindFlow(flow->first);
@@ -163,7 +167,7 @@ void Throughput (){
                                 exit(1);
                 }
 
-                netStatsOut2 << Simulator::Now ().GetSeconds () << " " <<  flow->first << " (" << proto << " " << t.sourceAddress << " / " << t.sourcePort << " --> " << t.destinationAddress << " / " << t.destinationPort << ") " << flow->second.bytes << " " << flow->second.packets << " " << flow->second.delayFromFirstProbeSum  << endl;
+                netStatsOut2 << Simulator::Now ().GetSeconds () << " " <<  flow->first << " (" << proto << " " << t.sourceAddress << " / " << t.sourcePort << " --> " << t.destinationAddress << " / " << t.destinationPort << ") " << flow->second.bytes << " " << flow->second.packets << " " << flow->second.delayFromFirstProbeSum  << std::endl;
 
 
                 FILE * pFile;
@@ -176,7 +180,7 @@ void Throughput (){
 
             }
         }
-        for (map< FlowId, FlowMonitor::FlowStats>::iterator
+        for (std::map< FlowId, FlowMonitor::FlowStats>::iterator
                         flow=stats.begin(); flow!=stats.end(); flow++)
         {
 		std::stringstream netStatsOut;
@@ -210,7 +214,7 @@ void Throughput (){
                 ss1 << ip[0];
                 int ID;
                 ss1 >> ID;
-                string temp = ss1.str().substr(ss1.str().length() - 1, 1);
+                std::string temp = ss1.str().substr(ss1.str().length() - 1, 1);
                 std::stringstream ss2;
                 ss2 << temp;
                 int ID2;
@@ -280,14 +284,14 @@ void Throughput (){
 		}
 
 
-		if (((double)flow->second.rxBytes*8)/((double)flow->second.timeLastRxPacket.GetSeconds()-(double)flow->second.timeFirstTxPacket.GetSeconds())/1024 > 0 )
-		{
-			double rx = (double)flow->second.rxBytes;
+                if (((double)flow->second.rxBytes*8)/((double)flow->second.timeLastRxPacket.GetSeconds()-(double)flow->second.timeFirstTxPacket.GetSeconds())/1024 > 0 )
+                {
+                        // rx is unused; keep the calculation inline below
 			if (ID == 10){
-	 		    netStatsOut << Simulator::Now ().GetSeconds () << " " <<  t.sourcePort << " (" << proto << " " << t.sourceAddress << " / " << t.sourcePort << " --> " << t.destinationAddress << " / " << t.destinationPort << ") " << ((double)flow->second.rxBytes*8)/((double)flow->second.timeLastRxPacket.GetSeconds()-(double)flow->second.timeFirstTxPacket.GetSeconds())/1024 << " " << flow->second.lostPackets << " " <<  (double)flow->second.rxBytes << " " << flow->second.txBytes << " " << ((double)flow->second.txPackets-(double)flow->second.rxPackets)/(double)flow->second.txPackets << " " << (flow->second.delaySum.GetSeconds()/flow->second.rxPackets) << " " << flow->second.txPackets << " " << flow->second.rxPackets << " " << (flow->second.jitterSum.GetSeconds()/(flow->second.rxPackets))  << endl;
+                            netStatsOut << Simulator::Now ().GetSeconds () << " " <<  t.sourcePort << " (" << proto << " " << t.sourceAddress << " / " << t.sourcePort << " --> " << t.destinationAddress << " / " << t.destinationPort << ") " << ((double)flow->second.rxBytes*8)/((double)flow->second.timeLastRxPacket.GetSeconds()-(double)flow->second.timeFirstTxPacket.GetSeconds())/1024 << " " << flow->second.lostPackets << " " <<  (double)flow->second.rxBytes << " " << flow->second.txBytes << " " << ((double)flow->second.txPackets-(double)flow->second.rxPackets)/(double)flow->second.txPackets << " " << (flow->second.delaySum.GetSeconds()/flow->second.rxPackets) << " " << flow->second.txPackets << " " << flow->second.rxPackets << " " << (flow->second.jitterSum.GetSeconds()/(flow->second.rxPackets))  << std::endl;
                             monitor[t.sourcePort] = netStatsOut.str();
 			}else{
-			    netStatsOut << Simulator::Now ().GetSeconds () << " " <<  t.destinationPort << " (" << proto << " " << t.sourceAddress << " / " << t.sourcePort << " --> " << t.destinationAddress << " / " << t.destinationPort << ") " << ((double)flow->second.rxBytes*8)/((double)flow->second.timeLastRxPacket.GetSeconds()-(double)flow->second.timeFirstTxPacket.GetSeconds())/1024 << " " << flow->second.lostPackets << " " <<  (double)flow->second.rxBytes << " " << flow->second.txBytes << " " << ((double)flow->second.txPackets-(double)flow->second.rxPackets)/(double)flow->second.txPackets << " " << (flow->second.delaySum.GetSeconds()/flow->second.rxPackets) << " " << flow->second.txPackets << " " << flow->second.rxPackets << " " << (flow->second.jitterSum.GetSeconds()/(flow->second.rxPackets))  << endl;
+                            netStatsOut << Simulator::Now ().GetSeconds () << " " <<  t.destinationPort << " (" << proto << " " << t.sourceAddress << " / " << t.sourcePort << " --> " << t.destinationAddress << " / " << t.destinationPort << ") " << ((double)flow->second.rxBytes*8)/((double)flow->second.timeLastRxPacket.GetSeconds()-(double)flow->second.timeFirstTxPacket.GetSeconds())/1024 << " " << flow->second.lostPackets << " " <<  (double)flow->second.rxBytes << " " << flow->second.txBytes << " " << ((double)flow->second.txPackets-(double)flow->second.rxPackets)/(double)flow->second.txPackets << " " << (flow->second.delaySum.GetSeconds()/flow->second.rxPackets) << " " << flow->second.txPackets << " " << flow->second.rxPackets << " " << (flow->second.jitterSum.GetSeconds()/(flow->second.rxPackets))  << std::endl;
                             monitor[t.destinationPort] = netStatsOut.str();
 			}
                         tp_transmitted[flow->first] = (double)flow->second.rxBytes;
@@ -296,7 +300,7 @@ void Throughput (){
 	}
 	FILE * pFile;
 	pFile = fopen (loc2.c_str(),"a");
-        map<int, std::string>::iterator it;
+        std::map<int, std::string>::iterator it;
         for (it = monitor.begin(); it != monitor.end(); it++)
         {
               fprintf(pFile, it->second.c_str());
@@ -312,7 +316,7 @@ void updateUETable(NodeContainer subNodes, NodeContainer ueNodes){
       int cc = 0;
       for (uint32_t j = 0; j < ueNodes.GetN(); j++){
         cc += 1;
-        addrTrans << subNodes.Get(i)->GetObject<Ipv4>()->GetAddress(cc,0).GetLocal() << ": " << ueNodes.Get(j)->GetObject<Ipv4>()->GetAddress(1,0).GetLocal() << endl;
+        addrTrans << subNodes.Get(i)->GetObject<Ipv4>()->GetAddress(cc,0).GetLocal() << ": " << ueNodes.Get(j)->GetObject<Ipv4>()->GetAddress(1,0).GetLocal() << std::endl;
     }
   }
 
@@ -403,26 +407,26 @@ void changeRoute (std::vector<NodeContainer> nodes, int index, std::string fileI
           int ID2;
           ss1 >> ID2;
           std::cout << "I am " << ip[1] << std::endl;
-          string temp = ss1.str(); //.substr(ss1.str().length() - 2);
+          std::string temp = ss1.str(); //.substr(ss1.str().length() - 2);
           if (ss1.str().length() > 2){
                 temp = ss1.str().substr(ss1.str().length() - 2);
           }
           int ID = 0;
 
-          int NewIndex = 1 + (rand() % int(nodes[2].GetN()));//random - (rand() % int(ueNodes.GetN()/2));
+          uint32_t NewIndex = 1 + (rand() % int(nodes[2].GetN())); //random - (rand() % int(ueNodes.GetN()/2))
           if (NewIndex > nodes[2].GetN()){
               NewIndex =  1;
           }
 
 
-          map<int, std::vector<int>>::iterator it;
-          map<int, map<int, std::vector<int>>>::iterator itx;
-          map<int, int> min;
-          map<int, int> max;
+          std::map<int, std::vector<int>>::iterator it;
+          std::map<int, std::map<int, std::vector<int>>>::iterator itx;
+          std::map<int, int> min;
+          std::map<int, int> max;
           int nextNode_ind = NewIndex; //(rand() % int(ueNodes.GetN())-2);
-          int nextNode_TP = 10000000;
-          int count = 0;
-          struct stat buffer;
+          // int nextNode_TP = 10000000;
+          // int count = 0;
+          // struct stat buffer;
 
           std::string line;
           std::ifstream infile("/people/belo700/RD2C/RC/integration/control/AgentDecisions.txt"); //fileID.c_str());
@@ -438,16 +442,16 @@ void changeRoute (std::vector<NodeContainer> nodes, int index, std::string fileI
                token = line.substr(0, pos);
                line.erase(0, pos + delimiter.length());
                int ID = std::stoi(token) - 1;
-               int NewIndex = std::stoi(line) + 1;
+               uint32_t NewIndex = std::stoi(line) + 1;
 	       //std::cout << nodes[1].GetN() << std::endl;
 	       //std::cout << nodes[1].Get(ID)->GetObject<Ipv4>() << std::endl;
 	       //std::cout << nodes[1].Get(ID)->GetObject<Ipv4>()->GetNInterfaces() << std::endl;
 	       //if (not nodes[1].Get(ID)->GetObject<Ipv4>()->IsUp(NewIndex)){
                //   nodes[1].Get(ID)->GetObject<Ipv4>()->SetUp(NewIndex);
                //}
-	       for (int x = 0; x < 4 ; x++){
-	           nodes[2].Get(ID)->GetObject<Ipv4>()->SetUp(x+1);
-	       }
+               for (uint32_t x = 0; x < 4; ++x){
+                   nodes[2].Get(ID)->GetObject<Ipv4>()->SetUp(x + 1);
+               }
 	       //nodes[1].Get(ID)->GetObject<Ipv4>()->SetUp(NewIndex);
                //std::cout << "LOOOOOOOOKKKKKEEEE BELOW!!!" << std::endl;
                //std::cout << NewIndex << std::endl;
@@ -479,8 +483,8 @@ main (int argc, char *argv[])
   std::string pcapFileDir = "./";
   uint32_t i;
   Time simTime = Seconds(180);
-  int attackStartTime = 120; //std::stoi(parameters["start"]);
-  int attackEndTime   = 180; //std::stoi(parameters["end"]);
+  // int attackStartTime = 120; //std::stoi(parameters["start"]);
+  // int attackEndTime   = 180; //std::stoi(parameters["end"]);
   CommandLine cmd;
   Json::Value configObject;
   Json::Value helicsConfigObject;
@@ -582,7 +586,7 @@ main (int argc, char *argv[])
       nodes.Create(topologyConfigObject["Node"].size());
       std::cout << "Creating the nodes " << topologyConfigObject["Node"].size() << " vs " << configObject["MIM"].size() << std::endl;
       //Dividing the nodes depending on whether they will serve as control center or man in the middle
-      for (int h = 0; h < configObject["MIM"].size()-1; h++){
+        for (uint32_t h = 0; h < configObject["MIM"].size()-1; h++){
           MIMNode.Add(nodes.Get(h));
       }
       hubNode.Add(nodes.Get(configObject["MIM"].size()-1));
@@ -617,10 +621,10 @@ main (int argc, char *argv[])
       NetDeviceContainer NN;
       //Connecting the nodes as a ring
       if (true){ //(std::stoi(topologyConfigObject["Node"][0]["UseWifi"].asString())==1){
-        for (int node = 0; node < topologyConfigObject["Node"].size(); node++){
+          for (uint32_t node = 0; node < topologyConfigObject["Node"].size(); node++){
           std::cout << "Node " << topologyConfigObject["Node"][node]["name"] << " is connected to the following "<< topologyConfigObject["Node"][node]["connections"].size() << " nodes:" << std::endl;
 	  //int con = 0;
-          for(int con = 0; con < topologyConfigObject["Node"][node]["connections"].size(); con++){
+            for(uint32_t con = 0; con < topologyConfigObject["Node"][node]["connections"].size(); con++){
              std::cout << topologyConfigObject["Node"][node]["UseCSMA"].asString() << " " << topologyConfigObject["Node"][node]["UseWifi"].asString() <<  ": Connection " << con << " " << topologyConfigObject["Node"][node]["connections"][con] << std::endl;	     
 	     if(std::stoi(topologyConfigObject["Node"][node]["UseCSMA"].asString())==1){
 		 //CsmaHelper csma2;
@@ -680,8 +684,8 @@ main (int argc, char *argv[])
         internetStack.Install(hubNode);
 	std::cout << "Finished adding to Stack " << topologyConfigObject["Gridlayout"][0]["SetPos"].asString() << std::endl;
       }
-      if(std::stoi(topologyConfigObject["Gridlayout"][0]["SetPos"].asString()) == 1){
-	  for (int x = 0; x < topologyConfigObject["Node"].size(); x++){
+        if(std::stoi(topologyConfigObject["Gridlayout"][0]["SetPos"].asString()) == 1){
+            for (uint32_t x = 0; x < topologyConfigObject["Node"].size(); x++){
 	      Ptr<ConstantPositionMobilityModel> mob = nodes.Get(std::stoi(topologyConfigObject["Node"][x]["name"].asString()))->GetObject<ConstantPositionMobilityModel>();
               Vector m_position = mob->GetPosition();
 	      m_position.y = std::stoi(topologyConfigObject["Node"][x]["y"].asString());
@@ -694,7 +698,7 @@ main (int argc, char *argv[])
       std::string address = "10.1.1.0";
       ipv4Sub.SetBase(address.c_str(), "255.255.255.0", "0.0.0.1");
       std::cout << NetRing.size() << std::endl;
-      for (int h = 0; h < NetRing.size(); h++){
+        for (uint32_t h = 0; h < NetRing.size(); h++){
 	    std::cout << "I am in the NetRing Setup if statement " << h << std::endl;
 	    if (h < topologyConfigObject["Node"].size() && std::stoi(topologyConfigObject["Node"][h]["UseWifi"].asString()) == 0){
 	      Ptr<RateErrorModel> em = CreateObject<RateErrorModel> ();
@@ -719,7 +723,7 @@ main (int argc, char *argv[])
       star.AssignIpv4Addresses (ipv4);
 
       uint32_t numSpoke = star.SpokeCount();
-      for (int y = 0; y < numSpoke; y++){
+        for (uint32_t y = 0; y < numSpoke; y++){
           MIMNode.Add(star.GetSpokeNode(y));
       }
       hubNode.Add(star.GetHub());
@@ -849,9 +853,9 @@ main (int argc, char *argv[])
     auto cc_name = configObject["controlCenter"]["name"].asString();
     std::cout << "Control Center network node: " << cc_name << std::endl;
     
-    int ID = 1; //i+1;
+    // int ID = 1; // i+1; (unused)
     if (ring){
-          ID = 1;
+          // ID = 1;
     }
     //auto ep_name = configObject["microgrid"][i]["name"].asString();
     std::string IDx = "SS_";
